@@ -1,0 +1,32 @@
+[
+  {
+    "name": "track_time",
+    "display_name": "Track time",
+    "description": "Allows user to track his own time"
+  },
+  {
+    "name": "manage_team",
+    "display_name": "Manage team",
+    "description": "Allows user to create, edit and delete his own team members"
+  },
+  {
+    "name": "manage_projects",
+    "display_name": "Manage projects",
+    "description": "Allows user to create, edit and delete projects"
+  },
+  {
+    "name": "manage_clients",
+    "display_name": "Manage clients",
+    "description": "Allows user to create, edit and delete clients"
+  },
+  {
+    "name": "view_reports",
+    "display_name": "View reports",
+    "description": "Allows user to view detailed reports for all projects, clients and users"
+  },
+  {
+    "name": "manage_roles",
+    "display_name": "Manage roles",
+    "description": "Allows user to create, edit and delete roles"
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "name": "admin",
+    "display_name": "Administrator",
+    "description": "Application administrator role",
+    "permissions": "all"
+  },
+  {
+    "name": "manager",
+    "display_name": "Manager",
+    "description": "Project manager role",
+    "permissions": [
+      "track_time", "manage_projects",  "manage_clients", "view_reports"
+    ]
+  },
+  {
+    "name": "programmer",
+    "display_name": "Programmer",
+    "description": "Programmer role",
+    "permissions": [
+      "track_time"
+    ]
+  }
+]

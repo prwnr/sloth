@@ -1,0 +1,27 @@
+[
+  {
+    "name": "United States Dollar",
+    "code": "USD",
+    "symbol": "$"
+  },
+  {
+    "name": "Canadian Dollar",
+    "code": "CAD",
+    "symbol": "C$"
+  },
+  {
+    "name": "Great British Pound",
+    "code": "GBP",
+    "symbol": "£"
+  },
+  {
+    "name": "Euro",
+    "code": "EUR",
+    "symbol": "€"
+  },
+  {
+    "name": "Polish złoty",
+    "code": "PLN",
+    "symbol": "zł"
+  }
+]
