@@ -1,6 +1,4 @@
 
-// Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
 
 // Variables
 @import "variables";
@@ -10,7 +8,10 @@
 @import "~admin-lte/plugins/font-awesome/css/font-awesome.min.css";
 @import "~admin-lte/build/scss/AdminLTE-raw.scss";
 
-.navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+.user-panel i {
+  font-size: 22px;
+}
+
+body {
+  font-family: $font-family-sans-serif;
 }
