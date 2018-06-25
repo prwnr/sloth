@@ -13,3 +13,47 @@
 body {
   font-family: $font-family-sans-serif;
 }
+
+body.sticky-footer .content-wrapper {
+  min-height: calc(100vh - 56px - 56px) !important;
+}
+
+footer.sticky-footer {
+  padding: 0 0 0 15px;
+  position: absolute;
+  bottom: 0;
+  height: 56px;
+  line-height: 55px;
+  z-index: 1000;
+  width: 100%;
+}
+
+.main-sidebar {
+  z-index: 2000;
+}
+
+.main-header {
+  z-index: 1200;
+}
+
+.control-sidebar {
+  z-index: 1100;
+}
+
+.content-header {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.content-header .container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.user-panel-icon {
+  color: rgb(194, 199, 208);
+  line-height: 30px;
+  width: 1.6rem;
+  font-size: 1.2rem;
+  margin-left: 2px;
+}

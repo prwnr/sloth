@@ -14,6 +14,15 @@ export default class User {
     }
 
     /**
+     * Return user field value
+     * @param field
+     * @returns {*}
+     */
+    get(field) {
+        return this.data[field];
+    }
+
+    /**
      * Check if user has permission
      * @param perm
      * @returns {boolean}

@@ -1,34 +1,44 @@
 <template>
-    <section>
-        <div class="row">
-            <div class="col-md-10">
-                <h1>Clients</h1>
+    <div class="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-10">
+                        <h1>Blank Page</h1>
+                    </div>
+                    <div class="col-sm-2">
+                        <router-link :to="{ name: 'clients.create' }" class="btn btn-success btn-block float-sm-right">
+                            Create new
+                        </router-link>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-2">
-                <router-link :to="{ name: 'clients.create' }" class="btn btn-success btn-block">Create new</router-link>
-            </div>
-        </div>
-        <hr>
+        </section>
+        <section class="content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa fa-table"></i> Clients list</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fa fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <loading v-if="loading"></loading>
 
-        <div class="card card mb-3">
-            <div class="card-header">
-                <i class="fa fa-table"></i> Clients list
+                    <datatable
+                            v-if="!loading"
+                            :columns="columns"
+                            :data="itemsData"
+                            :total="items.length"
+                            :query="query"
+                            :xprops="xprops"
+                            :HeaderSettings="false"
+                    />
+                </div>
             </div>
-            <div class="card-body">
-                <loading v-if="loading"></loading>
-
-                <datatable
-                        v-if="!loading"
-                        :columns="columns"
-                        :data="itemsData"
-                        :total="items.length"
-                        :query="query"
-                        :xprops="xprops"
-                        :HeaderSettings="false"
-                />
-            </div>
-        </div>
-    </section>
+        </section>
+    </div>
 </template>
 
 <script>

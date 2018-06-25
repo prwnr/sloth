@@ -18,7 +18,7 @@
     <!-- Google Font: Source Sans Pro -->
 </head>
 <body class="hold-transition sidebar-mini">
-<div id="app" class="wrapper">
+<div id="app" class="wrapper sticky-footer">
     <auth-user :user="{{ json_encode($activeUser) }}"></auth-user>
     @include('blocks/navbar')
     @include('blocks/sidebar')
@@ -30,12 +30,7 @@
     @include('blocks/control-sidebar')
     @include('blocks/footer')
 </div>
-<!-- ./wrapper -->
-
-<!-- REQUIRED SCRIPTS -->
-
 <script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('js/adminlte.js') }}"></script>
-@stack('scripts')
 </body>
 </html>
