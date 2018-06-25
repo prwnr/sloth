@@ -1,0 +1,128 @@
+<template>
+    <section>
+        <div class="row">
+            <div class="col-md-10">
+                <h1>{{ role.display_name }} role</h1>
+            </div>
+            <div class="col-md-2">
+                <router-link
+                        v-if="role.editable"
+                        :to="{ name: 'roles.edit', params: { id: role.id } }"
+                        class="btn btn-success btn-block ">Edit
+                </router-link>
+            </div>
+        </div>
+        <hr>
+
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <div class="card mb-3">
+                    <div class="card-header"><h5><strong>Information</strong></h5></div>
+                    <div class="card-body">
+                        <table class="table table-striped mb-0">
+                            <tr>
+                                <td><strong>Code name</strong></td>
+                                <td>{{ role.name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Display name</strong></td>
+                                <td>{{ role.display_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Description</strong></td>
+                                <td>{{ role.description }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div v-if="role.users" class="card" :class="{ 'border-bottom-0': role.users.length > 0}">
+                    <div class="card-header"><h5><strong>Assigned users</strong></h5></div>
+                    <div class="card-body" :class="{ 'p-0': role.users.length > 0}">
+                        <ul v-if="role.users.length > 0" class="list-group">
+                            <router-link
+                                    v-if="user.member"
+                                    v-for="(user, index) in role.users"
+                                    :key="user.member.id"
+                                    :to="{ name: 'members.show', params: { id: user.member.id } }"
+                                    class="list-group-item border-right-0 border-left-0"
+                                    :class="{ 'border-top-0': index === 0}">
+                                {{ user.fullname }}
+                            </router-link>
+                            <span v-else class="list-group-item border-right-0 border-left-0" :class="{ 'border-top-0': index === 0}">{{ user.fullname }}</span>
+                        </ul>
+                        <span v-if="role.users.length == 0">No users assigned</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card border-bottom-0">
+                    <div class="card-header"><h5><strong>Permissions</strong></h5></div>
+                    <div class="card-body p-0">
+                        <ul class="list-group">
+                            <li v-for="(permission, index) in permissions" :key="permission.id" class="list-group-item border-right-0 border-left-0 @endif"
+                                :class="[hasPermission(permission) ? 'text-success' : 'disabled', {'border-top-0' : index == 0} ]">
+                                {{ permission.display_name }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <back-buttton class="btn btn-info"></back-buttton>
+    </section>
+</template>
+
+<script>
+    export default {
+        data() {
+            return {
+                role: {},
+                permissions: [],
+            }
+        },
+
+        created() {
+            this.fetchData(this.$route.params.id);
+        },
+
+        methods: {
+            fetchData(id) {
+                axios.get('/api/roles/' + id).then(response => {
+                    this.role = response.data.data;
+                }).catch(error => {
+                    let message = error.message;
+                    if (error.response.status == 404) {
+                        message = 'Role not found';
+                        this.$router.push({ name: 'roles.index' });
+                    }
+                    this.$awn.alert(message);
+                });
+
+                axios.get('/api/perms').then(response => {
+                    this.permissions = response.data.data
+                }).catch(error => {
+                    this.$awn.alert(error.message);
+                });
+            },
+
+            /**
+             * Find if current Role has given permission
+             * @param permission
+             */
+            hasPermission(permission) {
+                if (!this.role.perms) {
+                    return false;
+                }
+
+                return this.role.perms.find(item => item.id === permission.id);
+            }
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

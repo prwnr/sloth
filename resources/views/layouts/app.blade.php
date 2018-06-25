@@ -24,7 +24,7 @@
     @include('blocks/sidebar')
 
     <div class="content-wrapper">
-        @yield('content')
+        <router-view></router-view>
     </div>
 
     @include('blocks/control-sidebar')
