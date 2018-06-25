@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 @section('content')
-    <div class="card card-login mx-auto mt-5">
+    <div class="card card-login mx-auto">
         <div class="card-header text-center"><h4>{{ __('Reset Password') }}</h4></div>
         <div class="card-body">
             @if (session('status'))
@@ -29,8 +29,8 @@
                 <button type="submit" class="btn btn-primary btn-block">{{ __('Send Password Reset Link') }}</button>
             </form>
             <div class="text-center">
-                <a class="d-block small mt-3" href="{{ route('register') }}">{{ __('Register an Account') }}</a>
-                <a class="d-block small" href="{{ route('login') }}">{{ __('Login Page') }}</a>
+                <a class="d-block mt-3" href="{{ route('register') }}">{{ __('Register an Account') }}</a>
+                <a class="d-block" href="{{ route('login') }}">{{ __('Login Page') }}</a>
             </div>
         </div>
     </div>

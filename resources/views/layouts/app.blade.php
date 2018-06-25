@@ -19,6 +19,7 @@
 </head>
 <body class="hold-transition sidebar-mini">
 <div id="app" class="wrapper">
+    <auth-user :user="{{ json_encode($activeUser) }}"></auth-user>
     @include('blocks/navbar')
     @include('blocks/sidebar')
 

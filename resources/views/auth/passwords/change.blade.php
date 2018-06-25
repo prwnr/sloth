@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 @section('content')
-    <div class="card card-login mx-auto mt-5">
+    <div class="card card-login mx-auto">
         <div class="card-header text-center">
             <h4>{{ __('Your first login!') }}</h4>
         </div>

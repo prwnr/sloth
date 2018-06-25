@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 @section('content')
-    <div class="card card-register mx-auto mt-5">
+    <div class="card card-register mx-auto">
         <div class="card-header text-center"><h4>{{ __('Register') }}</h4></div>
         <div class="card-body">
             <form method="POST" action="{{ route('register') }}">
@@ -68,8 +68,8 @@
                 <button type="submit" class="btn btn-primary btn-block">{{ __('Register') }}</button>
             </form>
             <div class="text-center">
-                <a class="d-block small mt-3" href="{{ route('login') }}">{{ __('Login Page') }}</a>
-                <a class="d-block small" href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
+                <a class="d-block mt-3" href="{{ route('login') }}">{{ __('Login Page') }}</a>
+                <a class="d-block" href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
             </div>
         </div>
     </div>
