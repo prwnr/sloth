@@ -4,7 +4,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-10">
-                        <h1>Blank Page</h1>
+                        <h1>Clients</h1>
                     </div>
                     <div class="col-sm-2">
                         <router-link :to="{ name: 'clients.create' }" class="btn btn-success btn-block float-sm-right">
@@ -15,26 +15,22 @@
             </div>
         </section>
         <section class="content">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fa fa-table"></i> Clients list</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fa fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <loading v-if="loading"></loading>
+            <div class="row">
+                <div class="card">
+                    <card-header>Clients list</card-header>
+                    <div class="card-body">
+                        <loading v-if="loading"></loading>
 
-                    <datatable
-                            v-if="!loading"
-                            :columns="columns"
-                            :data="itemsData"
-                            :total="items.length"
-                            :query="query"
-                            :xprops="xprops"
-                            :HeaderSettings="false"
-                    />
+                        <datatable
+                                v-if="!loading"
+                                :columns="columns"
+                                :data="itemsData"
+                                :total="items.length"
+                                :query="query"
+                                :xprops="xprops"
+                                :HeaderSettings="false"
+                        />
+                    </div>
                 </div>
             </div>
         </section>

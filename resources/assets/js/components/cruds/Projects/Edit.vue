@@ -1,133 +1,137 @@
 <template>
-    <section>
-        <div class="row">
-            <div class="col-md-10">
-                <h1>Project: {{ form.name }}</h1>
+    <div class="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-10">
+                        <h1>Project: {{ form.name }}</h1>
+                    </div>
+                    <div class="col-md-2">
+                        <router-link
+                                exact
+                                v-if="project.id"
+                                :to="{ name: 'projects.show', params: { id: project.id } }"
+                                class="btn btn-info btn-block ">View
+                        </router-link>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-2">
-                    <router-link
-                            exact
-                            v-if="project.id"
-                            :to="{ name: 'projects.show', params: { id: project.id } }"
-                            class="btn btn-info btn-block ">View
-                    </router-link>  
-            </div>
-        </div>
-        <hr>
+        </section>
+        <section class="content">
+            <form @submit.prevent="submitForm" @keydown="form.errors.clear($event.target.name)">
+                <div class="row mb-3">
+                    <div class="col-lg-6">
+                        <div class="card mb-3">
+                            <card-header>Details</card-header>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input id="name" type="text" class="form-control" :class="{ 'is-invalid': form.errors.has('name')}"
+                                           name="name" value="" placeholder="Name" required v-model="form.name">
+                                    <form-error :text="form.errors.get('name')" :show="form.errors.has('name')"></form-error>
+                                </div>
 
-        <form @submit.prevent="submitForm" @keydown="form.errors.clear($event.target.name)">
-            <div class="row mb-3">
-                <div class="col-lg-6">
-                    <div class="card mb-3">
-                        <div class="card-header"><h5><strong>Details</strong></h5></div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input id="name" type="text" class="form-control" :class="{ 'is-invalid': form.errors.has('name')}"
-                                    name="name" value="" placeholder="Name" required v-model="form.name">
-                                <form-error :text="form.errors.get('name')" :show="form.errors.has('name')"></form-error>
-                            </div>
+                                <div class="form-group">
+                                    <label for="code">Code</label>
+                                    <div class="input-group">
+                                        <input id="code" type="text" class="form-control" :class="{ 'is-invalid': form.errors.has('code')}"
+                                               name="code" value="" placeholder="Code" required v-model="form.code" :maxlength="maxCodeLenght">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" v-text="(maxCodeLenght - form.code.length)"></span>
+                                        </div>
+                                    </div>
+                                    <form-error :text="form.errors.get('code')" :show="form.errors.has('code')"></form-error>
+                                </div>
 
-                            <div class="form-group">
-                                <label for="code">Code</label>
-                                <div class="input-group">
-                                    <input id="code" type="text" class="form-control" :class="{ 'is-invalid': form.errors.has('code')}"
-                                    name="code" value="" placeholder="Code" required v-model="form.code" :maxlength="maxCodeLenght">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text" v-text="(maxCodeLenght - form.code.length)"></span>
+                                <label for="budget">Budget</label>
+                                <div class="form-group row">
+                                    <div class="col-4">
+                                        <input id="budget" type="number" step=".01" class="form-control" :class="{ 'is-invalid': form.errors.has('budget')}"
+                                               name="budget" value="" placeholder="Budget" required v-model="form.budget">
+                                        <form-error :text="form.errors.get('budget')" :show="form.errors.has('budget')"></form-error>
+                                    </div>
+
+                                    <div class="col-4 ">
+                                        <select class="form-control" :class="{ 'is-invalid': form.errors.has('budget_currency')}"
+                                                name="budget_currency" id="budget_currency" required v-model="form.budget_currency">
+                                            <option value="0" selected disabled>Currency</option>
+                                            <option v-for="currency in currencies" :key="currency.id" :value="currency.id">
+                                                {{ currency.symbol }} {{ currency.name }}
+                                            </option>
+                                        </select>
+                                        <form-error :text="form.errors.get('budget_currency')" :show="form.errors.has('budget_currency')"></form-error>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <select class="form-control" :class="{ 'is-invalid': form.errors.has('budget_period')}"
+                                                name="budget_period" id="budget_period" required v-model="form.budget_period">
+                                            <option value="" selected disabled>Budget period</option>
+                                            <option v-for="(name, index) in budgetPeriods" :key="index" :value="index">
+                                                {{ name }}
+                                            </option>
+                                        </select>
+                                        <form-error :text="form.errors.get('budget_period')" :show="form.errors.has('budget_period')"></form-error>
                                     </div>
                                 </div>
-                                <form-error :text="form.errors.get('code')" :show="form.errors.has('code')"></form-error>
-                            </div>
-
-                            <label for="budget">Budget</label>
-                            <div class="form-group row">
-                                <div class="col-4">
-                                    <input id="budget" type="number" step=".01" class="form-control" :class="{ 'is-invalid': form.errors.has('budget')}"
-                                        name="budget" value="" placeholder="Budget" required v-model="form.budget">
-                                    <form-error :text="form.errors.get('budget')" :show="form.errors.has('budget')"></form-error>
-                                </div>
-
-                                <div class="col-4 ">
-                                    <select class="form-control" :class="{ 'is-invalid': form.errors.has('budget_currency')}"
-                                        name="budget_currency" id="budget_currency" required v-model="form.budget_currency">
-                                        <option value="0" selected disabled>Currency</option>
-                                        <option v-for="currency in currencies" :key="currency.id" :value="currency.id">
-                                            {{ currency.symbol }} {{ currency.name }}
-                                        </option>
-                                    </select>
-                                    <form-error :text="form.errors.get('budget_currency')" :show="form.errors.has('budget_currency')"></form-error>
-                                </div>
-
-                                <div class="col-4">
-                                    <select class="form-control" :class="{ 'is-invalid': form.errors.has('budget_period')}"
-                                    name="budget_period" id="budget_period" required v-model="form.budget_period">
-                                        <option value="" selected disabled>Budget period</option>
-                                        <option v-for="(name, index) in budgetPeriods" :key="index" :value="index">
-                                            {{ name }}
-                                        </option>
-                                    </select>
-                                    <form-error :text="form.errors.get('budget_period')" :show="form.errors.has('budget_period')"></form-error>
-                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card">
-                        <div class="card-header "><h5><strong>Client</strong></h5></div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <Select2 
-                                v-model="form.client" 
-                                :options="clientsSelectOptions"
-                                :class="{ 'is-invalid': form.errors.has('client')}"
-                                @change="form.errors.clear('client')"></Select2>
+                        <div class="card">
+                            <card-header>Client</card-header>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <Select2
+                                            v-model="form.client"
+                                            :options="clientsSelectOptions"
+                                            :class="{ 'is-invalid': form.errors.has('client')}"
+                                            @change="form.errors.clear('client')"></Select2>
+                                </div>
+                                <form-error :text="form.errors.get('client')" :show="form.errors.has('client')"></form-error>
                             </div>
-                            <form-error :text="form.errors.get('client')" :show="form.errors.has('client')"></form-error>
                         </div>
+                        <button class="mt-3 btn btn-success w-25">Save</button>
                     </div>
-                    <button class="mt-3 btn btn-success w-25">Save</button>
-                </div>
 
-                <div class="col-lg-6">
-                    <div class="card mb-3">
-                        <div class="card-header "><h5><strong>Assigned members</strong></h5></div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <Select2 v-model="form.members" 
-                                :options="membersSelectOptions" 
-                                :settings="{ multiple: true }"
-                                :class="{ 'is-invalid': form.errors.has('members')}"
-                                @change="form.errors.clear('members')"></Select2>
+                    <div class="col-lg-6">
+                        <div class="card mb-3">
+                            <card-header>Assigned members</card-header>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <Select2 v-model="form.members"
+                                             :options="membersSelectOptions"
+                                             :settings="{ multiple: true }"
+                                             :class="{ 'is-invalid': form.errors.has('members')}"
+                                             @change="form.errors.clear('members')"></Select2>
+                                </div>
+                                <form-error :text="form.errors.get('members')" :show="form.errors.has('members')"></form-error>
                             </div>
-                            <form-error :text="form.errors.get('members')" :show="form.errors.has('members')"></form-error>
                         </div>
-                    </div>
 
-                    <div class="card">
-                        <div class="card-header"><h5><strong>Billings</strong></h5></div>
-                        <div class="card-body">
-                            <billings-form v-if="currencies.length > 0 && billingTypes" 
-                                :currencies="currencies"
-                                :billingTypes="billingTypes">
-                            </billings-form>
-                            <hr>
-                            <button v-if="canAddTasks" class="btn btn-info mb-3" type="button" @click="addTasks">Add tasks</button>
-                            <button v-else-if="!allTasksDeleted" class="btn btn-info mb-3" type="button" @click="deleteTasks">Delete tasks</button>
-                            <button v-else-if="allTasksDeleted" class="btn btn-info mb-3" type="button" @click="restoreTasks">Restore tasks</button>
-                            <tasks-form v-if="(currencies.length > 0 && billingTypes && tasks) && showTasks"
-                                :tasks="tasks"
-                                :currencies="currencies"
-                                :billingTypes="billingTypes">
-                            </tasks-form>
+                        <div class="card">
+                            <card-header>Billings</card-header>
+                            <div class="card-body">
+                                <billings-form v-if="currencies.length > 0 && billingTypes"
+                                               :currencies="currencies"
+                                               :billingTypes="billingTypes">
+                                </billings-form>
+                                <hr>
+                                <button v-if="canAddTasks" class="btn btn-info mb-3" type="button" @click="addTasks">Add tasks</button>
+                                <button v-else-if="!allTasksDeleted" class="btn btn-info mb-3" type="button" @click="deleteTasks">Delete tasks</button>
+                                <button v-else-if="allTasksDeleted" class="btn btn-info mb-3" type="button" @click="restoreTasks">Restore tasks</button>
+                                <tasks-form v-if="(currencies.length > 0 && billingTypes && tasks) && showTasks"
+                                            :tasks="tasks"
+                                            :currencies="currencies"
+                                            :billingTypes="billingTypes">
+                                </tasks-form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
 
-        <back-buttton class="btn btn-info"></back-buttton>
-    </section>
+            <back-buttton></back-buttton>
+        </section>
+    </div>
 </template>
 
 <script>

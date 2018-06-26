@@ -22,7 +22,6 @@
         @yield('content')
     </div>
 
-<script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('js/adminlte.js') }}"></script>
 @stack('scripts')
 </body>

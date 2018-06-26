@@ -73,6 +73,18 @@ class UserController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @return $this
+     */
+    public function logout(Request $request)
+    {
+        $dd = Auth::guard('auth');
+        Auth::guard()->logout();
+        $request->session()->invalidate();
+        return response()->setStatusCode(Response::HTTP_ACCEPTED);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request

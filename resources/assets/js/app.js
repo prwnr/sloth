@@ -24,6 +24,7 @@ Vue.component('back-buttton', require('./components/blocks/BackButton.vue'));
 Vue.component('form-error', require('./components/blocks/FormError.vue'));
 Vue.component('loading', require('./components/blocks/Loading.vue'));
 Vue.component('sidebar', require('./components/blocks/Sidebar.vue'));
+Vue.component('card-header', require('./components/blocks/card/Header.vue'));
 Vue.component('bootstrap-toggle', require('vue-bootstrap-toggle'));
 
 const app = new Vue({

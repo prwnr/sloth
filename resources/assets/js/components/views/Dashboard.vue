@@ -1,15 +1,20 @@
 <template>
-    <section>
-        <div class="row">
-            <div class="col-md-10">
-                <h1>Dashboard</h1>
+    <div class="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-10">
+                        <h1>Dashboard</h1>
+                    </div>
+                </div>
             </div>
-        </div>
-        <hr>
-        <div class="row col-lg-12">
-            Content
-        </div>
-    </section>   
+        </section>
+        <section class="content">
+            <div class="row col-lg-12">
+                Content
+            </div>
+        </section>
+    </div>
 </template>
 
 <script>

@@ -46,11 +46,12 @@
             </div>
             <div class="form-group">
                 <label>Choose your theme skin:
-                    <bootstrap-toggle v-model="checked" :options="{
+                    <bootstrap-toggle v-model="checked" :disabled="true" :options="{
                         on: 'Dark skin',
                         off: 'Light skin',
                         onstyle: 'primary',
                         offstyle: 'default',
+                        style: 'disabled',
                         size: 'small' }"/>
                 </label>
             </div>

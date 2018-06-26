@@ -15,7 +15,7 @@ body {
 }
 
 body.sticky-footer .content-wrapper {
-  min-height: calc(100vh - 56px - 56px) !important;
+  min-height: calc(100vh - 57px) !important;
 }
 
 footer.sticky-footer {
@@ -56,4 +56,9 @@ footer.sticky-footer {
   width: 1.6rem;
   font-size: 1.2rem;
   margin-left: 2px;
+}
+
+.navbar-expand .navbar-nav .nav-link {
+  padding-right: 1rem;
+  padding-left: 1rem;
 }

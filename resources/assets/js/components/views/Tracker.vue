@@ -1,35 +1,43 @@
 <template>
-    <section>
-        <h1>Time tracker</h1>
-        <hr>
-
-        <div class="row">
-            <div class="col-lg-12">
-                <button class="btn btn-success" type="button" data-toggle="modal" data-target="#newRow">Add time <i class="fa fa-fw fa-plus"></i></button>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12">
-                <time-log v-for="(time, index) in timeLogs" :time="time" :key="index"></time-log>
-            </div>
-        </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="newRow" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <new-time :projects="projects"></new-time>
+    <div class="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-10">
+                        <h1>Time tracker</h1>
                     </div>
                 </div>
             </div>
-        </div>
-        <back-buttton class="btn btn-info"></back-buttton>
-    </section>
+        </section>
+        <section class="content">
+            <div class="row">
+                <div class="col-lg-12">
+                    <button class="btn btn-success" type="button" data-toggle="modal" data-target="#newRow">Add time <i class="fa fa-fw fa-plus"></i></button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <time-log v-for="(time, index) in timeLogs" :time="time" :key="index"></time-log>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="newRow" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <new-time :projects="projects"></new-time>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <back-buttton></back-buttton>
+        </section>
+    </div>
 </template>
 
 <script>

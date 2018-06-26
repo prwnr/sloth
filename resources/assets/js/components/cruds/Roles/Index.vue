@@ -1,34 +1,41 @@
 <template>
-    <section>
-        <div class="row">
-            <div class="col-md-10">
-                <h1>Roles</h1>
-            </div>
-            <div class="col-md-2">
-                <router-link :to="{ name: 'roles.create' }" class="btn btn-success btn-block">Create new</router-link>
-            </div>
-        </div>
-        <hr>
+    <div class="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-10">
+                        <h1>Roles</h1>
+                    </div>
+                    <div class="col-sm-2">
+                        <router-link :to="{ name: 'roles.create' }" class="btn btn-success btn-block">Create new</router-link>
 
-        <div class="card card mb-3">
-            <div class="card-header">
-                <i class="fa fa-table"></i> Roles list
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <loading v-if="loading"></loading>
+        </section>
+        <section class="content">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <card-header>Roles list</card-header>
+                        <div class="card-body">
+                            <loading v-if="loading"></loading>
 
-                <datatable
-                    v-if="!loading"
-                    :columns="columns"
-                    :data="itemsData"
-                    :total="items.length"
-                    :query="query"
-                    :xprops="xprops"
-                    :HeaderSettings="false"
-                />
+                            <datatable
+                                    v-if="!loading"
+                                    :columns="columns"
+                                    :data="itemsData"
+                                    :total="items.length"
+                                    :query="query"
+                                    :xprops="xprops"
+                                    :HeaderSettings="false"
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 </template>
 
 <script>

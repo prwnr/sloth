@@ -1,78 +1,82 @@
 <template>
-    <section>
-        <div class="row">
-            <div class="col-md-10">
-                <h1>{{ role.display_name }} role</h1>
-            </div>
-            <div class="col-md-2">
-                <router-link
-                        v-if="role.editable"
-                        :to="{ name: 'roles.edit', params: { id: role.id } }"
-                        class="btn btn-success btn-block ">Edit
-                </router-link>
-            </div>
-        </div>
-        <hr>
-
-        <div class="row mb-3">
-            <div class="col-lg-6">
-                <div class="card mb-3">
-                    <div class="card-header"><h5><strong>Information</strong></h5></div>
-                    <div class="card-body">
-                        <table class="table table-striped mb-0">
-                            <tr>
-                                <td><strong>Code name</strong></td>
-                                <td>{{ role.name }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Display name</strong></td>
-                                <td>{{ role.display_name }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Description</strong></td>
-                                <td>{{ role.description }}</td>
-                            </tr>
-                        </table>
+    <div class="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-10">
+                        <h1>{{ role.display_name }} role</h1>
                     </div>
-                </div>
-
-                <div v-if="role.users" class="card" :class="{ 'border-bottom-0': role.users.length > 0}">
-                    <div class="card-header"><h5><strong>Assigned users</strong></h5></div>
-                    <div class="card-body" :class="{ 'p-0': role.users.length > 0}">
-                        <ul v-if="role.users.length > 0" class="list-group">
-                            <router-link
-                                    v-if="user.member"
-                                    v-for="(user, index) in role.users"
-                                    :key="user.member.id"
-                                    :to="{ name: 'members.show', params: { id: user.member.id } }"
-                                    class="list-group-item border-right-0 border-left-0"
-                                    :class="{ 'border-top-0': index === 0}">
-                                {{ user.fullname }}
-                            </router-link>
-                            <span v-else class="list-group-item border-right-0 border-left-0" :class="{ 'border-top-0': index === 0}">{{ user.fullname }}</span>
-                        </ul>
-                        <span v-if="role.users.length == 0">No users assigned</span>
+                    <div class="col-md-2">
+                        <router-link
+                                v-if="role.editable"
+                                :to="{ name: 'roles.edit', params: { id: role.id } }"
+                                class="btn btn-success btn-block ">Edit
+                        </router-link>
                     </div>
                 </div>
             </div>
+        </section>
+        <section class="content">
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <div class="card mb-3">
+                        <card-header>Information</card-header>
+                        <div class="card-body">
+                            <table class="table table-striped mb-0">
+                                <tr>
+                                    <td><strong>Code name</strong></td>
+                                    <td>{{ role.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Display name</strong></td>
+                                    <td>{{ role.display_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Description</strong></td>
+                                    <td>{{ role.description }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
 
-            <div class="col-lg-6">
-                <div class="card border-bottom-0">
-                    <div class="card-header"><h5><strong>Permissions</strong></h5></div>
-                    <div class="card-body p-0">
-                        <ul class="list-group">
-                            <li v-for="(permission, index) in permissions" :key="permission.id" class="list-group-item border-right-0 border-left-0 @endif"
-                                :class="[hasPermission(permission) ? 'text-success' : 'disabled', {'border-top-0' : index == 0} ]">
-                                {{ permission.display_name }}
-                            </li>
-                        </ul>
+                    <div v-if="role.users" class="card" :class="{ 'border-bottom-0': role.users.length > 0}">
+                        <card-header>Assigned users</card-header>
+                        <div class="card-body" :class="{ 'p-0': role.users.length > 0}">
+                            <ul v-if="role.users.length > 0" class="list-group">
+                                <router-link
+                                        v-if="user.member"
+                                        v-for="(user, index) in role.users"
+                                        :key="user.member.id"
+                                        :to="{ name: 'members.show', params: { id: user.member.id } }"
+                                        class="list-group-item border-right-0 border-left-0"
+                                        :class="{ 'border-top-0': index === 0}">
+                                    {{ user.fullname }}
+                                </router-link>
+                                <span v-else class="list-group-item border-right-0 border-left-0" :class="{ 'border-top-0': index === 0}">{{ user.fullname }}</span>
+                            </ul>
+                            <span v-if="role.users.length == 0">No users assigned</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card border-bottom-0">
+                        <card-header>Permissions</card-header>
+                        <div class="card-body p-0">
+                            <ul class="list-group">
+                                <li v-for="(permission, index) in permissions" :key="permission.id" class="list-group-item border-right-0 border-left-0 @endif"
+                                    :class="[hasPermission(permission) ? 'text-success' : 'disabled', {'border-top-0' : index == 0} ]">
+                                    {{ permission.display_name }}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <back-buttton class="btn btn-info"></back-buttton>
-    </section>
+            <back-buttton></back-buttton>
+        </section>
+    </div>
 </template>
 
 <script>

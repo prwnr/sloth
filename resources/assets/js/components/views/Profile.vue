@@ -1,20 +1,25 @@
 <template>
-    <section>
-        <div class="row">
-            <div class="col-md-10">
-                <h1>My account</h1>
+    <div class="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-10">
+                        <h1>My account</h1>
+                    </div>
+                </div>
             </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-lg-6">
-            <info></info>
-        </div>
-        <div class="col-lg-6">
-            <team></team>   
-        </div>
-        </div>
-    </section>   
+        </section>
+        <section class="content">
+            <div class="row">
+                <div class="col-lg-6">
+                    <info></info>
+                </div>
+                <div class="col-lg-6">
+                    <team></team>
+                </div>
+            </div>
+        </section>
+    </div>
 </template>
 
 <script>

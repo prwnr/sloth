@@ -1,120 +1,124 @@
 <template>
-    <section>
-        <div class="row">
-            <div class="col-md-10">
-                <h1>{{ form.firstname }} {{ form.lastname }} member</h1>
-            </div>
-            <div class="col-md-2">
-                <router-link
-                        exact
-                        v-if="member.id"
-                        :to="{ name: 'members.show', params: { id: member.id } }"
-                        class="btn btn-info btn-block">View
-                </router-link>
-            </div>
-        </div>
-        <hr>
-
-        <form @submit.prevent="submitForm" @keydown="form.errors.clear($event.target.name)">
-            <div class="row mb-3">
-                <div class="col-lg-6">
-                    <div class="card mb-3">
-                        <div class="card-header"><h5><strong>Details</strong></h5></div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="firstname">First name</label>
-                                <input id="firstname" type="text" class="form-control" v-model="form.firstname"
-                                       name="firstname" value="" placeholder="First name" required>
-                                <form-error :text="form.errors.get('firstname')" :show="form.errors.has('firstname')"></form-error>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="lastname">Last name</label>
-                                <input id="lastname" type="text" class="form-control" v-model="form.lastname"
-                                       name="lastname" value="" placeholder="Last name" required>
-                                <form-error :text="form.errors.get('lastname')" :show="form.errors.has('lastname')"></form-error>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input id="email" type="email" class="form-control" v-model="form.email"
-                                       name="email" placeholder="Email" required>
-                                <form-error :text="form.errors.get('email')" :show="form.errors.has('email')"></form-error>
-                            </div>
-                        </div>
+    <div class="content">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-10">
+                        <h1>{{ form.firstname }} {{ form.lastname }} member</h1>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header "><h5><strong>Roles</strong></h5></div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <Select2 v-model="form.roles" :options="rolesSelectOptions" :settings="{ multiple: true }" 
-                                @change="form.errors.clear('roles')"></Select2>
-                            </div>
-                            <form-error :text="form.errors.get('roles')" :show="form.errors.has('roles')"></form-error>
-                        </div>
-                    </div>
-                    <button class="mt-3 btn btn-success w-25">Save</button>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="card mb-3">
-                        <div class="card-header"><h5><strong>Billings</strong></h5></div>
-                        <div class="card-body">
-                            <billings-form v-if="currencies.length > 0 && billingTypes" 
-                                :currencies="currencies"
-                                :billingTypes="billingTypes">
-                            </billings-form>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header"><h5><strong>Projects</strong></h5></div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <Select2 v-model="form.projects" :options="projectsSelectOptions" :settings="{ multiple: true }"></Select2>
-                            </div>
-                        </div>
+                    <div class="col-md-2">
+                        <router-link
+                                exact
+                                v-if="member.id"
+                                :to="{ name: 'members.show', params: { id: member.id } }"
+                                class="btn btn-info btn-block">View
+                        </router-link>
                     </div>
                 </div>
             </div>
-        </form>
+        </section>
+        <section class="content">
+            <form @submit.prevent="submitForm" @keydown="form.errors.clear($event.target.name)">
+                <div class="row mb-3">
+                    <div class="col-lg-6">
+                        <div class="card mb-3">
+                            <card-header>Details</card-header>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="firstname">First name</label>
+                                    <input id="firstname" type="text" class="form-control" v-model="form.firstname"
+                                           name="firstname" value="" placeholder="First name" required>
+                                    <form-error :text="form.errors.get('firstname')" :show="form.errors.has('firstname')"></form-error>
+                                </div>
 
-        <hr>
-        <div class="row">
-            <div class="col-lg-6">
-                <form @submit.prevent="changePassword" @keydown="formPassword.errors.clear($event.target.name)">
-                    <div class="card mt-3">
-                        <div class="card-header "><h5><strong>Member password</strong></h5></div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input id="password" v-model="formPassword.password" type="password" required
-                                    class="form-control" autocomplete="off"
-                                    name="password">
-                                <span class="help-block text-danger"
-                                    v-html="formPassword.errors.get('password')" v-show="formPassword.errors.has('password')"></span>
+                                <div class="form-group">
+                                    <label for="lastname">Last name</label>
+                                    <input id="lastname" type="text" class="form-control" v-model="form.lastname"
+                                           name="lastname" value="" placeholder="Last name" required>
+                                    <form-error :text="form.errors.get('lastname')" :show="form.errors.has('lastname')"></form-error>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input id="email" type="email" class="form-control" v-model="form.email"
+                                           name="email" placeholder="Email" required>
+                                    <form-error :text="form.errors.get('email')" :show="form.errors.has('email')"></form-error>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="password-confirm">Confirm password</label>
-                                <input id="password-confirm" v-model="formPassword.password_confirmation" type="password" required
-                                    class="form-control" autocomplete="off"
-                                    name="password_confirmation">
-                                <span class="help-block text-danger"
-                                    v-html="formPassword.errors.get('password_confirmation')"
-                                    v-show="formPassword.errors.has('password_confirmation')"></span>
+                        </div>
+
+                        <div class="card">
+                            <card-header>Roles</card-header>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <Select2 v-model="form.roles" :options="rolesSelectOptions" :settings="{ multiple: true }"
+                                             @change="form.errors.clear('roles')"></Select2>
+                                </div>
+                                <form-error :text="form.errors.get('roles')" :show="form.errors.has('roles')"></form-error>
                             </div>
-                            <div class="form-group">
-                                <button class="btn btn-success">Change password</button>
+                        </div>
+                        <button class="mt-3 btn btn-success w-25">Save</button>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card mb-3">
+                            <card-header>Billings</card-header>
+                            <div class="card-body">
+                                <billings-form v-if="currencies.length > 0 && billingTypes"
+                                               :currencies="currencies"
+                                               :billingTypes="billingTypes">
+                                </billings-form>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <card-header>Projects</card-header>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <Select2 v-model="form.projects" :options="projectsSelectOptions" :settings="{ multiple: true }"></Select2>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
+                </div>
+            </form>
 
-        <back-buttton class="btn btn-info"></back-buttton>
-    </section>
+            <hr>
+            <div class="row">
+                <div class="col-lg-6">
+                    <form @submit.prevent="changePassword" @keydown="formPassword.errors.clear($event.target.name)">
+                        <div class="card mt-3">
+                            <card-header>Member password</card-header>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input id="password" v-model="formPassword.password" type="password" required
+                                           class="form-control" autocomplete="off"
+                                           name="password">
+                                    <span class="help-block text-danger"
+                                          v-html="formPassword.errors.get('password')" v-show="formPassword.errors.has('password')"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password-confirm">Confirm password</label>
+                                    <input id="password-confirm" v-model="formPassword.password_confirmation" type="password" required
+                                           class="form-control" autocomplete="off"
+                                           name="password_confirmation">
+                                    <span class="help-block text-danger"
+                                          v-html="formPassword.errors.get('password_confirmation')"
+                                          v-show="formPassword.errors.has('password_confirmation')"></span>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success">Change password</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <back-buttton></back-buttton>
+        </section>
+    </div>
 </template>
 
 <script>
