@@ -15,22 +15,20 @@
             </div>
         </section>
         <section class="content">
-            <div class="row">
-                <div class="card">
-                    <card-header>Clients list</card-header>
-                    <div class="card-body">
-                        <loading v-if="loading"></loading>
+            <div class="card card-table">
+                <card-header>Clients list</card-header>
+                <div class="card-body">
+                    <loading v-if="loading"></loading>
 
-                        <datatable
-                                v-if="!loading"
-                                :columns="columns"
-                                :data="itemsData"
-                                :total="items.length"
-                                :query="query"
-                                :xprops="xprops"
-                                :HeaderSettings="false"
-                        />
-                    </div>
+                    <datatable
+                            v-if="!loading"
+                            :columns="columns"
+                            :data="itemsData"
+                            :total="items.length"
+                            :query="query"
+                            :xprops="xprops"
+                            :HeaderSettings="false"
+                    />
                 </div>
             </div>
         </section>

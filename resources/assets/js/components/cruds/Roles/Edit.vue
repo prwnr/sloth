@@ -69,7 +69,7 @@
                 </div>
             </form>
 
-            <back-buttton></back-buttton>
+            <back-button></back-button>
         </section>
     </div>
 </template>

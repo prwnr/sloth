@@ -13,10 +13,8 @@
             </div>
         </section>
         <section class="content">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <i class="fa fa-table"></i> Members list
-                </div>
+            <div class="card card-table">
+                <card-header>Members list</card-header>
                 <div class="card-body">
                     <loading v-if="loading"></loading>
 

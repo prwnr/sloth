@@ -14,7 +14,7 @@
             </div>
         </section>
         <section class="content">
-            <div class="card mb-3">
+            <div class="card card-table">
                 <card-header>Projects list</card-header>
                 <div class="card-body">
                     <loading v-if="loading"></loading>
@@ -30,6 +30,7 @@
                     />
                 </div>
             </div>
+            <back-button></back-button>
         </section>
     </div>
 </template>

@@ -20,7 +20,7 @@ Vue.component('Select2', Select2);
 Vue.use(VueSweetalert2);
 
 Vue.component('auth-user', require('./components/blocks/AuthUser.vue'));
-Vue.component('back-buttton', require('./components/blocks/BackButton.vue'));
+Vue.component('back-button', require('./components/blocks/BackButton.vue'));
 Vue.component('form-error', require('./components/blocks/FormError.vue'));
 Vue.component('loading', require('./components/blocks/Loading.vue'));
 Vue.component('sidebar', require('./components/blocks/Sidebar.vue'));
