@@ -15,7 +15,7 @@
         <section class="content">
             <div class="card card-table">
                 <card-header>Members list</card-header>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 
                     <datatable
@@ -42,7 +42,7 @@
                 loading: true,
                 items: [],
                 columns: [
-                    {title: '#', field: 'id', sortable: true, colStyle: 'width: 50px;'},
+                    {title: '#', field: 'id', sortable: true, colStyle: 'width: 70px;'},
                     {title: 'Name', field: 'fullname', sortable: true},
                     {title: 'Email', field: 'email', sortable: true},
                     {title: 'Active?', field: 'active', sortable: true},

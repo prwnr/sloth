@@ -16,7 +16,7 @@
         <section class="content">
             <div class="card card-table">
                 <card-header>Roles list</card-header>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 
                     <datatable
@@ -43,7 +43,7 @@
                 loading: true,
                 items: [],
                 columns: [
-                    {title: '#', field: 'id', sortable: true, colStyle: 'width: 50px;'},
+                    {title: '#', field: 'id', sortable: true, colStyle: 'width: 70px;'},
                     {title: 'Name', field: 'display_name', sortable: true},
                     {title: 'Description', field: 'description', sortable: true},
                     {title: 'Created at', field: 'created_at', sortable: true},

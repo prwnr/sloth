@@ -17,7 +17,7 @@
         <section class="content">
             <div class="card card-table">
                 <card-header>Clients list</card-header>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 
                     <datatable
@@ -44,7 +44,7 @@
                 loading: true,
                 items: [],
                 columns: [
-                    {title: '#', field: 'id', sortable: true, colStyle: 'width: 50px;'},
+                    {title: '#', field: 'id', sortable: true, colStyle: 'width: 70px;'},
                     {title: 'Name', field: 'fullname', sortable: true},
                     {title: 'Company name', field: 'company_name', sortable: true},
                     {title: 'Email', field: 'email', sortable: true},
