@@ -3,14 +3,16 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-require('./classes/event-hub');
+import Form from './utilities/Form';
+window.Form = Form;
+
+require('./event-hub');
 
 import router from './routes'
 import VueSweetalert2 from 'vue-sweetalert2';
 import Select2 from 'v-select2-component';
 import Datatable from 'vue2-datatable-component';
 import VueAWN from 'vue-awesome-notifications';
-import 'vue-awesome-notifications/dist/styles/style.scss';
 
 Vue.use(Datatable);
 Vue.use(VueAWN, {

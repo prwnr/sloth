@@ -122,7 +122,6 @@
 </template>
 
 <script>
-    import {Form} from '../../../classes/form.js';
     import BillingsForm from '../../../components/blocks/billings/Form.vue';
 
     export default {

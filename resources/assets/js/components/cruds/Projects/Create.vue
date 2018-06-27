@@ -141,8 +141,7 @@
 </template>
 
 <script>
-    import {Form} from '../../../classes/form.js';
-    import String from '../../../classes/string.js';
+    import String from '../../../utilities/String.js';
     import BillingsForm from '../../../components/blocks/billings/Form.vue';
     import TasksForm from '../../../components/blocks/tasks/Form.vue';
     import CreateClient from '../Clients/Create';

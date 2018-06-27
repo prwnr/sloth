@@ -1,9 +1,9 @@
-import {Errors} from './errors.js';
+import Errors from './Errors.js';
 
 /**
  * class Form
  */
-export class Form {
+class Form {
 
     /**
      * Create a new Form instance
@@ -104,3 +104,5 @@ export class Form {
         this.originalData = this.data();
     }
 }
+
+export default Form;

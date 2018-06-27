@@ -1,7 +1,7 @@
 /**
  * Class User
  */
-export default class User {
+class User {
 
     /**
      * User constructor
@@ -39,3 +39,5 @@ export default class User {
         return false;
     }
 }
+
+export default User;

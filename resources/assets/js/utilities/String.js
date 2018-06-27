@@ -1,7 +1,7 @@
 /**
  * Class string
  */
-export default class String {
+class String {
 
     /**
      * Create a new Errors instance
@@ -34,10 +34,12 @@ export default class String {
      */
     slugify(separator) {
         return this.text.toLowerCase()
-            .replace(/\s+/g, separator)     // Replace spaces with -
-            .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-            .replace(/\-\-+/g, separator)   // Replace multiple - with single -
-            .replace(/^-+/, '')       // Trim - from start of text
+            .replace(/\s+/g, separator)
+            .replace(/[^\w\-]+/g, '')
+            .replace(/\-\-+/g, separator)
+            .replace(/^-+/, '')
             .replace(/-+$/, '');
     }
 }
+
+export default String;

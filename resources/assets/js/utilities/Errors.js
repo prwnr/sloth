@@ -1,7 +1,7 @@
 /**
  * Class errors
  */
-export class Errors {
+class Errors {
 
     /**
      * Create a new Errors instance
@@ -61,3 +61,5 @@ export class Errors {
         delete this.errors[field];
     }
 }
+
+export default Errors;

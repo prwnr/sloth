@@ -135,7 +135,6 @@
 </template>
 
 <script>
-    import {Form} from '../../../classes/form.js';
     import TasksForm from '../../../components/blocks/tasks/Form.vue';
     import BillingsForm from '../../../components/blocks/billings/Form.vue';
 

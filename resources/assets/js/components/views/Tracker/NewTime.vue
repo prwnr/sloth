@@ -36,8 +36,6 @@
 </template>
 
 <script>
-    import {Form} from "../../../classes/form";
-
     export default {
         props: ['projects'],
 

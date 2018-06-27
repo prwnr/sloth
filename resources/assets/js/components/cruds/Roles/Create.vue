@@ -67,8 +67,6 @@
 </template>
 
 <script>
-    import {Form} from '../../../classes/form.js';
-
     export default {
         data() {
             return {
