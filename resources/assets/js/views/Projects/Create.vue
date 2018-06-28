@@ -4,15 +4,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-10">
-                        <h1>Project: {{ form.name }}</h1>
-                    </div>
-                    <div class="col-md-2">
-                        <router-link
-                                exact
-                                v-if="project.id"
-                                :to="{ name: 'projects.show', params: { id: project.id } }"
-                                class="btn btn-info btn-block ">View
-                        </router-link>
+                        <h1>Create new project</h1>
                     </div>
                 </div>
             </div>
@@ -80,6 +72,8 @@
                             <card-header>Client</card-header>
                             <div class="card-body">
                                 <div class="form-group">
+                                    <label for="">Choose from a list or</label>
+                                    <a href="#" data-toggle="modal" data-target="#clientCreate">create new client</a>
                                     <Select2
                                             v-model="form.client"
                                             :options="clientsSelectOptions"
@@ -89,12 +83,12 @@
                                 <form-error :text="form.errors.get('client')" :show="form.errors.has('client')"></form-error>
                             </div>
                         </div>
-                        <button class="mt-3 btn btn-success w-25">Save</button>
+                        <button class="mt-3 btn btn-success w-25">Create</button>
                     </div>
 
                     <div class="col-lg-6">
                         <div class="card mb-3">
-                            <card-header>Assigned members</card-header>
+                            <card-header>Members</card-header>
                             <div class="card-body">
                                 <div class="form-group">
                                     <Select2 v-model="form.members"
@@ -107,7 +101,7 @@
                             </div>
                         </div>
 
-                        <div class="card">
+                        <div class="card ">
                             <card-header>Billings</card-header>
                             <div class="card-body">
                                 <billings-form v-if="currencies.length > 0 && billingTypes"
@@ -115,10 +109,9 @@
                                                :billingTypes="billingTypes">
                                 </billings-form>
                                 <hr>
-                                <button v-if="canAddTasks" class="btn btn-info mb-3" type="button" @click="addTasks">Add tasks</button>
-                                <button v-else-if="!allTasksDeleted" class="btn btn-info mb-3" type="button" @click="deleteTasks">Delete tasks</button>
-                                <button v-else-if="allTasksDeleted" class="btn btn-info mb-3" type="button" @click="restoreTasks">Restore tasks</button>
-                                <tasks-form v-if="(currencies.length > 0 && billingTypes && tasks) && showTasks"
+                                <button v-if="!showTasks" class="btn btn-info mb-3" type="button" @click="addTasks">Add tasks</button>
+                                <button v-if="showTasks" class="btn btn-info mb-3" type="button" @click="showTasks = false">Remove tasks</button>
+                                <tasks-form v-if="(currencies.length > 0 && billingTypes && tasks.length > 0) && showTasks"
                                             :tasks="tasks"
                                             :currencies="currencies"
                                             :billingTypes="billingTypes">
@@ -129,31 +122,47 @@
                 </div>
             </form>
 
+            <!-- Modal -->
+            <div class="modal fade" id="clientCreate" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <create-client isModal="true"></create-client>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <back-button></back-button>
         </section>
     </div>
 </template>
 
 <script>
-    import TasksForm from '../../../components/blocks/tasks/Form.vue';
-    import BillingsForm from '../../../components/blocks/billings/Form.vue';
+    import String from '../../utilities/String.js';
+    import BillingsForm from '../../components/Billings/Form.vue';
+    import TasksForm from '../../components/Tasks/Form.vue';
+    import CreateClient from '../Clients/Create';
 
     export default {
         components: {
+            CreateClient,
+            TasksForm,
             BillingsForm,
-            TasksForm
         },
         data() {
             return {
-                showTasks: true,
-                project: {},
+                showTasks: false,
                 maxCodeLenght: 4,
+                addProjectTasks: false,
                 clients: [],
                 members: [],
                 currencies: [],
                 billingTypes: null,
                 budgetPeriods: [],
-                tasks: null,
+                tasks: [],
                 form: new Form({
                     name: '',
                     code: '',
@@ -172,17 +181,20 @@
 
         created() {
             this.fetchData();
+            EventHub.listen('client_created', this.clientCreated);
         },
 
         watch: {
+            'form.name': function () {
+                let string = new String(this.form.name);
+                this.form.code = string.codify(this.maxCodeLenght);
+            },
             'form.code': function () {
                 let code = this.form.code.toString().toUpperCase();
                 this.form.code = code;
             },
-            'form.tasks': function () {
-                if (this.form.tasks.length == 0) {
-                    this.showTasks = false;
-                }
+            'form.budget_currency': function () {
+                this.form.billing_currency = this.form.budget_currency;
             }
         },
 
@@ -202,30 +214,15 @@
                         text: item.company_name
                     }
                 });
-            },
-            allTasksDeleted: function () {
-                if (this.form.tasks.every(item => {
-                    return item.is_deleted;
-                })) {
-                    return true;
-                }
-
-                return false;
-            },
-            canAddTasks: function () {
-                if (this.form.tasks === null || this.form.tasks.length == 0) {
-                    return true;
-                }
-
-                return false;
-            },
+            }
         },
 
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.put('/api/projects/' + this.$route.params.id).then(response => {
-                        this.$awn.success('Project updated successfully.');
+                    this.form.post('/api/projects').then(response => {
+                        this.$router.push({name: 'projects.show', params: { id: response.data.id }})
+                        this.$awn.success('Created new project');
                     }).catch(error => {
                         this.$awn.alert(error.message);
                     })
@@ -233,25 +230,12 @@
             },
 
             /**
-             * Dispatch event that all tasks should be marked as deleted
+             * Fallback method listening on client_created event
              */
-            deleteTasks() {
-                this.form.tasks = this.form.tasks.filter(item => {
-                    return typeof item.id != 'undefined';
-                });
-
-                this.form.tasks.map(item => {
-                    return item.is_deleted = true;
-                });
-            },
-
-            /**
-             * Dispatch event that all tasks should be retored
-             */
-            restoreTasks() {
-                this.form.tasks.map((item) => {
-                    return item.is_deleted = false;
-                });
+            clientCreated(data) {
+                this.clients.push(data);
+                this.form.client = data.id;
+                $('#closeDialog').trigger('click');
             },
 
             /**
@@ -269,12 +253,7 @@
                     reverseButtons: true
                 }).then(result => {
                     if (result.value) {
-                        axios.get('/api/tasks').then(response => {
-                            this.tasks = response.data;
-                            this.showTasks = true;
-                        }).catch(error => {
-                            this.$awn.alert(error.message);
-                        });
+                        this.showTasks = true;
                     }
                 });
             },
@@ -283,34 +262,10 @@
              * Load all required data
              */
             fetchData() {
-                this.fetchProject();
                 this.fetchClients();
                 this.fetchMembers();
-                this.fetchBudgetData();
-            },
-            /**
-             * Load current project data
-             */
-            fetchProject() {
-                axios.get('/api/projects/' + this.$route.params.id).then(response => {
-                    this.project = response.data.data;
-                    this.form.name = this.project.name;
-                    this.form.code = this.project.code;
-                    this.form.budget = this.project.budget;
-                    this.form.budget_currency = this.project.budget_currency.id;
-                    this.form.budget_period = this.project.budget_period;
-                    this.form.client = this.project.client.id;
-                    this.form.members = this.project.members.map(item => item.id);
-                    this.form.billing_rate = this.project.billing.rate;
-                    this.form.billing_type = this.project.billing.type;
-                    this.form.billing_currency = this.project.billing.currency.id;
-                    this.tasks = this.project.tasks;
-                    if (this.tasks.length == 0) {
-                        this.showTasks = false;
-                    }
-                }).catch(error => {
-                    this.$awn.alert(error.message);
-                });
+                this.fetchBillingData();
+                this.fetchTasks();
             },
             /**
              * Load clients 
@@ -336,7 +291,7 @@
             /**
              * Load currencies and budget periods 
              */
-            fetchBudgetData() {
+            fetchBillingData() {
                 axios.get('/api/billings/data').then(response => {
                     this.currencies = response.data.currencies;
                     this.budgetPeriods = response.data.budget_periods;
@@ -345,6 +300,16 @@
                     this.$awn.alert(error.message);
                 });
             },
+            /**
+             * Load default tasks for project
+             */
+            fetchTasks() {
+                axios.get('/api/tasks').then(response => {
+                    this.tasks = response.data;
+                }).catch(error => {
+                    this.$awn.alert(error.message);
+                });
+            }
         }
     }
 </script>

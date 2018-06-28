@@ -81,7 +81,7 @@
 </template>
 
 <script>
-    import BillingsForm from '../../../components/blocks/billings/Form.vue';
+    import BillingsForm from '../../components/Billings/Form.vue';
 
     export default {
         components: {

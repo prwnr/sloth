@@ -88,8 +88,8 @@
 </template>
 
 <script>
-    import BillingsShow from '../../../components/blocks/billings/Show.vue';
-    import TasksShow from '../../../components/blocks/tasks/Show.vue';
+    import BillingsShow from '../../components/Billings/Show.vue';
+    import TasksShow from '../../components/Tasks/Show.vue';
 
     export default {
         components: {

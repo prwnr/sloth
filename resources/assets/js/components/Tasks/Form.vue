@@ -57,7 +57,7 @@
 
 <script>
     import TaskRow from './TaskRow.vue';
-    import String from '../../../utilities/String.js';
+    import String from '../../utilities/String.js';
 
     export default {
         props: ['tasks', 'currencies', 'billingTypes'],

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-    import DatatableActions from '../../dataTable/Actions'
+    import DatatableActions from '../../components/DataTable/Actions'
 
     export default {
         data() {

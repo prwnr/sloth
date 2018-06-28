@@ -4,18 +4,19 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-10">
-                        <h1>Roles</h1>
+                        <h1>Clients</h1>
                     </div>
                     <div class="col-sm-2">
-                        <router-link :to="{ name: 'roles.create' }" class="btn btn-success btn-block">Create new</router-link>
-
+                        <router-link :to="{ name: 'clients.create' }" class="btn btn-success btn-block float-sm-right">
+                            Create new
+                        </router-link>
                     </div>
                 </div>
             </div>
         </section>
         <section class="content">
             <div class="card card-table">
-                <card-header>Roles list</card-header>
+                <card-header>Clients list</card-header>
                 <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 
@@ -35,7 +36,7 @@
 </template>
 
 <script>
-    import DatatableActions from '../../dataTable/Actions'
+    import DatatableActions from '../../components/DataTable/Actions'
 
     export default {
         data() {
@@ -44,10 +45,10 @@
                 items: [],
                 columns: [
                     {title: '#', field: 'id', sortable: true, colStyle: 'width: 70px;'},
-                    {title: 'Name', field: 'display_name', sortable: true},
-                    {title: 'Description', field: 'description', sortable: true},
+                    {title: 'Name', field: 'fullname', sortable: true},
+                    {title: 'Company name', field: 'company_name', sortable: true},
+                    {title: 'Email', field: 'email', sortable: true},
                     {title: 'Created at', field: 'created_at', sortable: true},
-                    {title: 'Updated at', field: 'updated_at', sortable: true},
                     {
                         title: 'Actions',
                         tdComp: DatatableActions,
@@ -58,7 +59,7 @@
                 ],
                 query: {sort: 'id', order: 'asc'},
                 xprops: {
-                    route: 'roles',
+                    route: 'clients',
                     destroy: (id) => this.destroyData(id)
                 }
             }
@@ -84,7 +85,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.get('/api/roles').then(response => {
+                axios.get('/api/clients').then(response => {
                     this.items = response.data.data
                     this.loading = false;
                 }).catch(error => {
@@ -100,12 +101,12 @@
              */
             destroyData(id) {
                 this.$awn.async(
-                    axios.delete('/api/roles/' + id).then(response => {
+                    axios.delete('/api/clients/' + id).then(response => {
                         this.items = this.items.filter((item) => {
                             return item.id != id
                         });
 
-                        this.$awn.success('Role succesfully deleted');
+                        this.$awn.success('Client succesfully deleted.');
                     }).catch(error => {
                         this.$awn.alert(error.message);
                     })

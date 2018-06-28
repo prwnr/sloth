@@ -23,8 +23,8 @@
 </template>
 
 <script>
-    import Info from './Profile/Info.vue';
-    import Team from './Profile/Team.vue';
+    import Info from './../components/Profile/Info.vue';
+    import Team from './../components/Profile/Team.vue';
 
     export default {
         components: {

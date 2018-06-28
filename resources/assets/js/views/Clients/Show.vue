@@ -82,7 +82,7 @@
 </template>
 
 <script>
-    import BillingsShow from '../../../components/blocks/billings/Show.vue';
+    import BillingsShow from '../../components/Billings/Show.vue';
 
     export default {
         components: {

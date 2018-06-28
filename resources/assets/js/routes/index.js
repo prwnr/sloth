@@ -1,29 +1,29 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import RolesIndex from '../components/cruds/Roles/Index.vue';
-import RolesCreate from '../components/cruds/Roles/Create.vue';
-import RolesShow from '../components/cruds/Roles/Show.vue';
-import RolesEdit from '../components/cruds/Roles/Edit.vue';
+import RolesIndex from '../views/Roles/Index.vue';
+import RolesCreate from '../views/Roles/Create.vue';
+import RolesShow from '../views/Roles/Show.vue';
+import RolesEdit from '../views/Roles/Edit.vue';
 
-import MembersIndex from '../components/cruds/Members/Index.vue';
-import MembersCreate from '../components/cruds/Members/Create.vue';
-import MembersShow from '../components/cruds/Members/Show.vue';
-import MembersEdit from '../components/cruds/Members/Edit.vue';
+import MembersIndex from '../views/Members/Index.vue';
+import MembersCreate from '../views/Members/Create.vue';
+import MembersShow from '../views/Members/Show.vue';
+import MembersEdit from '../views/Members/Edit.vue';
 
-import ProjectsIndex from '../components/cruds/Projects/Index.vue';
-import ProjectsCreate from '../components/cruds/Projects/Create.vue';
-import ProjectsShow from '../components/cruds/Projects/Show.vue';
-import ProjectsEdit from '../components/cruds/Projects/Edit.vue';
+import ProjectsIndex from '../views/Projects/Index.vue';
+import ProjectsCreate from '../views/Projects/Create.vue';
+import ProjectsShow from '../views/Projects/Show.vue';
+import ProjectsEdit from '../views/Projects/Edit.vue';
 
-import ClientsIndex from '../components/cruds/Clients/Index.vue';
-import ClientsCreate from '../components/cruds/Clients/Create.vue';
-import ClientsShow from '../components/cruds/Clients/Show.vue';
-import ClientsEdit from '../components/cruds/Clients/Edit.vue';
+import ClientsIndex from '../views/Clients/Index.vue';
+import ClientsCreate from '../views/Clients/Create.vue';
+import ClientsShow from '../views/Clients/Show.vue';
+import ClientsEdit from '../views/Clients/Edit.vue';
 
-import Dashboard from '../components/views/Dashboard.vue';
-import Tracker from '../components/views/Tracker.vue';
-import Profile from '../components/views/Profile.vue';
+import Dashboard from '../views/Dashboard.vue';
+import Tracker from '../views/Tracker.vue';
+import Profile from '../views/Profile.vue';
 
 Vue.use(VueRouter);
 
