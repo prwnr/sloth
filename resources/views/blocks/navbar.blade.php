@@ -56,18 +56,28 @@
                 <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i
-                        class="fa fa-th-large"></i></a>
+
+        <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <i class="fa fa-user-o"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu dropdown-menu-right">
+                <router-link :to="{ name: 'profile' }" class="dropdown-item" tag="a">
+                    <i class="fa fa-folder mr-2"></i>My account
+                </router-link>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fa fa-sign-out mr-2"></i>Sign out
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            </div>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" title="Sign out" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fa fa-sign-out mr-2"></i>
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
+            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i
+                        class="fa fa-th-large"></i></a>
         </li>
     </ul>
 </nav>
