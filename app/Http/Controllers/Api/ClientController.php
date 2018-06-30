@@ -25,7 +25,9 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return new ClientResource(Client::findFromTeam(Auth::user()->team)->get());
+        $clients = Client::findFromTeam(Auth::user()->team)->get();
+        $clients->loadMissing('billing');
+        return new ClientResource($clients);
     }
 
     /**

@@ -1,15 +1,16 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "prwnr/sloth",
+    "description": "Slothful time tracking application.",
+    "keywords": ["sloth", "laravel", "time", "tracking"],
     "license": "MIT",
     "type": "project",
     "require": {
         "php": "^7.1.3",
+        "doctrine/dbal": "^2.7",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.6.*",
-        "laravel/tinker": "^1.0",
         "laravel/passport": "^6.0",
+        "laravel/tinker": "^1.0",
         "zizaco/entrust": "^1.9"
     },
     "require-dev": {

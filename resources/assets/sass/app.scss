@@ -26,20 +26,24 @@ footer.sticky-footer {
   bottom: 0;
   height: 56px;
   line-height: 55px;
-  z-index: 1000;
+  z-index: 800;
   width: 100%;
 }
 
 .main-sidebar {
-  z-index: 2000;
+  z-index: 1000;
 }
 
 .main-header {
-  z-index: 1200;
+  z-index: 900;
 }
 
 .control-sidebar {
-  z-index: 1100;
+  z-index: 850;
+}
+
+.modal {
+  z-index: 1050;
 }
 
 .card-table {
@@ -62,7 +66,7 @@ footer.sticky-footer {
 
 .user-panel-icon {
   color: rgb(194, 199, 208);
-  line-height: 30px;
+  line-height: 34px;
   width: 1.6rem;
   font-size: 1.2rem;
   margin-left: 2px;
