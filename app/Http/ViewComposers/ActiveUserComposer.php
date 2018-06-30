@@ -4,6 +4,7 @@
 namespace App\Http\ViewComposers;
 
 use App\Models\Permission;
+use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -23,7 +24,8 @@ class ActiveUserComposer
     public function compose(View $view): void
     {
         $user = Auth::user();
-        $user->loadMissing('roles', 'member');
+        $user->loadMissing('member');
+        $roles = $user->roles()->select(['id', 'name', 'display_name'])->get();
         $permissions = [];
         foreach (Permission::all() as $perm) {
             if ($user->can($perm->name)) {
@@ -32,9 +34,11 @@ class ActiveUserComposer
         }
 
         $activeUser = [
-            'user' => $user->toArray(),
+            'user' => $user,
+            'projects' => $user->member ? $user->member->projects : Project::findFromTeam($user->team)->get(),
             'permissions' => $permissions,
-            'team' => $user->team->toArray()
+            'roles' => $roles,
+            'team' => $user->team
         ];
         $view->with('activeUser', $activeUser);
     }

@@ -76,6 +76,7 @@ class ProjectController extends Controller
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
+            report($ex);
             return response()->json(['message' => __('Something went wrong when creating new project. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 

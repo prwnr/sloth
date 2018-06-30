@@ -17,7 +17,7 @@ class Project extends Model
 {
     use TeamRelatedTrait;
 
-    public const MAX_BILLING_RATE = 999999999.99;
+    public const MAX_BILLING_RATE = 999999.99;
 
     /**
      * Budget defined periods

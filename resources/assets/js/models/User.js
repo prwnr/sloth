@@ -10,6 +10,8 @@ class User {
     constructor(activeUser) {
         this.data = activeUser.user;
         this.team = activeUser.team;
+        this.projects = activeUser.projects;
+        this.roles = activeUser.roles;
         this.permissions = activeUser.permissions;
     }
 
@@ -33,6 +35,23 @@ class User {
         }
 
         if (this.permissions.includes(perm)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user has role
+     * @param perm
+     * @returns {boolean}
+     */
+    hasRole(role) {
+        if (!this.roles) {
+            return false;
+        }
+
+        if (this.roles.find(item => item.name == role)) {
             return true;
         }
 

@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <div>
         <div class="card mr-0">
         <div class="card-body">
             <form @submit.prevent="onSubmit"
@@ -7,18 +7,18 @@
                 <div class="form-group">
                     <div class="form-row">
                         <label for="name">Team name</label>
-                        <input :class="{disabled : !isAdmin}" :disabled="!isAdmin" id="name" v-model="form.name" type="text"
+                        <input id="name" v-model="form.name" type="text"
                                 class="form-control"
                                 name="name" required autofocus>
                         <span v-show="form.errors.has('name')" class="help-block text-danger"
                                 v-html="form.errors.get('name')"></span>
                     </div>
                 </div>
-                <button v-show="isAdmin" type="submit" class="btn btn-success" :disabled="form.errors.any()">Save</button>
+                <button type="submit" class="btn btn-success" :disabled="form.errors.any()">Save</button>
             </form>
         </div>
     </div>
-    <div v-if="isAdmin" class="card card mb-3 mt-3">
+    <div class="card card mb-3 mt-3">
         <div class="card-header">
             <i class="fa fa-table"></i> Members
         </div>
@@ -32,19 +32,19 @@
                 />
         </div>
     </div>
-    </section>
+    </div>
 </template>
 
 <script>
     export default {
+        props: ['team'],
+
         data() {
             return {
-                user: {},
-                roles: [],
                 items: [],
-                teamId: 0,
+                teamId: this.team.id,
                 form: new Form({
-                    name: ''
+                    name: this.team.name
                 }),
                 columns: [
                     {title: '#', field: 'id', sortable: true, colStyle: 'width: 50px;'},
@@ -55,21 +55,10 @@
         },
 
         created() {
-            this.fetchData();
+            this.fetchMembers();
         },
 
         computed: {
-            /**
-             * Check if user is admin
-             */
-            isAdmin: function () {
-                if (this.roles.includes('admin')) {
-                    return true;
-                }
-
-                return false;
-            },
-
             itemsData: function () {
                 if (this.query.sort) {
                     this.items = _.orderBy(this.items, this.query.sort, this.query.order)
@@ -79,31 +68,7 @@
             }
         },
 
-        watch: {
-            /**
-             * Load members if isAdmin computed is changed to true
-             */
-            isAdmin: function () {
-                if (this.isAdmin) {
-                    this.fetchMembers();
-                }
-            }
-        },
-
         methods: {
-            fetchData() {
-                axios.get('/api/users/active').then(response => {
-                    this.user = response.data.data;
-                    this.roles = response.data.roles;
-
-                    let team = response.data.team;
-                    this.teamId = team.id;
-                    this.form.name = team.name;
-                }).catch(error => {
-                    this.$awn.alert(error.message);
-                });
-            },
-
             /**
              * Fetch all members for current Admin
              */
@@ -124,6 +89,7 @@
             onSubmit() {
                 this.$awn.async(
                     this.form.put('/api/teams/' + this.teamId).then(response => {
+                        this.$emit('teamUpdated', response.data);
                         this.$awn.success('Your team name has been updated.');
                         this.form.updateOriginalData();
                     }).catch(error => {
