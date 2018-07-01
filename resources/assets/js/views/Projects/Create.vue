@@ -201,17 +201,9 @@
                     return;
                 }
                 let client = this.clients.find(item => { return item.id == this.form.client });
-                if (!this.form.billing_rate) {
-                    this.form.billing_rate = client.billing.rate;
-                }
-
-                if (!this.form.billing_currency) {
-                    this.form.billing_currency = client.billing.currency_id;
-                }
-
-                if (!this.form.billing_type) {
-                    this.form.billing_type = client.billing.type;
-                }
+                this.form.budget_currency = client.billing.currency_id;
+                this.form.billing_type = client.billing.type;
+                this.form.billing_rate = client.billing.rate;
             }
         },
 
