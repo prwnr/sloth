@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Permission;
+use App\Models\Project;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -29,7 +30,7 @@ class User extends JsonResource
     public function with($request)
     {
         $this->loadMissing('roles', 'member');
-        $roles = $this->roles->pluck('name')->toArray();
+        $roles = $this->roles()->select(['id', 'name', 'display_name'])->get();
         $permissions = [];
         foreach (Permission::all() as $perm) {
             if ($this->can($perm->name)) {
@@ -39,8 +40,10 @@ class User extends JsonResource
 
         return [
             'roles' => $roles,
+            'projects' => $this->member ? $this->member->projects : Project::findFromTeam($this->team)->get(),
             'permissions' => $permissions,
-            'team' => $this->team->toArray()
+            'roles' => $roles,
+            'team' => $this->team
         ];
     }
 }

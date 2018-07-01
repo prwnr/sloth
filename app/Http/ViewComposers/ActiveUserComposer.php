@@ -34,7 +34,7 @@ class ActiveUserComposer
         }
 
         $activeUser = [
-            'user' => $user,
+            'data' => $user,
             'projects' => $user->member ? $user->member->projects : Project::findFromTeam($user->team)->get(),
             'permissions' => $permissions,
             'roles' => $roles,

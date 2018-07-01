@@ -7,7 +7,8 @@
                 </div>
             </div>
         </section>
-        <section class="content mb-6">
+        <loading v-if="loading"></loading>
+        <section v-if="!loading" class="content mb-6">
             <div class="row">
                 <div class="col-md-3">
                     <div class="card card-primary card-outline">
@@ -94,6 +95,7 @@
     import Team from './../components/Profile/Team.vue';
     import Settings from './../components/Profile/Settings.vue';
     import Activity from './../components/Profile/Activity.vue';
+    import User from "../models/User";
 
     export default {
         components: {
@@ -116,7 +118,7 @@
         },
 
         created() {
-            this.user = this.$user;
+            this.fetchUser();
         },
 
         computed: {
@@ -127,6 +129,16 @@
         },
 
         methods: {
+            fetchUser() {
+                this.loading = true;
+                axios.get('/api/users/active').then(response => {
+                    this.user = new User(response.data);
+                }).catch(error => {
+                    reject(error.response.data);
+                }).finally(() => {
+                    this.loading = false;
+                });
+            },
             /**
              * Update user first and last name if he changed his data
              * @param user

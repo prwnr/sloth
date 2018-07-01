@@ -5,14 +5,14 @@ class User {
 
     /**
      * User constructor
-     * @param activeUser
+     * @param data
      */
-    constructor(activeUser) {
-        this.data = activeUser.user;
-        this.team = activeUser.team;
-        this.projects = activeUser.projects;
-        this.roles = activeUser.roles;
-        this.permissions = activeUser.permissions;
+    constructor(data) {
+        this.data = data.data;
+        this.team = data.team;
+        this.projects = data.projects;
+        this.roles = data.roles;
+        this.permissions = data.permissions;
     }
 
     /**

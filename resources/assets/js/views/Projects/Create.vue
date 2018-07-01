@@ -238,7 +238,6 @@
             submitForm() {
                 this.$awn.async(
                     this.form.post('/api/projects').then(response => {
-                        this.$user.projects.push(response.data);
                         this.$router.push({name: 'projects.show', params: { id: response.data.id }})
                         this.$awn.success('Created new project');
                     }).catch(error => {
