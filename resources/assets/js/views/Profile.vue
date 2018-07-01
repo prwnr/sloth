@@ -8,8 +8,8 @@
             </div>
         </section>
         <loading v-if="loading"></loading>
-        <section v-if="!loading" class="content mb-6">
-            <div class="row">
+        <section class="content mb-6">
+            <div class="row" v-if="!loading">
                 <div class="col-md-3">
                     <div class="card card-primary card-outline">
                         <div class="card-body box-user">
@@ -71,7 +71,6 @@
                             </ul>
                         </div>
                         <div class="card-body">
-
                             <div class="tab-content">
                                 <div class="tab-pane active" id="activity">
                                     <activity></activity>
@@ -172,5 +171,9 @@
 
     .mb-6 {
         margin-bottom: 4rem !important;
+    }
+
+    .row div {
+        margin-bottom: 1px;
     }
 </style>
