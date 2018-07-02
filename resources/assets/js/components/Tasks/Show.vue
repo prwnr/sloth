@@ -1,7 +1,7 @@
 <template>
     <div class="mt-4">
         <h5><strong>Tasks</strong></h5>             
-        <table class="table-hover table mt-2">
+        <table class="table-striped table mt-2">
             <thead>
             <tr>
                 <th>Name</th>
@@ -25,7 +25,7 @@
                         <span v-if="task.billable">{{ task.currency.name }} ({{ task.currency.symbol }})</span>
                         <span v-if="!task.billable">none</span>
                     </td>
-                    <td v-if="task.is_deleted" colspan="3" class="text-center">
+                    <td v-if="task.is_deleted" colspan="4" class="text-center">
                         task deleted
                     </td>
                 </tr>

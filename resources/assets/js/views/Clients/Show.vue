@@ -68,7 +68,7 @@
 
                 <div class="col-lg-6">
                     <div class="card mb-3">
-                        <card-header>Contact Details</card-header>
+                        <card-header>Billings</card-header>
                         <div class="card-body">
                             <BillingsShow v-if="client.billing" :billing="client.billing"></BillingsShow>
                         </div>

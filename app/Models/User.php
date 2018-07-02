@@ -89,4 +89,28 @@ class User extends Authenticatable
     {
         return $this->hasMany(TimeLog::class);
     }
+
+    /**
+     * Return all importan info about user as array (for json response)
+     * @return array
+     */
+    public function getAllInfoData(): array
+    {
+        $this->loadMissing('member');
+        $roles = $this->roles()->select(['id', 'name', 'display_name'])->get();
+        $permissions = [];
+        foreach (Permission::all() as $perm) {
+            if ($this->can($perm->name)) {
+                $permissions[] = $perm->name;
+            }
+        }
+
+        return [
+            'data' => $this,
+            'projects' => $this->member ? $this->member->projects : Project::findFromTeam($this->team)->get(),
+            'permissions' => $permissions,
+            'roles' => $roles,
+            'team' => $this->team
+        ];
+    }
 }

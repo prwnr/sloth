@@ -23,23 +23,6 @@ class ActiveUserComposer
      */
     public function compose(View $view): void
     {
-        $user = Auth::user();
-        $user->loadMissing('member');
-        $roles = $user->roles()->select(['id', 'name', 'display_name'])->get();
-        $permissions = [];
-        foreach (Permission::all() as $perm) {
-            if ($user->can($perm->name)) {
-                $permissions[] = $perm->name;
-            }
-        }
-
-        $activeUser = [
-            'data' => $user,
-            'projects' => $user->member ? $user->member->projects : Project::findFromTeam($user->team)->get(),
-            'permissions' => $permissions,
-            'roles' => $roles,
-            'team' => $user->team
-        ];
-        $view->with('activeUser', $activeUser);
+        $view->with('activeUser', Auth::user()->getAllInfoData());
     }
 }
