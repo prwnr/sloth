@@ -6,18 +6,18 @@
                     <div class="col-sm-10">
                         <h1>Time tracker</h1>
                     </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-success btn-block" type="button" data-toggle="modal"
+                                data-target="#newRow">Add time <i class="fa fa-fw fa-plus"></i></button>
+                    </div>
                 </div>
             </div>
         </section>
         <section class="content">
-            <div class="row">
-                <div class="col-lg-12">
-                    <button class="btn btn-success" type="button" data-toggle="modal" data-target="#newRow">Add time <i class="fa fa-fw fa-plus"></i></button>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-12">
+            <div class="card mb-3">
+                <card-header :minimizable="false">Your logs from {{ viewedDay }}</card-header>
+                <div class="card-body col-lg-12">
+                    <span v-if="timeLogs.length == 0">You haven't worked yet this day. Slothfully</span>
                     <time-log v-for="(time, index) in timeLogs" :time="time" :key="index"></time-log>
                 </div>
             </div>
@@ -52,6 +52,7 @@
 
         data() {
             return {
+                viewedDay: '',
                 timeLogs: [],
                 projects: []
             }

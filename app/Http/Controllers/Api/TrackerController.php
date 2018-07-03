@@ -54,7 +54,7 @@ class TrackerController extends Controller
 
         try {
             DB::beginTransaction();
-            /** @var Project $project */
+            /** @var TimeLog $timeLog */
             $timeLog = TimeLog::create([
                 'user_id' => $data['user'],
                 'project_id' => $data['project'],
@@ -70,6 +70,7 @@ class TrackerController extends Controller
             return response()->json(['message' => __('Something went wrong when creating new time log. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
+        $timeLog->loadMissing('project', 'task', 'user');
         return (new TimeLogResource($timeLog))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 

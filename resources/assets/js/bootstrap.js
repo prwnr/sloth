@@ -10,6 +10,7 @@ window.Popper = require('popper.js').default;
 
 try {
     require('bootstrap');
+    window.moment = require('moment');
 } catch (e) {}
 
 /**

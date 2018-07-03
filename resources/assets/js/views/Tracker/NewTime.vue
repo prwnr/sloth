@@ -23,8 +23,15 @@
 
             <div class="form-group">
                 <label for="name">Description</label>
-                <input id="name" type="text" class="form-control"
-                       name="name" value="" placeholder="Description" v-model="form.description">
+
+
+                <div class="input-group">
+                    <textarea id="name" type="text" class="form-control"
+                              name="name" value="" placeholder="Description" v-model="form.description" :maxlength="200"></textarea>
+                    <div class="input-group-append">
+                        <span class="input-group-text" v-text="(200 - form.description.length)"></span>
+                    </div>
+                </div>
             </div>
 
             <div class="col-lg-12 text-center">
@@ -66,11 +73,8 @@
              */
             create() {
                 this.form.post('/api/times').then(response => {
-                    let log = this.form.data();
-                    log.id = response.data.id;
-                    log.start = response.data.start;
-                    log.length = response.data.length;
-                    this.$parent.timeLogs.push(log);
+                    response.data.start = response.data.start.date;
+                    this.$parent.timeLogs.push(response.data);
                     this.form.reset();
                     this.form.user = this.$user.data.id;
                     $('#closeDialog').trigger('click');
