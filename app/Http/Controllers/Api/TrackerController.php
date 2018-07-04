@@ -61,7 +61,7 @@ class TrackerController extends Controller
                 'task_id' => $data['task'],
                 'description' => $data['description'],
                 'start' => Carbon::now(),
-                'length' => null
+                'length' => 0
             ]);
 
             DB::commit();

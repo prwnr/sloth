@@ -7,7 +7,8 @@
             </div>
         </div>
         <div class="col-lg-2">
-            <input type="text" class="form-control" name="time" v-model="timeLength">
+            <input v-if="startTime" :disabled="true" type="text" class="form-control" v-model="displayTime">
+            <input v-if="!startTime" type="text" class="form-control" name="time" v-model="length">
         </div>
         <div class="col-lg-3">
             <button v-if="!startTime" class="btn btn-success" @click="start">Start</button>
@@ -19,13 +20,17 @@
 </template>
 
 <script>
+    import Timer from "../../utilities/Timer";
+
     export default {
         props: ['time'],
 
         data() {
             return {
                 startTime: this.time.start,
-                timeLength: null
+                workedTime: null,
+                length: null,
+                timer: new Timer()
             }
         },
 
@@ -37,6 +42,10 @@
             description: function () {
                 return this.time.description ? this.time.description : '(empty)';
             },
+
+            displayTime: function () {
+                return this.timer.format(this.workedTime);
+            }
         },
 
         methods: {
@@ -48,6 +57,9 @@
              * Stops currently running time
              */
             stop() {
+                let workedSeconds = this.timer.secondsToMinutes(this.workedTime);
+                this.time.length += workedSeconds - this.time.length;
+                this.length = this.timer.format(this.workedTime);
                 this.startTime = null;
             },
 
@@ -61,8 +73,7 @@
                     }
 
                     let start = moment(this.startTime);
-                    let diff = moment().diff(start);
-                    this.timeLength = moment(diff).utc().format('HH:mm:ss');
+                    this.workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.length);
                 }, 1000);
             },
         }
