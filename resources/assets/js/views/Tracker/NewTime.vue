@@ -35,8 +35,8 @@
             </div>
 
             <div class="col-lg-12 text-center">
-                <button class="btn btn-success">Create</button>
                 <button type="button" data-dismiss="modal" aria-label="Close" id="closeDialog" class="btn btn-danger" >Cancel</button>
+                <button class="btn btn-success">Create</button>
             </div>
         </form>
     </div>

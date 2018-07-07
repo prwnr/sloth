@@ -10,7 +10,7 @@
             <div class="input-group">
                 <input v-if="!editing" type="text" class="form-control flat text-right" :disabled="true" :value="displayTime"/>
                 <input v-if="editing" type="text" class="form-control flat text-right" name="time"
-                       v-model="length"
+                       v-model="duration"
                        v-mask="'##:##'"
                        @keyup="correctTime"/>
                 <button v-if="!startTime && !editing" class="btn btn-success btn-flat" @click="start">Start</button>
@@ -36,7 +36,7 @@
                 editing: false,
                 startTime: this.time.start,
                 workedTime: null,
-                length: null,
+                duration: null,
                 timer: new Timer()
             }
         },
@@ -70,8 +70,8 @@
              */
             stop() {
                 let workedSeconds = this.timer.secondsToMinutes(this.workedTime);
-                this.time.length += workedSeconds - this.time.length;
-                this.length = this.timer.format(this.workedTime);
+                this.time.duration += workedSeconds - this.time.duration;
+                this.duration = this.timer.format(this.workedTime);
                 this.startTime = null;
             },
 
@@ -103,13 +103,13 @@
              *
              */
             correctTime() {
-                let time = this.length.split(':');
+                let time = this.duration.split(':');
                 if (time.length != 2) {
                     return;
                 }
 
                 if (time[1] > 60) {
-                    this.length = time[0] + ':' + 60;
+                    this.duration = time[0] + ':' + 60;
                     return;
                 }
             },
@@ -124,7 +124,7 @@
                     }
 
                     let start = moment(this.startTime);
-                    this.workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.length);
+                    this.workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.duration);
                 }, 1000);
             },
         }

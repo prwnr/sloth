@@ -15,7 +15,7 @@ class TimeLog extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'project_id', 'task_id', 'description', 'start', 'length'
+        'user_id', 'project_id', 'task_id', 'description', 'start', 'duration'
     ];
 
     /**

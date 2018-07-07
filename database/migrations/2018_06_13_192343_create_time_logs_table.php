@@ -20,7 +20,7 @@ class CreateTimeLogsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->string('description', 200)->nullable(true);
             $table->dateTime('start');
-            $table->int('length', 11)->default(0);
+            $table->integer('duration')->default(0);
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')
