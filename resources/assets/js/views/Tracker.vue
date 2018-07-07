@@ -18,14 +18,14 @@
                 <card-header :minimizable="false">Your logs from {{ viewedDay }}</card-header>
                 <div class="card-body col-lg-12">
                     <span v-if="timeLogs.length == 0">You haven't worked yet this day. Slothfully</span>
-                    <time-log v-for="(time, index) in timeLogs" :time="time" :key="index"></time-log>
+                    <time-log v-for="(time, index) in timeLogs" :time="time" :key="index" @logDeleted="deleteLog"></time-log>
                 </div>
             </div>
 
             <!-- Modal -->
             <div class="modal fade" id="newRow" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
+                    <div class="modal-content card-primary card-outline">
                         <div class="modal-body">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
@@ -63,6 +63,18 @@
         },
 
         methods: {
+            deleteLog(log) {
+                axios.delete('/api/time/' + log.id).then(response => {
+                    this.timeLogs = this.timeLogs.filter((item) => {
+                        return item.id != log.id
+                    });
+
+                    this.$awn.success('Log succesfully deleted.');
+                }).catch(error => {
+                    this.$awn.alert(error.message);
+                })
+            },
+
             /**
              * Fetch tracker data
              */

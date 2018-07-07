@@ -80,7 +80,7 @@ class TrackerController extends Controller
      * @param  \App\Models\TimeLog  $timeLog
      * @return \Illuminate\Http\Response
      */
-    public function show(TimeLog $timeLog)
+    public function show(TimeLog $time)
     {
         //
     }
@@ -89,10 +89,10 @@ class TrackerController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TimeLog  $timeLog
+     * @param  \App\Models\TimeLog  $time
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TimeLog $timeLog)
+    public function update(Request $request, TimeLog $time)
     {
         //
     }
@@ -100,11 +100,26 @@ class TrackerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\TimeLog  $timeLog
+     * @param  \App\Models\TimeLog  $time
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TimeLog $timeLog)
+    public function destroy(TimeLog $time)
     {
-        //
+        DB::beginTransaction();
+        try {
+            if ($time->delete()) {
+                DB::commit();
+                return response()->json(null, Response::HTTP_NO_CONTENT);
+            }
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $ex->getMessage()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json([
+            'message' => __('Something went wrong and your time log could not be deleted. It may not exists, please try again')
+        ], Response::HTTP_BAD_REQUEST);
     }
 }

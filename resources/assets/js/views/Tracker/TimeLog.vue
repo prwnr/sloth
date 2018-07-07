@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="col-lg-1 text-right">
-            <i class="btn fa fa-trash text-danger"></i>
+            <i class="btn fa fa-trash text-danger" @click="deleteLog"></i>
         </div>
     </div>
 </template>
@@ -80,6 +80,23 @@
              */
             update() {
 
+            },
+
+            deleteLog() {
+                this.$swal({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    confirmButtonColor: '#dd4b39',
+                    focusCancel: true,
+                    reverseButtons: true
+                }).then(result => {
+                    if (result.value) {
+                        this.$emit('logDeleted', this.time);
+                    }
+                })
             },
 
             /**

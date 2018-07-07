@@ -72,7 +72,7 @@
              * Creates new tracking time row
              */
             create() {
-                this.form.post('/api/times').then(response => {
+                this.form.post('/api/time').then(response => {
                     response.data.start = response.data.start.date;
                     this.$parent.timeLogs.push(response.data);
                     this.form.reset();

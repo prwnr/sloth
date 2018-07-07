@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
     Route::apiResource('clients', 'ClientController')->only('index')->middleware('team:client');    
 
     //Tracker routes
-    Route::apiResource('times', 'TrackerController')->middleware('permission:track_time');
+    Route::apiResource('time', 'TrackerController')->middleware('permission:track_time');
 
     Route::apiResource('tasks', 'TaskController')->only('index')->middleware('team:project');
 
