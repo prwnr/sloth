@@ -13,6 +13,7 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import Select2 from 'v-select2-component';
 import Datatable from 'vue2-datatable-component';
 import VueAWN from 'vue-awesome-notifications';
+import VueMask from 'v-mask'
 
 Vue.use(Datatable);
 Vue.use(VueAWN, {
@@ -20,6 +21,7 @@ Vue.use(VueAWN, {
 });
 Vue.component('Select2', Select2);
 Vue.use(VueSweetalert2);
+Vue.use(VueMask);
 
 Vue.component('auth-user', require('./components/AuthUser.vue'));
 Vue.component('back-button', require('./components/BackButton.vue'));

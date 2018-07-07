@@ -1,20 +1,26 @@
 <template>
     <div class="row form-group log pb-3">
-        <div class="col-lg-7">
-            <div class="col-lg-12 text-bold p-0">{{ time.project.name }} ({{ time.project.code }})</div>
+        <div class="col-lg-9">
+            <div class="col-lg-12 p-0"><strong>{{ time.project.name }} ({{ time.project.code }})</strong> - {{ time.task.name }} ({{ time.task.billable_text }})</div>
             <div class="col-lg-12 mt-1 small p-0">
                 Description: {{ description }}
             </div>
         </div>
         <div class="col-lg-2">
-            <input v-if="startTime" :disabled="true" type="text" class="form-control" v-model="displayTime">
-            <input v-if="!startTime" type="text" class="form-control" name="time" v-model="length">
+            <div class="input-group">
+                <input v-if="!editing" type="text" class="form-control flat text-right" :disabled="true" :value="displayTime"/>
+                <input v-if="editing" type="text" class="form-control flat text-right" name="time"
+                       v-model="length"
+                       v-mask="'##:##'"
+                       @keyup="correctTime"/>
+                <button v-if="!startTime && !editing" class="btn btn-success btn-flat" @click="start">Start</button>
+                <button v-if="startTime" class="btn btn-warning btn-flat" @click="stop">Stop</button>
+                <button v-if="!startTime && editing" class="btn btn-success btn-flat" @click="update">Update</button>
+                <button v-if="!startTime" class="btn btn-default btn-flat" @click="editing = !editing">{{ editButtonText }}</button>
+            </div>
         </div>
-        <div class="col-lg-3">
-            <button v-if="!startTime" class="btn btn-success" @click="start">Start</button>
-            <button v-if="startTime" class="btn btn-warning" @click="stop">Stop</button>
-            <button class="btn btn-default">Edit</button>
-            <button class="btn btn-danger">Delete</button>
+        <div class="col-lg-1 text-right">
+            <i class="btn fa fa-trash text-danger"></i>
         </div>
     </div>
 </template>
@@ -27,6 +33,7 @@
 
         data() {
             return {
+                editing: false,
                 startTime: this.time.start,
                 workedTime: null,
                 length: null,
@@ -45,11 +52,16 @@
 
             displayTime: function () {
                 return this.timer.format(this.workedTime);
+            },
+
+            editButtonText: function () {
+                return this.editing ? 'Cancel' : 'Edit';
             }
         },
 
         methods: {
             start() {
+                this.editing = false;
                 this.startTime = moment().utc();
             },
 
@@ -61,6 +73,28 @@
                 this.time.length += workedSeconds - this.time.length;
                 this.length = this.timer.format(this.workedTime);
                 this.startTime = null;
+            },
+
+            /**
+             *
+             */
+            update() {
+
+            },
+
+            /**
+             *
+             */
+            correctTime() {
+                let time = this.length.split(':');
+                if (time.length != 2) {
+                    return;
+                }
+
+                if (time[1] > 60) {
+                    this.length = time[0] + ':' + 60;
+                    return;
+                }
             },
 
             /**
@@ -83,5 +117,15 @@
 <style scoped>
     .log {
         border-bottom: 1px solid #ccc;
+    }
+
+    .fa-trash {
+        font-size: 28px;
+        padding: 0 !important;
+    }
+
+    .fa-trash:hover {
+        cursor: pointer;
+        color: #c82333 !important;
     }
 </style>
