@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class TimeLog extends Model
 {
+    public const STOP = 'stop';
+    public const START = 'start';
+
     /**
      * @var array
      */

@@ -94,7 +94,38 @@ class TrackerController extends Controller
      */
     public function update(Request $request, TimeLog $time)
     {
-        //
+        $this->validate($request, [
+            'project' => 'nullable|numeric',
+            'task' => 'nullable|numeric',
+            'description' => 'nullable|string|max:200',
+            'duration' => 'required|numeric',
+            'start' => 'nullable|date'
+        ]);
+
+        $data = $request->all();
+        if (isset($data['time'])) {
+            if ($data['time'] === TimeLog::STOP) {
+                $data['start'] = null;
+            }
+
+            if ($data['time'] === TimeLog::START) {
+                $data['start'] = Carbon::now();
+            }
+
+            unset($data['time']);
+        }
+
+        try {
+            DB::beginTransaction();
+            $time->update($data);
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            report($ex);
+            return response()->json(['message' => __('Something went wrong stopping time. Please try again')], Response::HTTP_BAD_REQUEST);
+        }
+
+        return (new TimeLogResource($time))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**

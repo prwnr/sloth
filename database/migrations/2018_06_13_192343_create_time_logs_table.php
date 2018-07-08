@@ -19,7 +19,7 @@ class CreateTimeLogsTable extends Migration
             $table->integer('task_id')->unsigned()->nullable(true);
             $table->integer('user_id')->unsigned();
             $table->string('description', 200)->nullable(true);
-            $table->dateTime('start');
+            $table->dateTime('start')->nullable(true);
             $table->integer('duration')->default(0);
             $table->timestamps();
 
