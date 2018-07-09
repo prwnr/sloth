@@ -112,7 +112,18 @@
              * Update current log time
              */
             update() {
-                this.editing = false;
+                let seconds = this.timer.revert(this.duration);
+                let newDuration = this.timer.secondsToMinutes(seconds);
+                axios.put('/api/time/' + this.time.id, {
+                    duration: newDuration,
+                }).then(response => {
+                    this.editing = false;
+                    this.workedTime = seconds;
+                    this.time.duration = newDuration;
+                    this.$awn.success('Time log successfully updated');
+                }).catch(error => {
+                    this.$awn.alert(error.message);
+                });
             },
 
             /**

@@ -17,6 +17,16 @@ class Timer {
     }
 
     /**
+     * @param format
+     * @returns {*}
+     */
+    revert(format) {
+        let time = format.split(':');
+        let minutes = parseInt(time[1]) + this.hoursToMinutes(time[0]);
+        return this.minutesToSeconds(minutes);
+    }
+
+    /**
      * @param seconds
      * @returns {number}
      */
@@ -38,6 +48,14 @@ class Timer {
      */
     minutesToHours(minutes) {
         return Math.floor(minutes / 60);
+    }
+
+    /**
+     * @param hours
+     * @returns {*}
+     */
+    hoursToMinutes(hours) {
+        return Math.floor(hours * 60);
     }
 
     /**
