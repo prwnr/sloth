@@ -15,6 +15,7 @@
                 <input v-if="editing" type="text" class="form-control flat text-right" name="time"
                        v-model="duration"
                        v-mask="'##:##'"
+                       placeholder="00:00"
                        @keyup="correctTime"/>
                 <button v-if="!startTime && !editing" class="btn btn-success btn-flat" @click="start" title="Start">
                     <i class="fa fa-play"></i>

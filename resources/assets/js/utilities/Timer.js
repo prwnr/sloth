@@ -27,6 +27,20 @@ class Timer {
     }
 
     /**
+     * Makes sure that MM in HH:MM won't go over 60 minutes
+     */
+    correctTime(duration) {
+        let time = duration.split(':');
+        if (time.length != 2) {
+            return null;
+        }
+
+        if (time[1] > 60) {
+            return time[0] + ':' + 60;
+        }
+    }
+
+    /**
      * @param seconds
      * @returns {number}
      */

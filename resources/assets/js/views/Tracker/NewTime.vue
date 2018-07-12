@@ -23,8 +23,6 @@
 
             <div class="form-group">
                 <label for="name">Description</label>
-
-
                 <div class="input-group">
                     <textarea id="name" type="text" class="form-control"
                               name="name" value="" placeholder="Description" v-model="form.description" :maxlength="200"></textarea>
@@ -34,27 +32,52 @@
                 </div>
             </div>
 
-            <div class="col-lg-12 text-center">
+            <div class="form-group col-5 p-0">
+                <label for="name">Time <span class="small">(optional)</span></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
+                    </div>
+                    <input type="text" class="form-control text-right" name="time"
+                           v-model="duration"
+                           v-mask="'##:##'"
+                           placeholder="00:00"
+                           @keyup="correctTime"/>
+                </div>
+            </div>
+
+            <div class="col-lg-12 p-0">
                 <button type="button" data-dismiss="modal" aria-label="Close" id="closeDialog" class="btn btn-danger" >Cancel</button>
-                <button class="btn btn-success">Create</button>
+                <button class="btn btn-success float-right">{{ buttonText }}</button>
             </div>
         </form>
     </div>
 </template>
 
 <script>
+    import Timer from "../../utilities/Timer";
+
     export default {
         props: ['projects'],
 
         data() {
             return {
                 tasks: [],
+                duration: null,
+                timer: new Timer(),
                 form: new Form({
                     user: this.$user.data.id,
                     project: '',
                     task: '',
                     description: '',
+                    duration: null
                 })
+            }
+        },
+
+        computed: {
+            buttonText: function () {
+                return this.duration ? 'Create' : 'Start';
             }
         },
 
@@ -72,15 +95,39 @@
              * Creates new tracking time row
              */
             create() {
+                if (this.duration) {
+                    this.form.duration = this.timer.secondsToMinutes(this.timer.revert(this.duration));
+                }
+
                 this.form.post('/api/time').then(response => {
-                    response.data.start = response.data.start.date;
+                    if (response.data.start) {
+                        response.data.start = response.data.start.date;
+                    } else {
+                        response.data.start = null;
+                    }
+
                     this.$parent.timeLogs.push(response.data);
                     this.form.reset();
                     this.form.user = this.$user.data.id;
+                    this.duration = null;
                     $('#closeDialog').trigger('click');
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
+            },
+
+            /**
+             * Makes sure that MM in HH:MM won't go over 60 minutes
+             */
+            correctTime() {
+                let time = this.duration.split(':');
+                if (time.length != 2) {
+                    return;
+                }
+
+                if (time[1] > 60) {
+                    this.duration = time[0] + ':' + 60;
+                }
             }
         }
     }

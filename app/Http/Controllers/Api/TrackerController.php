@@ -49,9 +49,11 @@ class TrackerController extends Controller
             'user' => 'required|numeric',
             'project' => 'required|numeric',
             'task' => $taskRequired ? 'required|numeric' : 'nullable|numeric',
-            'description' => 'nullable|string|max:200'
+            'description' => 'nullable|string|max:200',
+            'duration' => 'nullable|numeric'
         ]);
 
+        $hasDuration = $data['duration'] ?? false;
         try {
             DB::beginTransaction();
             /** @var TimeLog $timeLog */
@@ -60,8 +62,8 @@ class TrackerController extends Controller
                 'project_id' => $data['project'],
                 'task_id' => $data['task'],
                 'description' => $data['description'],
-                'start' => Carbon::now(),
-                'duration' => 0
+                'start' => $hasDuration ? null : Carbon::now(),
+                'duration' => $hasDuration ? $data['duration'] : 0
             ]);
 
             DB::commit();
