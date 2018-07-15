@@ -18,7 +18,7 @@
                 <card-header :minimizable="false">Your logs from {{ viewedDay }}</card-header>
                 <div class="card-body col-lg-12">
                     <span v-if="timeLogs.length == 0">You haven't worked yet this day. Slothfully</span>
-                    <time-log v-for="(time, index) in timeLogs" :time="time" :key="index" @logDeleted="deleteLog"></time-log>
+                    <time-log v-for="time in timeLogs" :time="time" :key="time.id" @logDeleted="deleteLog"></time-log>
                 </div>
             </div>
 
@@ -63,10 +63,10 @@
         },
 
         methods: {
-            deleteLog(log) {
-                axios.delete('/api/time/' + log.id).then(response => {
+            deleteLog(logId) {
+                axios.delete('/api/time/' + logId).then(response => {
                     this.timeLogs = this.timeLogs.filter((item) => {
-                        return item.id != log.id
+                        return item.id != logId
                     });
 
                     this.$awn.success('Log succesfully deleted.');

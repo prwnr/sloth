@@ -142,7 +142,7 @@
                     reverseButtons: true
                 }).then(result => {
                     if (result.value) {
-                        this.$emit('logDeleted', this.time);
+                        this.$emit('logDeleted', this.time.id);
                     }
                 })
             },
