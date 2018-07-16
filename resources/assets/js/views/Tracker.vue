@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <!-- Modal -->
+            <!-- Modal - delete confirmation -->
             <div class="modal fade" id="newRow" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content card-primary card-outline">
@@ -30,7 +30,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-time :projects="projects"></new-time>
+                            <new-log :projects="projects"></new-log>
                         </div>
                     </div>
                 </div>
@@ -42,12 +42,12 @@
 
 <script>
     import TimeLog from './Tracker/TimeLog.vue';
-    import NewTime from './Tracker/NewTime.vue';
+    import NewLog from './Tracker/NewLog.vue';
 
     export default {
         components: {
             TimeLog,
-            NewTime
+            NewLog
         },
 
         data() {

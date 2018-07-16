@@ -1,7 +1,13 @@
 <template>
-    <div class="row form-group log pb-3">
-        <div class="col-lg-9">
-            <div class="col-lg-12 p-0"><strong>{{ time.project.name }} ({{ time.project.code }})</strong> - {{ time.task.name }} ({{ time.task.billable_text }})</div>
+    <div class="row form-group log pb-4" @mouseover="mouseOver = true" @mouseleave="mouseOver = false">
+        <div class="col-lg-10">
+            <div class="col-lg-12 p-0">
+                <strong>{{ time.project.name }} ({{ time.project.code }})</strong> - {{ time.task.name }} ({{ time.task.billable_text }})
+                <span class="log-buttons pl-3" v-if="mouseOver">
+                    <span><i class="text-info fa fa-edit p-1" @click="editLog"></i></span>
+                    <span><i class="text-danger fa fa-trash p-1"  @click="deleteLog"></i></span>
+                </span>
+            </div>
             <div class="col-lg-12 mt-1 small p-0">
                 Description: {{ description }}
             </div>
@@ -34,9 +40,6 @@
                 </button>
             </div>
         </div>
-        <div class="col-lg-1 text-right">
-            <i class="btn fa fa-trash text-danger" @click="deleteLog"></i>
-        </div>
     </div>
 </template>
 
@@ -48,6 +51,7 @@
 
         data() {
             return {
+                mouseOver: false,
                 editing: false,
                 startTime: this.time.start,
                 workedTime: null,
@@ -128,6 +132,13 @@
             },
 
             /**
+             * Sends event with current log data to be processed in popup
+             */
+            editLog() {
+                //TODO
+            },
+
+            /**
              * Show confirmation popup for log delete and emits events for it
              */
             deleteLog() {
@@ -184,12 +195,12 @@
         border-bottom: 1px solid #ccc;
     }
 
-    .fa-trash {
-        font-size: 28px;
-        padding: 0 !important;
+    .log-buttons .fa-edit:hover {
+        cursor: pointer;
+        color: #138496 !important;
     }
 
-    .fa-trash:hover {
+    .log-buttons .fa-trash:hover {
         cursor: pointer;
         color: #c82333 !important;
     }
