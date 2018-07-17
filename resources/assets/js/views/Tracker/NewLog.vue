@@ -110,7 +110,7 @@
                     this.form.reset();
                     this.form.user = this.$user.data.id;
                     this.duration = null;
-                    $('#closeDialog').trigger('click');
+                    $('#newLog').modal('hide');
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });

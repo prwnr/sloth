@@ -33,7 +33,7 @@
             </div>
 
             <div class="col-lg-12 p-0">
-                <button type="button" data-dismiss="modal" aria-label="Close" id="closeDialog" class="btn btn-danger" >Cancel</button>
+                <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-danger" >Cancel</button>
                 <button class="btn btn-success float-right">Save</button>
             </div>
         </form>
@@ -55,37 +55,41 @@
                     user: this.$user.data.id,
                     project: this.time.project.id,
                     task: this.time.task.id,
-                    description: this.time.description
+                    description: this.time.description ? this.time.description : ''
                 })
             }
+        },
+
+        created() {
+            this.fillTasks();
         },
 
         watch: {
             'form.project': function () {
                 if (this.form.project) {
-                    let project = this.projects.find(item => item.id == this.form.project);
-                    this.tasks = project.tasks;
+                    this.fillTasks();
+                    this.form.task = null
                 }
             }
         },
 
         methods: {
             /**
-             * Creates new tracking time row
+             * Fill tasks variable with array of tasks for current project
+             */
+            fillTasks() {
+                let project = this.projects.find(item => item.id == this.form.project);
+                this.tasks = project.tasks;
+            },
+
+            /**
+             * Update tracking time row
              */
             save() {
                 this.form.put('/api/time/' + this.time.id).then(response => {
-                    if (response.data.start) {
-                        response.data.start = response.data.start.date;
-                    } else {
-                        response.data.start = null;
-                    }
-
-                    this.$parent.timeLogs.push(response.data);
-                    this.form.reset();
-                    this.form.user = this.$user.data.id;
-                    this.duration = null;
-                    $('#closeDialog').trigger('click');
+                    this.$emit('logUpdated', response.data);
+                    $('#editRow').modal('hide');
+                    this.$awn.success('Log successfully updated');
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });

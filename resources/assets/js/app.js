@@ -49,7 +49,6 @@ const app = new Vue({
                 return Promise.reject(error);
             }
 
-            console.log(error);
             let message = error.message || error.response.data.message;
             error.message = message;
             return Promise.reject(error);

@@ -4,7 +4,7 @@
             <div class="col-lg-12 p-0">
                 <strong>{{ time.project.name }} ({{ time.project.code }})</strong> - {{ time.task.name }} ({{ time.task.billable_text }})
                 <span class="log-buttons pl-3" v-if="mouseOver">
-                    <span><i class="text-info fa fa-edit p-1" @click="editLog"></i></span>
+                    <span><i class="text-info fa fa-edit p-1" @click="editLog" data-toggle="modal" data-target="#editRow"></i></span>
                     <span><i class="text-danger fa fa-trash p-1"  @click="deleteLog"></i></span>
                 </span>
             </div>
@@ -87,7 +87,7 @@
              * Start stopped time (current time is taken as new start time)
              */
             start() {
-                axios.put('/api/time/' + this.time.id, {
+                axios.put('/api/time/' + this.time.id + '/duration', {
                     duration: this.time.duration,
                     time: 'start'
                 }).then(response => {
@@ -105,7 +105,7 @@
                 this.time.duration += workedSeconds - this.time.duration;
                 this.duration = this.timer.format(this.workedTime);
                 this.startTime = null;
-                axios.put('/api/time/' + this.time.id, {
+                axios.put('/api/time/' + this.time.id + '/duration', {
                     duration: this.time.duration,
                     time: 'stop'
                 }).catch(error => {
@@ -119,7 +119,7 @@
             update() {
                 let seconds = this.timer.revert(this.duration);
                 let newDuration = this.timer.secondsToMinutes(seconds);
-                axios.put('/api/time/' + this.time.id, {
+                axios.put('/api/time/' + this.time.id + '/duration', {
                     duration: newDuration,
                 }).then(response => {
                     this.editing = false;
@@ -135,7 +135,7 @@
              * Sends event with current log data to be processed in popup
              */
             editLog() {
-                //TODO
+                this.$emit('editTime', this.time);
             },
 
             /**
