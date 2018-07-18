@@ -229,25 +229,23 @@ class ProjectController extends Controller
                 $currency = $task['currency'] === 0 ? $data['billing_currency'] : $task['currency'];
             }
 
-            $taskModel = $project->tasks()->where('type', $task['type'])->first();
-            if ($taskModel && $taskModel->id) {
-                $taskModel->update([
-                    'billable' => (bool)$task['billable'],
-                    'billing_rate' => (float) $billingRate,
-                    'currency_id' => $currency,
-                    'is_deleted' => (float) $task['is_deleted']
-                ]);
-                continue;
-            }
-
-            $project->tasks()->create([
+            $data = [
                 'type' => $task['type'],
                 'name' => $task['name'],
                 'billable' => (bool)$task['billable'],
                 'billing_rate' => (float) $billingRate,
                 'currency_id' => $currency,
                 'is_deleted' => (float) $task['is_deleted']
-            ]);
+            ];
+
+            $taskId = $task['id'] ?? 0;
+            $taskModel = $project->tasks()->find($taskId);
+            if ($taskModel && $taskModel->id) {
+                $taskModel->update($data);
+                continue;
+            }
+
+            $project->tasks()->create($data);
         }
     }
 

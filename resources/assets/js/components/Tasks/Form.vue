@@ -13,8 +13,7 @@
             </thead>
             <tbody>
                 <task-row v-for="task in $parent.form.tasks"
-                    :key="task.type"
-                    :name="task.name"
+                    :key="task.id"
                     :task="task"
                     :currencies="currencies">
                 </task-row>

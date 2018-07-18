@@ -89,7 +89,7 @@
                                 <form-error :text="form.errors.get('client')" :show="form.errors.has('client')"></form-error>
                             </div>
                         </div>
-                        <button class="mt-3 btn btn-success w-25">Save</button>
+                        <button :disabled="taskHasError" class="mt-3 btn btn-success w-25">Save</button>
                     </div>
 
                     <div class="col-lg-6">
@@ -153,6 +153,7 @@
                 currencies: [],
                 billingTypes: null,
                 budgetPeriods: [],
+                taskHasError: false,
                 tasks: null,
                 form: new Form({
                     name: '',
@@ -172,6 +173,7 @@
 
         created() {
             this.fetchData();
+            EventHub.listen('task_duplicated', this.taskDuplicatedHandle);
         },
 
         watch: {
@@ -277,6 +279,13 @@
                         });
                     }
                 });
+            },
+
+            /**
+             * Handles task_duplication event
+             */
+            taskDuplicatedHandle(isDuplicated) {
+                this.taskHasError = isDuplicated;
             },
 
             /**

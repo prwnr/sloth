@@ -1,6 +1,10 @@
 <template>
     <tr :class="{ deleted: task.is_deleted }">
-        <td>{{ name }}</td>
+        <td>
+            <span v-if="task.is_deleted">{{ task.name }}</span>
+            <input v-if="!task.is_deleted" type="text" class="form-control" v-model="task.name" @keydown="clearError" :class="{ 'is-invalid': taskError != '' }">
+            <form-error :text="taskError" :show="taskError"></form-error>
+        </td>
         <td v-if="!task.is_deleted">
             <bootstrap-toggle v-model="task.billable" :options="{
                     on: 'Yes',
@@ -36,8 +40,16 @@
 </template>
 
 <script>
+    import String from '../../utilities/String.js';
+
     export default {
-        props: ['name', 'task', 'currencies'],
+        props: ['task', 'currencies'],
+
+        data() {
+            return {
+                taskError: ''
+            }
+        },
 
         watch: {
             'task.billable': function () {
@@ -45,7 +57,19 @@
                     this.task.billing_rate = '';
                     this.task.currency = 0;
                 }
-            }
+            },
+            'task.name': function () {
+                let taskName = new String(this.task.name);
+                this.task.type = taskName.slugify('_');
+
+                let taskExists = this.$parent.$parent.form.tasks.find(item => {
+                    return this.task.type == item.type && item.id != this.task.id
+                });
+                if (taskExists) {
+                    this.taskError = 'Task with given name already exists';
+                    EventHub.fire('task_duplicated', true);
+                }
+            },
         },
 
         methods: {
@@ -66,17 +90,23 @@
              */
             restore() {
                 this.task.is_deleted = false;
+            },
+
+            /**
+             * Clears task duplicated name error and notifys other components about that
+             */
+            clearError() {
+                if (this.taskError) {
+                    this.taskError = '';
+                    EventHub.fire('task_duplicated', false);
+                }
             }
         }
     }
 </script>
 
 <style scoped>
-    i {
-        -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+    i.fa-trash {
         font-size: 25px;
         line-height: 35px;
     }
