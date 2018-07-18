@@ -79,7 +79,7 @@
              */
             fillTasks() {
                 let project = this.projects.find(item => item.id == this.form.project);
-                this.tasks = project.tasks;
+                this.tasks = project.tasks.filter(item => item.is_deleted == false);
             },
 
             /**
