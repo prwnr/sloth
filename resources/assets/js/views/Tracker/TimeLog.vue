@@ -2,7 +2,8 @@
     <div class="row form-group log pb-4" @mouseover="mouseOver = true" @mouseleave="mouseOver = false">
         <div class="col-lg-10">
             <div class="col-lg-12 p-0">
-                <strong>{{ time.project.name }} ({{ time.project.code }})</strong> - {{ time.task.name }} ({{ time.task.billable_text }})
+                <strong>{{ time.project.name }} ({{ time.project.code }})</strong>
+                <span v-if="time.task">- {{ time.task.name }} ({{ time.task.billable_text }})</span>
                 <span class="log-buttons pl-3" v-if="mouseOver">
                     <span><i class="text-info fa fa-edit p-1" @click="editLog" data-toggle="modal" data-target="#editRow"></i></span>
                     <span><i class="text-danger fa fa-trash p-1"  @click="deleteLog"></i></span>

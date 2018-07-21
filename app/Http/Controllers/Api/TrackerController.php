@@ -93,19 +93,19 @@ class TrackerController extends Controller
             'task' => $this->isTaskRequired($data) ? 'required|numeric' : 'nullable|numeric',
             'description' => 'nullable|string|max:200'
         ]);
-
+        
         try {
             DB::beginTransaction();
             $time->update([
                 'project_id' => $data['project'],
-                'task_id' => $data['task'],
+                'task_id' => $data['task'] ?? null,
                 'description' => $data['description'],
             ]);
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
             report($ex);
-            return response()->json(['message' => __('Something went wrong stopping time. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => __('Something went wrong. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
         return (new TimeLogResource($time))->response()->setStatusCode(Response::HTTP_CREATED);
