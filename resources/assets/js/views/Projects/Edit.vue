@@ -173,7 +173,7 @@
 
         created() {
             this.fetchData();
-            EventHub.listen('task_duplicated', this.taskDuplicatedHandle);
+            EventHub.listen('task_error', this.taskErrorHandle);
         },
 
         watch: {
@@ -284,7 +284,7 @@
             /**
              * Handles task_duplication event
              */
-            taskDuplicatedHandle(isDuplicated) {
+            taskErrorHandle(isDuplicated) {
                 this.taskHasError = isDuplicated;
             },
 

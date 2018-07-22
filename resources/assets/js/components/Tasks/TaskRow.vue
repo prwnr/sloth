@@ -2,8 +2,8 @@
     <tr :class="{ deleted: task.is_deleted }">
         <td>
             <span v-if="task.is_deleted">{{ task.name }}</span>
-            <input v-if="!task.is_deleted" type="text" class="form-control" v-model="task.name" @keydown="clearError" :class="{ 'is-invalid': taskError != '' }">
-            <form-error :text="taskError" :show="taskError"></form-error>
+            <input v-if="!task.is_deleted" type="text" class="form-control" v-model="task.name" :class="{ 'is-invalid': error != '' }">
+            <form-error :text="error" :show="error"></form-error>
         </td>
         <td v-if="!task.is_deleted">
             <bootstrap-toggle v-model="task.billable" :options="{
@@ -47,7 +47,7 @@
 
         data() {
             return {
-                taskError: ''
+                error: ''
             }
         },
 
@@ -60,15 +60,23 @@
             },
             'task.name': function () {
                 let taskName = new String(this.task.name);
-                this.task.type = taskName.slugify('_');
+                let name = taskName.slugify('_');
+                name = name.trim();
 
-                let taskExists = this.$parent.$parent.form.tasks.find(item => {
-                    return this.task.type == item.type && item.id != this.task.id
-                });
-                if (taskExists) {
-                    this.taskError = 'Task with given name already exists';
-                    EventHub.fire('task_duplicated', true);
+                if (!name) {
+                    this.error = 'Task name cannot be empty';
+                    EventHub.fire('task_error', true);
+                    return;
                 }
+
+                this.task.type = name;
+                if (this.taskExists()) {
+                    this.error = 'Task with given name already exists';
+                    EventHub.fire('task_error', true);
+                    return;
+                }
+
+                this.clearError();
             },
         },
 
@@ -96,10 +104,18 @@
              * Clears task duplicated name error and notifys other components about that
              */
             clearError() {
-                if (this.taskError) {
-                    this.taskError = '';
-                    EventHub.fire('task_duplicated', false);
-                }
+                this.error = '';
+                EventHub.fire('task_error', false);
+            },
+
+            /**
+             * Check if task already exists in parent collection
+             * @returns {*}
+             */
+            taskExists() {
+                return this.$parent.$parent.form.tasks.find(item => {
+                    return this.task.type == item.type && item.id != this.task.id
+                });
             }
         }
     }

@@ -38,7 +38,8 @@ class String {
             .replace(/[^\w\-]+/g, '')
             .replace(/\-\-+/g, separator)
             .replace(/^-+/, '')
-            .replace(/-+$/, '');
+            .replace(/-+$/, '')
+            .replace(/_+$/, '');
     }
 }
 

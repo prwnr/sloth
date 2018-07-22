@@ -145,6 +145,7 @@
              * Adds new task to form
              */
             addTask() {
+                this.newTask.name = this.newTask.name.trim()
                 if (!this.newTask.name) {
                     this.taskError = 'Task name is required';
                     return;
