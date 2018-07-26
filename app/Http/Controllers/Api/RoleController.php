@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RoleRequest;
 use App\Http\Resources\Role as RoleResource;
 use App\Models\{Role, User};
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\{RedirectResponse, Request, Response};
+use Illuminate\Http\{RedirectResponse, Response};
 use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Session};
 
 /**
@@ -19,7 +20,7 @@ class RoleController extends Controller
     /**
      * Show list of all roles
      *
-     * @return \Illuminate\Http\Response
+     * @return RoleResource
      */
     public function index()
     {
@@ -30,14 +31,12 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param RoleRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RoleRequest $request)
     {
         $data = $request->all();
-        $data['name'] = str_slug($data['display_name'] ?? '', '_');
-        $this->validator($data)->validate();
 
         /** @var User $user */
         $user = Auth::user();
@@ -69,7 +68,7 @@ class RoleController extends Controller
      * Display the specified resource.
      *
      * @param Role $role
-     * @return \Illuminate\Http\Response
+     * @return RoleResource
      */
     public function show(Role $role)
     {
@@ -80,11 +79,11 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param RoleRequest $request
      * @param Role $role
      * @return RedirectResponse
      */
-    public function update(Request $request, Role $role)
+    public function update(RoleRequest $request, Role $role)
     {
         if (!$role->isEditable()) {
             Session::flash('alert-danger', 'You can\'t edit this role');
@@ -92,14 +91,12 @@ class RoleController extends Controller
         }
 
         $data = $request->all();
-        $data['name'] = str_slug($data['display_name'] ?? '', '_');
-        $this->validator($data)->validate();
-
         $exists = Role::where([
             ['name', '=', $data['name']],
             ['team_id', '=', $role->team_id],
             ['id', '<>', $role->id]
         ])->first();
+        
         if ($exists) {
             return response()->json(['message' => __('Role with this name already exists')], Response::HTTP_BAD_REQUEST);
         }
@@ -153,18 +150,5 @@ class RoleController extends Controller
         return response()->json([
             'message' => __('Something went wrong and role could not be deleted. It may not exists, please try again')
         ], Response::HTTP_BAD_REQUEST);
-    }
-
-    /**
-     * @param array $data
-     * @return mixed
-     */
-    private function validator(array $data): Validator
-    {
-        return \Illuminate\Support\Facades\Validator::make($data, [
-            'name' => 'required',
-            'display_name' => 'required|string|max:255',
-            'description' => 'required|string|max:500',
-        ]);
     }
 }
