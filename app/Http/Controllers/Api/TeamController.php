@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\TeamRequest;
 use App\Models\Team;
 use App\Http\Resources\Team as TeamResource;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
@@ -18,8 +18,8 @@ class TeamController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Team  $team
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Team $team
+     * @return void
      */
     public function show(Team $team)
     {
@@ -29,16 +29,12 @@ class TeamController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Team  $team
+     * @param TeamRequest $request
+     * @param  \App\Models\Team $team
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Team $team)
+    public function update(TeamRequest $request, Team $team)
     {
-        $this->validate($request, [
-            'name' => 'required|string|max:255'
-        ]);
-        
         try {
             $team->update([
                 'name' => $request->input('name')

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use App\Http\Resources\Client as ClientResource;
 use App\Models\Team;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +21,7 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return ClientResource
      */
     public function index()
     {
@@ -33,12 +33,11 @@ class ClientController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param ClientRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ClientRequest $request)
     {
-        $this->validator($request);
         $data = $request->all();
         /** @var Team $team */
         $team = Auth::user()->team;
@@ -76,8 +75,8 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Client $client
+     * @return ClientResource
      */
     public function show(Client $client)
     {
@@ -88,13 +87,12 @@ class ClientController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Client  $client
+     * @param ClientRequest $request
+     * @param  \App\Models\Client $client
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Client $client)
+    public function update(ClientRequest $request, Client $client)
     {
-        $this->validator($request);
         $data = $request->all();
 
         try {
@@ -147,26 +145,5 @@ class ClientController extends Controller
         return response()->json([
             'message' => __('Something went wrong and project could not be deleted. It may not exists, please try again')
         ], Response::HTTP_BAD_REQUEST);
-    }
-
-    /**
-     * Validate form data
-     * @param Request $request
-     */
-    private function validator(Request $request)
-    {
-        $this->validate($request, [
-            'company_name' => 'required|string|max:255',
-            'street' => 'required|string|max:255',
-            'zip' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'vat' => 'required|string|max:255',
-            'fullname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'billing_rate' => 'required|numeric|between:0,999.99',
-            'billing_currency' => 'required|numeric',
-            'billing_type' => 'required|string'
-        ]);
     }
 }

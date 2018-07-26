@@ -93,7 +93,7 @@ class RoleController extends Controller
 
         $data = $request->all();
         $data['name'] = str_slug($data['display_name'] ?? '', '_');
-        $this->validator($data, $role)->validate();
+        $this->validator($data)->validate();
 
         $exists = Role::where([
             ['name', '=', $data['name']],
