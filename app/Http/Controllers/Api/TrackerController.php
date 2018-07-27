@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Project;
+use App\Http\Requests\Tracker\{CreateLogRequest, UpdateLogRequest, UpdateTimeRequest};
 use App\Models\TimeLog;
 use App\Http\Resources\TimeLog as TimeLogResource;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +19,7 @@ class TrackerController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function index()
     {
@@ -30,21 +29,14 @@ class TrackerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateLogRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateLogRequest $request)
     {
         $data = $request->all();
-        $this->validate($request, [
-            'user' => 'required|numeric',
-            'project' => 'required|numeric',
-            'task' => $this->isTaskRequired($data) ? 'required|numeric' : 'nullable|numeric',
-            'description' => 'nullable|string|max:200',
-            'duration' => 'nullable|numeric'
-        ]);
-
         $hasDuration = $data['duration'] ?? false;
+
         try {
             DB::beginTransaction();
             /** @var TimeLog $timeLog */
@@ -70,8 +62,8 @@ class TrackerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\TimeLog  $timeLog
-     * @return \Illuminate\Http\Response
+     * @param TimeLog $time
+     * @return void
      */
     public function show(TimeLog $time)
     {
@@ -81,19 +73,13 @@ class TrackerController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TimeLog  $time
+     * @param UpdateLogRequest $request
+     * @param  \App\Models\TimeLog $time
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TimeLog $time)
+    public function update(UpdateLogRequest $request, TimeLog $time)
     {
         $data = $request->all();
-        $this->validate($request, [
-            'project' => 'required|numeric',
-            'task' => $this->isTaskRequired($data) ? 'required|numeric' : 'nullable|numeric',
-            'description' => 'nullable|string|max:200'
-        ]);
-        
         try {
             DB::beginTransaction();
             $time->update([
@@ -115,17 +101,12 @@ class TrackerController extends Controller
      * Update the specified resource in storage.
      * Updates only time for a log
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TimeLog  $time
+     * @param UpdateTimeRequest $request
+     * @param  \App\Models\TimeLog $time
      * @return \Illuminate\Http\Response
      */
-    public function updateTime(Request $request, TimeLog $time)
+    public function updateTime(UpdateTimeRequest $request, TimeLog $time)
     {
-        $this->validate($request, [
-            'duration' => 'required|numeric',
-            'start' => 'nullable|date'
-        ]);
-
         $data = $request->all();
         if (isset($data['time'])) {
             if ($data['time'] === TimeLog::STOP) {
@@ -160,8 +141,8 @@ class TrackerController extends Controller
      */
     public function destroy(TimeLog $time)
     {
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
             if ($time->delete()) {
                 DB::commit();
                 return response()->json(null, Response::HTTP_NO_CONTENT);
@@ -176,22 +157,5 @@ class TrackerController extends Controller
         return response()->json([
             'message' => __('Something went wrong and your time log could not be deleted. It may not exists, please try again')
         ], Response::HTTP_BAD_REQUEST);
-    }
-
-    /**
-     * @param $data
-     * @return bool
-     */
-    private function isTaskRequired($data): bool
-    {
-        if (isset($data['project'])) {
-            /** @var Project $project */
-            $project = Project::find($data['project']);
-            if ($project) {
-                return \count($project->tasks) > 0;
-            }
-        }
-
-        return false;
     }
 }

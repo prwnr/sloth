@@ -16,7 +16,7 @@ class PermissionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return PermissionResource
      */
     public function index()
     {

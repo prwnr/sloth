@@ -4,6 +4,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Class RoleRequest
+ * @package App\Http\Requests
+ */
 class RoleRequest extends FormRequest
 {
     /**
@@ -36,9 +40,15 @@ class RoleRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'display_name' => 'required|string|max:255',
-            'description' => 'required|string|max:500'
+            'name' => [
+                'required'
+            ],
+            'display_name' => [
+                'required', 'string', 'max:255'
+            ],
+            'description' => [
+                'required', 'string', 'max:500'
+            ],
         ];
     }
 }

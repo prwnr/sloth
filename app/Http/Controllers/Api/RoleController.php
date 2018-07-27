@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleRequest;
 use App\Http\Resources\Role as RoleResource;
 use App\Models\{Role, User};
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\{RedirectResponse, Response};
 use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Session};
 
@@ -96,7 +95,7 @@ class RoleController extends Controller
             ['team_id', '=', $role->team_id],
             ['id', '<>', $role->id]
         ])->first();
-        
+
         if ($exists) {
             return response()->json(['message' => __('Role with this name already exists')], Response::HTTP_BAD_REQUEST);
         }

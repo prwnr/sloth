@@ -15,16 +15,6 @@ use App\Http\Controllers\Controller;
 class TeamController extends Controller
 {
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Team $team
-     * @return void
-     */
-    public function show(Team $team)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.

@@ -102,7 +102,8 @@
                                     <label for="password-confirm">Confirm password</label>
                                     <input id="password-confirm" v-model="formPassword.password_confirmation" type="password" required
                                            class="form-control" autocomplete="off"
-                                           name="password_confirmation">
+                                           name="password_confirmation"
+                                           @keydown="formPassword.errors.clear('password')">
                                     <span class="help-block text-danger"
                                           v-html="formPassword.errors.get('password_confirmation')"
                                           v-show="formPassword.errors.has('password_confirmation')"></span>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Currency;
 use App\Http\Resources\Currency as CurrencyResource;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 /**
@@ -16,7 +15,7 @@ class CurrencyController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return CurrencyResource
      */
     public function index()
     {

@@ -37,7 +37,8 @@
             <label for="password-confirm">Confirm password</label>
             <input id="password-confirm" v-model="form.password_confirmation" type="password"
                    class="form-control"
-                   name="password_confirmation">
+                   name="password_confirmation"
+                   @keydown="form.errors.clear('password')">
             <span class="help-block text-danger"
                   v-html="form.errors.get('password_confirmation')"
                   v-show="form.errors.has('password_confirmation')"></span>

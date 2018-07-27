@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Task;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+/**
+ * Class TaskController
+ * @package App\Http\Controllers\Api
+ */
 class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return array
      */
     public function index()
     {

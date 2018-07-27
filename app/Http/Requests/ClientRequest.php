@@ -27,18 +27,30 @@ class ClientRequest extends FormRequest
      */
     public function rules(): array
     {
+        $requiredStringRules = [
+            'required', 'string', 'max:255'
+        ];
+
         return [
-            'company_name' => 'required|string|max:255',
-            'street' => 'required|string|max:255',
-            'zip' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'vat' => 'required|string|max:255',
-            'fullname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'billing_rate' => 'required|numeric|between:0,999.99',
-            'billing_currency' => 'required|numeric',
-            'billing_type' => 'required|string'
+            'company_name' => $requiredStringRules,
+            'street' => $requiredStringRules,
+            'zip' => $requiredStringRules,
+            'country' => $requiredStringRules,
+            'city' => $requiredStringRules,
+            'vat' => $requiredStringRules,
+            'fullname' => $requiredStringRules,
+            'email' => [
+                'required', 'string', 'email', 'max:255'
+            ],
+            'billing_rate' => [
+                'required', 'numeric', 'between:0,999.99'
+            ],
+            'billing_currency' => [
+                'required', 'numeric'
+            ],
+            'billing_type' => [
+                'required', 'string'
+            ]
         ];
     }
 }

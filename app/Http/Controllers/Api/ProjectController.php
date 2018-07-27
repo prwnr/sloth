@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Team;
-use App\Models\Client;
-use App\Models\Project;
-use Illuminate\Http\Request;
+use App\Http\Requests\ProjectRequest;
+use App\Models\{Team, Client, Project};
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Validation\Validator;
 use App\Http\Resources\Project as ProjectResource;
 
 /**
@@ -23,7 +20,7 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return ProjectResource
      */
     public function index()
     {
@@ -34,7 +31,7 @@ class ProjectController extends Controller
 
     /**
      * Return available budget periods
-     * @return void
+     * @return array
      */
     public function budgetPeriods()
     {
@@ -44,13 +41,12 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param ProjectRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProjectRequest $request)
     {
         $data = $request->all();
-        $this->validator($data)->validate();
 
         /** @var Team $team */
         $team = Auth::user()->team;
@@ -86,8 +82,8 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Project $project
+     * @return ProjectResource
      */
     public function show(Project $project)
     {
@@ -99,14 +95,13 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
+     * @param ProjectRequest $request
+     * @param  \App\Models\Project $project
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project)
+    public function update(ProjectRequest $request, Project $project)
     {
         $data = $request->all();
-        $this->validator($data, $project)->validate();
 
         try {
             DB::beginTransaction();
@@ -248,26 +243,4 @@ class ProjectController extends Controller
             $project->tasks()->create($data);
         }
     }
-
-    /**
-     * @param array $data
-     * @param Project|null $project
-     * @return Validator
-     */
-    private function validator(array $data, $project = null): Validator
-    {
-        return \Illuminate\Support\Facades\Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:4|unique:projects,code,' . ($project ? $project->id : ''),//TODO make code unique per Team
-            'budget' => 'required|numeric|between:0,' . Project::MAX_BILLING_RATE,
-            'budget_currency' => 'required|numeric',
-            'budget_period' => 'required|string',
-            'client' => 'required|numeric',
-            'billing_rate' => 'required|numeric|between:0,' . Project::MAX_BILLING_RATE,
-            'billing_currency' => 'required|numeric',
-            'billing_type' => 'required|string',
-            'users' => 'nullable|array',
-            'tasks' => 'array'
-        ]);
-    }    
 }

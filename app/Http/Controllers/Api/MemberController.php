@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\MemberRequest;
 use App\Http\Resources\Project as ProjectResource;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
-use App\Models\{
-    Project, Team, Team\Member, User
-};
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Request;
+use App\Models\{Team, Team\Member, User};
 use Illuminate\Http\Response;
-use Illuminate\Support\{
-    Facades\Auth, Facades\DB, Facades\Hash
-};
+use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Hash};
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Member as MemberResource;
 
@@ -27,7 +22,7 @@ class MemberController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return MemberResource
      */
     public function index()
     {
@@ -49,12 +44,11 @@ class MemberController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param MemberRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(MemberRequest $request)
     {
-        $this->validator($request->all())->validate();
         $data = $request->all();
         /** @var Team $team */
         $team = Auth::user()->team;
@@ -121,15 +115,13 @@ class MemberController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Team\Member  $member
+     * @param MemberRequest $request
+     * @param  \App\Models\Team\Member $member
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Member $member)
+    public function update(MemberRequest $request, Member $member)
     {
-        $this->validator($request->all(), $member->user)->validate();
         $data = $request->all();
-
         try {
             DB::beginTransaction();
             $member->user()->update([
@@ -184,24 +176,5 @@ class MemberController extends Controller
         return response()->json([
             'message' => __('Something went wrong and role could not be deleted. It may not exists, please try again')
         ], Response::HTTP_BAD_REQUEST);
-    }
-
-    /**
-     * @param array $data
-     * @param User|null $user
-     * @return Validator
-     */
-    private function validator(array $data, $user = null): Validator
-    {
-        return \Illuminate\Support\Facades\Validator::make($data, [
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email' . ($user ? ',' . $user->id : ''), //TODO make user email unique per team
-            'roles' => 'required|array|min:1',
-            'billing_rate' => 'required|numeric|between:0,999.99',
-            'billing_currency' => 'required|numeric',
-            'billing_type' => 'required|string',
-            'projects' => 'nullable|array'
-        ]);
     }
 }

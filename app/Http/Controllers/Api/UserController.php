@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Resources\TimeLog as TimeLogResource;
-use App\Http\Resources\User as UserResource;
-use App\Http\Resources\Users as UsersCollectionResource;
+use App\Http\Requests\{UserPasswordRequest, UserRequest};
+use App\Http\Resources\{
+    TimeLog as TimeLogResource,
+    User as UserResource,
+    Users as UsersCollectionResource
+};
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\{Facades\Auth, Facades\Hash};
 use Illuminate\Http\{Request, Response};
 
 /**
@@ -20,7 +22,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return UsersCollectionResource
      */
     public function index()
     {
@@ -40,21 +42,10 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return UserResource
      */
     public function show(User $user)
     {
@@ -63,8 +54,8 @@ class UserController extends Controller
 
     /**
      * Return logged in user
-     * 
-     * @return \Illuminate\Http\Response
+     *
+     * @return UserResource
      */
     public function showActive()
     {
@@ -75,31 +66,19 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param UserRequest $request
      * @param User $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        $this->validate($request, [
-            'firstname' => 'required|string|max:255',
-            'skin' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id, //TODO make user email unique per team
-            'password' => 'nullable|string|min:6|confirmed'
-        ]);
-
         $data = $request->all();
-        $user->firstname = $data['firstname'];
-        $user->lastname = $data['lastname'];
-        $user->email = $data['email'];
-        $user->skin = $data['skin'];
 
         try {
             if (isset($data['password'])) {
-                $user->password = Hash::make($data['password']);
+                $data['password'] = Hash::make($data['password']);
             }
-            $user->save();
+            $user->update($data);
 
             return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);
         } catch (\Exception $ex) {
@@ -108,16 +87,12 @@ class UserController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param UserPasswordRequest $request
      * @param User $user
      * @return $this|\Illuminate\Http\JsonResponse
      */
-    public function updatePassword(Request $request, User $user)
+    public function updatePassword(UserPasswordRequest $request, User $user)
     {
-        $this->validate($request, [
-            'password' => 'required|string|min:6|confirmed'
-        ]);
-
         try {
             $user->update([
                 'password' => Hash::make($request->input('password'))
@@ -126,16 +101,5 @@ class UserController extends Controller
         } catch (\Exception $ex) {
             return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
-    {
-        //
     }
 }

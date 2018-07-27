@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Tracker;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class TeamRequest
+ * Class UpdateTimeRequest
  * @package App\Http\Requests
  */
-class TeamRequest extends FormRequest
+class UpdateTimeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -25,12 +25,15 @@ class TeamRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'name' => [
-                'required', 'string', 'max:255'
-            ]
+            'duration' => [
+                'required', 'numeric'
+            ],
+            'start' => [
+                'nullable', 'date'
+            ],
         ];
     }
 }

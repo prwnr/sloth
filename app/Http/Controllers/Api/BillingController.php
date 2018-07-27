@@ -19,7 +19,7 @@ class BillingController extends Controller
     /**
      * Display types of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return BillingResource
      */
     public function types()
     {
@@ -27,6 +27,7 @@ class BillingController extends Controller
     }
 
     /**
+     * @param Request $request
      * @return array
      */
     public function showBillingData(Request $request): array
