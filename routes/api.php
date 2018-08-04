@@ -48,7 +48,7 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
 
     Route::get('/users/active', 'UserController@showActive')->name('users.active');
     Route::post('/users/logout', 'UserController@logout');
-    Route::get('/users/{user}/times', 'UserController@times');
+    Route::get('/users/{user}/logs', 'UserController@timeLogs');
     Route::put('/users/{user}/password', 'UserController@updatePassword')->middleware('permission:manage_team');
     Route::apiResource('users', 'UserController');
     Route::apiResource('teams', 'TeamController')->only(['show', 'update']);

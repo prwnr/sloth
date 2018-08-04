@@ -141,7 +141,11 @@
              * Fetch logs for given user
              */
             fetchTimeLogs() {
-                axios.get('/api/users/' + this.$user.data.id + '/times').then(response => {
+                axios.get('/api/users/' + this.$user.data.id + '/logs', {
+                    params: {
+                        date: null
+                    }
+                }).then(response => {
                     this.timeLogs = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

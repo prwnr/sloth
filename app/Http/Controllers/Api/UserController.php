@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\{UserPasswordRequest, UserRequest};
-use App\Http\Resources\{
-    TimeLog as TimeLogResource,
+use App\Http\Resources\{TimeLog as TimeLogResource,
     User as UserResource,
-    Users as UsersCollectionResource
-};
+    Users as UsersCollectionResource};
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Support\{Facades\Auth, Facades\Hash};
 use Illuminate\Http\{Request, Response};
 
@@ -31,14 +30,22 @@ class UserController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param User $user
      * @return TimeLogResource
      */
-    public function times(User $user)
+    public function timeLogs(Request $request, User $user)
     {
-        $times = $user->times;
-        $times->loadMissing('project', 'task');
-        return new TimeLogResource($times);
+        try {
+            $date = $request->get('date');
+            $dateFilter = $this->getDateFilter($date);
+        } catch (\Exception $ex) {
+            return response()->json(['error' => 'Date format is invalid'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $logs = $user->times()->whereDate('created_at', $dateFilter)->get();
+        $logs->loadMissing('project', 'task');
+        return new TimeLogResource($logs);
     }
 
     /**
@@ -83,7 +90,7 @@ class UserController extends Controller
             return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);
         } catch (\Exception $ex) {
             return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }    
+        }
     }
 
     /**
@@ -101,5 +108,24 @@ class UserController extends Controller
         } catch (\Exception $ex) {
             return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * @param null|string $date
+     * @return string
+     */
+    private function getDateFilter(?string $date): string
+    {
+        if (!$date) {
+            $date = Carbon::today();
+        }
+
+        if (\is_string($date)) {
+            $date = trim($date, '\"');
+            [$year, $month, $day] = explode('-', $date);
+            $date = Carbon::createFromDate($year, $month, $day);
+        }
+
+        return $date->format('Y-m-d');
     }
 }
