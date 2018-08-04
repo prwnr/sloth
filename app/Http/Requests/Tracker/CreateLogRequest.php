@@ -31,6 +31,9 @@ class CreateLogRequest extends LogRequest
             ],
             'duration' => [
                 'nullable', 'numeric'
+            ],
+            'created_at' => [
+                'nullable', 'date'
             ]
         ];
     }

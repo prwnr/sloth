@@ -15,9 +15,16 @@
         </section>
         <section class="content">
             <div class="card mb-3">
-                <card-header :minimizable="false">Your logs from {{ viewedDay }}</card-header>
+                <div class="card-header">
+                    <h3 class="text-center d-inline">Logs from: {{ currentDayText }}</h3>
+                    <div class="btn-group pull-right">
+                        <button class="btn btn-default" @click="previous"><i class="fa fa-angle-left"></i></button>
+                        <button class="btn btn-default" @click="reset">today</button>
+                        <button class="btn btn-default" @click="next"><i class="fa fa-angle-right"></i></button>
+                    </div>
+                </div>
                 <div class="card-body col-lg-12">
-                    <span v-if="timeLogs.length == 0">You haven't worked yet this day. Slothfully</span>
+                    <span v-if="timeLogs.length == 0">You haven't worked this day. Slothfully</span>
                     <time-log v-for="time in timeLogs" :key="time.id" :time="time" :projects="projects" @logDeleted="deleteLog" @editTime="handleEditDialog"></time-log>
                 </div>
             </div>
@@ -29,7 +36,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-log :projects="projects"></new-log>
+                            <new-log :projects="projects" :day="currentDay"></new-log>
                         </div>
                     </div>
                 </div>
@@ -66,7 +73,10 @@
 
         data() {
             return {
-                viewedDay: '',
+                currentDay: '',
+                previousDay: '',
+                nextDay: '',
+                today: '',
                 timeLogs: [],
                 projects: [],
                 editedTime: null
@@ -74,10 +84,53 @@
         },
 
         created() {
+            this.currentDay = moment().format('YYYY-MM-DD');
+            this.today = this.currentDay;
+            this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
+            this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
             this.fetchData();
         },
 
+        computed: {
+            currentDayText: function () {
+                return moment(this.currentDay).format('LL');
+            }
+        },
+
         methods: {
+            /**
+             * Reset date filter to todays day
+             */
+            reset() {
+                this.changeDays(this.today);
+                this.fetchTimeLogs();
+            },
+
+            /**
+             * Change date filter to previous day
+             */
+            previous() {
+                this.changeDays(this.previousDay);
+                this.fetchTimeLogs();
+            },
+
+            /**
+             * Change date filter to next day
+             */
+            next() {
+                this.changeDays(this.nextDay);
+                this.fetchTimeLogs();
+            },
+
+            /**
+             * Change days according to current date filter
+             */
+            changeDays(currentDay) {
+                this.currentDay = currentDay;
+                this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
+                this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
+            },
+
             /**
              * Delete log by ID
              */
@@ -143,7 +196,7 @@
             fetchTimeLogs() {
                 axios.get('/api/users/' + this.$user.data.id + '/logs', {
                     params: {
-                        date: null
+                        date: this.currentDay
                     }
                 }).then(response => {
                     this.timeLogs = response.data.data;

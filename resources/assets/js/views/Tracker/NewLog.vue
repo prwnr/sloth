@@ -58,7 +58,7 @@
     import Timer from "../../utilities/Timer";
 
     export default {
-        props: ['projects'],
+        props: ['projects', 'day'],
 
         data() {
             return {
@@ -70,7 +70,8 @@
                     project: '',
                     task: '',
                     description: '',
-                    duration: null
+                    duration: null,
+                    created_at: null
                 })
             }
         },
@@ -99,6 +100,7 @@
                     this.form.duration = this.timer.secondsToMinutes(this.timer.revert(this.duration));
                 }
 
+                this.form.created_at = this.day;
                 this.form.post('/api/time').then(response => {
                     if (response.data.start) {
                         response.data.start = response.data.start.date;
