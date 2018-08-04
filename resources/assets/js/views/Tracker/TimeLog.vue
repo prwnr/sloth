@@ -1,44 +1,46 @@
 <template>
-    <div class="row form-group log pb-4" @mouseover="mouseOver = true" @mouseleave="mouseOver = false">
-        <div class="col-lg-10">
-            <div class="col-lg-12 p-0">
-                <strong>{{ time.project.name }} ({{ time.project.code }})</strong>
-                <span v-if="time.task">- {{ time.task.name }} ({{ time.task.billable_text }})</span>
-                <span class="log-buttons pl-3" v-if="mouseOver">
+    <div class="list-group-item form-group log pb-4" @mouseover="mouseOver = true" @mouseleave="mouseOver = false">
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="col-lg-10 p-0">
+                    <strong>{{ time.project.name }} ({{ time.project.code }})</strong>
+                    <span v-if="time.task">- {{ time.task.name }} ({{ time.task.billable_text }})</span>
+                    <span class="log-buttons pl-3" v-if="mouseOver">
                     <span><i class="text-info fa fa-edit p-1" @click="editLog" data-toggle="modal" data-target="#editRow"></i></span>
                     <span><i class="text-danger fa fa-trash p-1"  @click="deleteLog"></i></span>
                 </span>
-            </div>
-            <div class="col-lg-12 mt-1 small p-0">
-                Description: {{ description }}
-            </div>
-        </div>
-        <div class="col-lg-2">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fa fa-clock-o" :class="{ 'tick' : startTime }"></i></span>
                 </div>
-                <input v-if="!editing" type="text" class="form-control flat text-right" :disabled="true" :value="displayTime"/>
-                <input v-if="editing" type="text" class="form-control flat text-right" name="time"
-                       v-model="duration"
-                       v-mask="'##:##'"
-                       placeholder="00:00"
-                       @keyup="correctTime"/>
-                <button v-if="!startTime && !editing" class="btn btn-success btn-flat" @click="start" title="Start">
-                    <i class="fa fa-play"></i>
-                </button>
-                <button v-if="startTime" class="btn btn-secondary btn-flat" @click="stop" title="Stop">
-                    <i class="fa fa-pause"></i>
-                </button>
-                <button v-if="!startTime && editing" class="btn btn-primary btn-flat" @click="update" title="Update">
-                    <i class="fa fa-check"></i>
-                </button>
-                <button v-if="!startTime" class="btn btn-default btn-flat"
-                        :title="editTitle"
-                        @click="editing = !editing">
-                    <i v-if="!editing" class="fa fa-edit" title="Edit"></i>
-                    <i v-if="editing" class="fa fa-times" title="Cancel"></i>
-                </button>
+                <div class="col-lg-12 mt-1 small p-0">
+                    Description: {{ description }}
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-clock-o" :class="{ 'tick' : startTime }"></i></span>
+                    </div>
+                    <input v-if="!editing" type="text" class="form-control flat text-right" :disabled="true" :value="displayTime"/>
+                    <input v-if="editing" type="text" class="form-control flat text-right" name="time"
+                           v-model="duration"
+                           v-mask="'##:##'"
+                           placeholder="00:00"
+                           @keyup="correctTime"/>
+                    <button v-if="!startTime && !editing" class="btn btn-success btn-flat" @click="start" title="Start">
+                        <i class="fa fa-play"></i>
+                    </button>
+                    <button v-if="startTime" class="btn btn-secondary btn-flat" @click="stop" title="Stop">
+                        <i class="fa fa-pause"></i>
+                    </button>
+                    <button v-if="!startTime && editing" class="btn btn-primary btn-flat" @click="update" title="Update">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button v-if="!startTime" class="btn btn-default btn-flat"
+                            :title="editTitle"
+                            @click="editing = !editing">
+                        <i v-if="!editing" class="fa fa-edit" title="Edit"></i>
+                        <i v-if="editing" class="fa fa-times" title="Cancel"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -192,10 +194,6 @@
 </script>
 
 <style scoped>
-    .log {
-        border-bottom: 1px solid #ccc;
-    }
-
     .log-buttons .fa-edit:hover {
         cursor: pointer;
         color: #138496 !important;

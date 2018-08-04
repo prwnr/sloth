@@ -23,8 +23,8 @@
                         <button class="btn btn-default" @click="next"><i class="fa fa-angle-right"></i></button>
                     </div>
                 </div>
-                <div class="card-body col-lg-12">
-                    <span v-if="timeLogs.length == 0">You haven't worked this day. Slothfully</span>
+                <div class="p-3" v-if="timeLogs.length == 0">You haven't worked this day. Slothfully</div>
+                <div class="list-group list-group-flush">
                     <time-log v-for="time in timeLogs" :key="time.id" :time="time" :projects="projects" @logDeleted="deleteLog" @editTime="handleEditDialog"></time-log>
                 </div>
             </div>
