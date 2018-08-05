@@ -27,5 +27,8 @@
         "admin-lte": "^3.0.0-alpha.2",
         "moment": "^2.22.2",
         "v-mask": "^1.3.2"
+    },
+    "dependencies": {
+        "vuejs-datepicker": "^1.5.2"
     }
 }

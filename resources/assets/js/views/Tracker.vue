@@ -129,6 +129,7 @@
                 this.currentDay = currentDay;
                 this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
                 this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
+                EventHub.fire('new_current_day', this.currentDay);
             },
 
             /**

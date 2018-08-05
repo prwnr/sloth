@@ -32,6 +32,16 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label for="name">Date</label>
+                <div class="input-group">
+                    <div slot="afterDateInput" class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    <date-picker :bootstrap-styling="true" format="yyyy-MM-dd" v-model="form.created_at"></date-picker>
+                </div>
+            </div>
+
             <div class="form-group col-5 p-0">
                 <label for="name">Time <span v-if="!disableStartButton" class="small">(optional)</span></label>
                 <div class="input-group">
@@ -56,9 +66,14 @@
 
 <script>
     import Timer from "../../utilities/Timer";
+    import DatePicker from "vuejs-datepicker";
 
     export default {
         props: ['projects', 'day'],
+
+        components: {
+            DatePicker
+        },
 
         data() {
             return {
@@ -71,9 +86,15 @@
                     task: '',
                     description: '',
                     duration: null,
-                    created_at: null
+                    created_at: this.day
                 })
             }
+        },
+
+        created() {
+            EventHub.listen('new_current_day', day => {
+                this.form.created_at = day;
+            })
         },
 
         computed: {
@@ -82,7 +103,7 @@
             },
 
             disableStartButton: function () {
-                if (this.$parent.currentDay != this.$parent.today) {
+                if (this.$parent.currentDay != this.form.created_at) {
                     return true;
                 }
 
@@ -108,7 +129,7 @@
                     this.form.duration = this.timer.secondsToMinutes(this.timer.revert(this.duration));
                 }
 
-                this.form.created_at = this.day;
+                this.form.created_at = moment(this.form.created_at).format('YYYY-MM-DD');
                 this.form.post('/api/time').then(response => {
                     if (response.data.start) {
                         response.data.start = response.data.start.date;
@@ -116,10 +137,16 @@
                         response.data.start = null;
                     }
 
-                    this.$parent.timeLogs.push(response.data);
+                    let created_at = this.form.created_at;
+                    if (this.day === created_at) {
+                        this.$parent.timeLogs.push(response.data);
+                    }
+
                     this.form.reset();
+                    this.form.created_at = created_at;
                     this.form.user = this.$user.data.id;
                     this.duration = null;
+                    this.$awn.success('New time log created');
                     $('#newLog').modal('hide');
                 }).catch(error => {
                     this.$awn.alert(error.message);
