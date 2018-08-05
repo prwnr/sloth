@@ -43,7 +43,7 @@ class UserController extends Controller
             return response()->json(['error' => 'Date format is invalid'], Response::HTTP_BAD_REQUEST);
         }
 
-        $logs = $user->times()->whereDate('created_at', $dateFilter)->get();
+        $logs = $user->logs()->whereDate('created_at', $dateFilter)->get();
         $logs->loadMissing('project', 'task');
         return new TimeLogResource($logs);
     }

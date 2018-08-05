@@ -71,7 +71,7 @@ class Project extends Model
     /**
      * @return HasMany
      */
-    public function times(): HasMany
+    public function logs(): HasMany
     {
         return $this->hasMany(TimeLog::class);
     }

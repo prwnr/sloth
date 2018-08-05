@@ -85,13 +85,13 @@ class User extends Authenticatable
     /**
      * @return HasMany
      */
-    public function times(): HasMany
+    public function logs(): HasMany
     {
         return $this->hasMany(TimeLog::class);
     }
 
     /**
-     * Return all importan info about user as array (for json response)
+     * Return all important info about user as array (for json response)
      * @return array
      */
     public function getAllInfoData(): array

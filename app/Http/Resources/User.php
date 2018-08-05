@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Permission;
-use App\Models\Project;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
