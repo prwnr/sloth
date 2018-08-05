@@ -14,7 +14,7 @@ class CreateLogRequest extends LogRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'user' => [
@@ -33,7 +33,7 @@ class CreateLogRequest extends LogRequest
                 'nullable', 'numeric'
             ],
             'created_at' => [
-                'nullable', 'date'
+                'required', 'date'
             ]
         ];
     }

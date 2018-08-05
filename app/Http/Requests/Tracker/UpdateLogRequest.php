@@ -14,7 +14,7 @@ class UpdateLogRequest extends LogRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'project' => [
@@ -23,7 +23,12 @@ class UpdateLogRequest extends LogRequest
             'task' => [
                 $this->taskRequirementRule(), 'numeric'
             ],
-            'description' => 'nullable|string|max:200'
+            'description' => [
+                'nullable', 'string', 'max:200'
+            ],
+            'created_at' => [
+                'required', 'date'
+            ]
         ];
     }
 }

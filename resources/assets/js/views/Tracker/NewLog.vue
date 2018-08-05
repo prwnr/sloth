@@ -139,7 +139,7 @@
 
                     let created_at = this.form.created_at;
                     if (this.day === created_at) {
-                        this.$parent.timeLogs.push(response.data);
+                        this.$emit('logAdded', response.data);
                     }
 
                     this.form.reset();

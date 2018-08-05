@@ -36,7 +36,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-log :projects="projects" :day="currentDay"></new-log>
+                            <new-log :projects="projects" :day="currentDay" @logAdded="log => this.timeLogs.push(log)"></new-log>
                         </div>
                     </div>
                 </div>
@@ -49,7 +49,14 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeEditDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <edit-log v-if="editedTime" :time="editedTime" :projects="projects" @logUpdated="updateLog"></edit-log>
+                            <edit-log
+                                    v-if="editedTime"
+                                    :time="editedTime"
+                                    :projects="projects"
+                                    :day="currentDay"
+                                    @logUpdated="updateLog"
+                                    @dateChanged="fetchTimeLogs"
+                            ></edit-log>
                         </div>
                     </div>
                 </div>

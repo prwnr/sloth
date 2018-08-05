@@ -32,6 +32,16 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label for="name">Date</label>
+                <div class="input-group">
+                    <div slot="afterDateInput" class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    <date-picker :bootstrap-styling="true" format="yyyy-MM-dd" v-model="form.created_at"></date-picker>
+                </div>
+            </div>
+
             <div class="col-lg-12 p-0">
                 <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-danger" >Cancel</button>
                 <button class="btn btn-success float-right">Save</button>
@@ -42,9 +52,14 @@
 
 <script>
     import Timer from "../../utilities/Timer";
+    import DatePicker from "vuejs-datepicker";
 
     export default {
-        props: ['time', 'projects'],
+        props: ['time', 'projects', 'day'],
+
+        components: {
+            DatePicker
+        },
 
         data() {
             return {
@@ -55,13 +70,17 @@
                     user: this.$user.data.id,
                     project: this.time.project.id,
                     task: this.time.task ? this.time.task.id : null,
-                    description: this.time.description ? this.time.description : ''
+                    description: this.time.description ? this.time.description : '',
+                    created_at: this.day
                 })
             }
         },
 
         created() {
             this.fillTasks();
+            EventHub.listen('new_current_day', day => {
+                this.form.created_at = day;
+            });
         },
 
         watch: {
@@ -86,9 +105,15 @@
              * Update tracking time row
              */
             save() {
+                this.form.created_at = moment(this.form.created_at).format('YYYY-MM-DD');
                 this.form.put('/api/time/' + this.time.id).then(response => {
                     this.$emit('logUpdated', response.data);
                     $('#editRow').modal('hide');
+
+                    if (this.day !== this.form.created_at) {
+                        this.$emit('dateChanged');
+                    }
+
                     this.$awn.success('Log successfully updated');
                 }).catch(error => {
                     this.$awn.alert(error.message);

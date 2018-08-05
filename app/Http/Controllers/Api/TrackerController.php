@@ -87,6 +87,7 @@ class TrackerController extends Controller
                 'project_id' => $data['project'],
                 'task_id' => $data['task'] ?? null,
                 'description' => $data['description'],
+                'created_at' => $data['created_at']
             ]);
             DB::commit();
         } catch (\Exception $ex) {
