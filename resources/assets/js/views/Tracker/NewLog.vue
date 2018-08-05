@@ -33,7 +33,7 @@
             </div>
 
             <div class="form-group col-5 p-0">
-                <label for="name">Time <span class="small">(optional)</span></label>
+                <label for="name">Time <span v-if="!disableStartButton" class="small">(optional)</span></label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
@@ -48,7 +48,7 @@
 
             <div class="col-lg-12 p-0">
                 <button type="button" data-dismiss="modal" aria-label="Close" id="closeDialog" class="btn btn-danger" >Cancel</button>
-                <button class="btn btn-success float-right">{{ buttonText }}</button>
+                <button :disabled="disableStartButton && !duration" class="btn btn-success float-right">{{ buttonText }}</button>
             </div>
         </form>
     </div>
@@ -79,7 +79,15 @@
         computed: {
             buttonText: function () {
                 return this.duration ? 'Create' : 'Start';
-            }
+            },
+
+            disableStartButton: function () {
+                if (this.$parent.currentDay != this.$parent.today) {
+                    return true;
+                }
+
+                return false;
+            },
         },
 
         watch: {

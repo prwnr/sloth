@@ -25,7 +25,7 @@
                            v-mask="'##:##'"
                            placeholder="00:00"
                            @keyup="correctTime"/>
-                    <button v-if="!startTime && !editing" class="btn btn-success btn-flat" @click="start" title="Start">
+                    <button v-if="!startTime && !editing" :disabled="disableStartButton" class="btn btn-success btn-flat" @click="start" title="Start">
                         <i class="fa fa-play"></i>
                     </button>
                     <button v-if="startTime" class="btn btn-secondary btn-flat" @click="stop" title="Stop">
@@ -82,7 +82,18 @@
 
             editTitle: function () {
                 return this.editing ? 'Cancel' : 'Edit';
-            }
+            },
+
+            /**
+             * Checks if start button should be disabled
+             */
+            disableStartButton: function () {
+                if (this.$parent.currentDay != this.$parent.today) {
+                    return true;
+                }
+
+                return false;
+            },
         },
 
         methods: {
