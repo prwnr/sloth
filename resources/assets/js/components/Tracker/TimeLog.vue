@@ -20,11 +20,7 @@
                         <span class="input-group-text"><i class="fa fa-clock-o" :class="{ 'tick' : startTime }"></i></span>
                     </div>
                     <input v-if="!editing" type="text" class="form-control flat text-right" :disabled="true" :value="displayTime"/>
-                    <input v-if="editing" type="text" class="form-control flat text-right" name="time"
-                           v-model="duration"
-                           v-mask="'##:##'"
-                           placeholder="00:00"
-                           @keyup="correctTime"/>
+                    <time-input v-if="editing" v-model="duration"></time-input>
                     <button v-if="!startTime && !editing" :disabled="disableStartButton" class="btn btn-success btn-flat" @click="start" title="Start">
                         <i class="fa fa-play"></i>
                     </button>
@@ -48,9 +44,14 @@
 
 <script>
     import Timer from "../../utilities/Timer";
+    import TimeInput from "./TimeInput";
 
     export default {
         props: ['time'],
+
+        components: {
+            TimeInput
+        },
 
         data() {
             return {
@@ -170,21 +171,6 @@
                         this.$emit('logDeleted', this.time.id);
                     }
                 })
-            },
-
-            /**
-             * Makes sure that MM in HH:MM won't go over 60 minutes
-             */
-            correctTime() {
-                let time = this.duration.split(':');
-                if (time.length != 2) {
-                    return;
-                }
-
-                if (time[1] > 60) {
-                    this.duration = time[0] + ':' + 60;
-                    return;
-                }
             },
 
             /**

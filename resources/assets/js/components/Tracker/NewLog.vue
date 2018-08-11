@@ -49,11 +49,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
                     </div>
-                    <input type="text" class="form-control text-right" name="time"
-                           v-model="duration"
-                           v-mask="'##:##'"
-                           placeholder="00:00"
-                           @keyup="correctTime"/>
+                    <time-input v-model="duration"></time-input>
                 </div>
             </div>
 
@@ -68,12 +64,13 @@
 <script>
     import Timer from "../../utilities/Timer";
     import DatePicker from "vuejs-datepicker";
+    import TimeInput from "./TimeInput";
 
     export default {
         props: ['projects', 'day'],
 
         components: {
-            DatePicker
+            DatePicker, TimeInput
         },
 
         data() {
@@ -153,20 +150,6 @@
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
-            },
-
-            /**
-             * Makes sure that MM in HH:MM won't go over 60 minutes
-             */
-            correctTime() {
-                let time = this.duration.split(':');
-                if (time.length != 2) {
-                    return;
-                }
-
-                if (time[1] > 60) {
-                    this.duration = time[0] + ':' + 60;
-                }
             }
         }
     }

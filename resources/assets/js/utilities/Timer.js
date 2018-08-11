@@ -21,23 +21,30 @@ class Timer {
      * @returns {*}
      */
     revert(format) {
-        let time = format.split(':');
+        let time = this.getCorrectedTime(format);
+
         let minutes = parseInt(time[1]) + this.hoursToMinutes(time[0]);
         return this.minutesToSeconds(minutes);
     }
 
     /**
-     * Makes sure that MM in HH:MM won't go over 60 minutes
+     * Get time array with two elements and proper values
+     * @param timeString
+     * @returns {array}
      */
-    correctTime(duration) {
-        let time = duration.split(':');
-        if (time.length != 2) {
-            return null;
+    getCorrectedTime(timeString) {
+        let time = [];
+        if (timeString.includes(':')) {
+            time = timeString.split(':');
+            if (time.length == 2 && !time[1]) {
+                time[1] = '00';
+            }
+        } else {
+            time[0] = '00';
+            time[1] = timeString;
         }
 
-        if (time[1] > 60) {
-            return time[0] + ':' + 60;
-        }
+        return time;
     }
 
     /**
