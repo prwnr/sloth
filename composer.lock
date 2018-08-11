@@ -972,16 +972,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.6.29",
+            "version": "v5.6.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "acc6b5c54ab196d3358f60acc5f55d9ebaaccc02"
+                "reference": "8a708b989adc320c451ee639d812af81f884666b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/acc6b5c54ab196d3358f60acc5f55d9ebaaccc02",
-                "reference": "acc6b5c54ab196d3358f60acc5f55d9ebaaccc02",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/8a708b989adc320c451ee639d812af81f884666b",
+                "reference": "8a708b989adc320c451ee639d812af81f884666b",
                 "shasum": ""
             },
             "require": {
@@ -1107,20 +1107,20 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2018-07-26T16:01:26+00:00"
+            "time": "2018-08-09T20:36:39+00:00"
         },
         {
             "name": "laravel/passport",
-            "version": "v6.0.6",
+            "version": "v6.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/passport.git",
-                "reference": "83ac18d903c1446be7344464d37fa006fb6957c9"
+                "reference": "5a3dbeb0904573fcfecf11c018eaa42bfc935372"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/passport/zipball/83ac18d903c1446be7344464d37fa006fb6957c9",
-                "reference": "83ac18d903c1446be7344464d37fa006fb6957c9",
+                "url": "https://api.github.com/repos/laravel/passport/zipball/5a3dbeb0904573fcfecf11c018eaa42bfc935372",
+                "reference": "5a3dbeb0904573fcfecf11c018eaa42bfc935372",
                 "shasum": ""
             },
             "require": {
@@ -1176,7 +1176,7 @@
                 "oauth",
                 "passport"
             ],
-            "time": "2018-07-17T13:00:32+00:00"
+            "time": "2018-08-09T19:10:08+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -3260,16 +3260,16 @@
         },
         {
             "name": "zendframework/zend-diactoros",
-            "version": "1.8.4",
+            "version": "1.8.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "736ffa7c2bfa4a60e8a10acb316fa2ac456c5fba"
+                "reference": "3e4edb822c942f37ade0d09579cfbab11e2fee87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/736ffa7c2bfa4a60e8a10acb316fa2ac456c5fba",
-                "reference": "736ffa7c2bfa4a60e8a10acb316fa2ac456c5fba",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/3e4edb822c942f37ade0d09579cfbab11e2fee87",
+                "reference": "3e4edb822c942f37ade0d09579cfbab11e2fee87",
                 "shasum": ""
             },
             "require": {
@@ -3319,7 +3319,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2018-08-01T13:47:49+00:00"
+            "time": "2018-08-10T14:16:32+00:00"
         },
         {
             "name": "zizaco/entrust",
