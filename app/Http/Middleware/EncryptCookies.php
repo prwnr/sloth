@@ -14,4 +14,10 @@ class EncryptCookies extends Middleware
     protected $except = [
         //
     ];
+
+    /**
+     * Serialize Cookie for Laravel/Passport v6.0.7
+     * @var bool
+     */
+    protected static $serialize = true;
 }
