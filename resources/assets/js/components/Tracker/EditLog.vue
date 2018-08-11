@@ -3,13 +3,24 @@
         <h1 class="text-center">Edit time log</h1><hr>
 
         <form @submit.prevent="save" @change="form.errors.clear($event.target.name)" @keydown="form.errors.clear($event.target.name)">
-            <div class="form-group">
-                <label for="name">Choose your project</label>
-                <select class="form-control" name="project" v-model="form.project" :class="{ 'is-invalid': form.errors.has('project')}">
-                    <option v-if="projects.length == 0" value="''" disabled selected="false">There are no projects that you could choose</option>
-                    <option v-for="project in projects" :value="project.id">{{ project.name }}</option>
-                </select>
-                <form-error :text="form.errors.get('project')" :show="form.errors.has('project')"></form-error>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="name">Choose your project</label>
+                        <select class="form-control" name="project" v-model="form.project" :class="{ 'is-invalid': form.errors.has('project')}">
+                            <option v-if="projects.length == 0" value="''" disabled selected="false">There are no projects that you could choose</option>
+                            <option v-for="project in projects" :value="project.id">{{ project.name }}</option>
+                        </select>
+                        <form-error :text="form.errors.get('project')" :show="form.errors.has('project')"></form-error>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="name">Select day</label>
+                        <date-picker :bootstrap-styling="true" format="yyyy-MM-dd" v-model="form.created_at"></date-picker>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -22,23 +33,13 @@
             </div>
 
             <div class="form-group">
-                <label for="name">Description</label>
+                <label for="name">Write description <span class="small">(optional)</span></label>
                 <div class="input-group">
                     <textarea id="name" type="text" class="form-control"
                               name="name" value="" placeholder="Description" v-model="form.description" :maxlength="200"></textarea>
                     <div class="input-group-append">
                         <span class="input-group-text" v-text="(200 - form.description.length)"></span>
                     </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="name">Date</label>
-                <div class="input-group">
-                    <div slot="afterDateInput" class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    </div>
-                    <date-picker :bootstrap-styling="true" format="yyyy-MM-dd" v-model="form.created_at"></date-picker>
                 </div>
             </div>
 

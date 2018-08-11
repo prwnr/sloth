@@ -67,9 +67,9 @@
 </template>
 
 <script>
-    import TimeLog from './Tracker/TimeLog.vue';
-    import NewLog from './Tracker/NewLog.vue';
-    import EditLog from './Tracker/EditLog.vue';
+    import TimeLog from '../components/Tracker/TimeLog.vue';
+    import NewLog from '../components/Tracker/NewLog.vue';
+    import EditLog from '../components/Tracker/EditLog.vue';
 
     export default {
         components: {
