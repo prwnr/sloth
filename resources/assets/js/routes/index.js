@@ -24,6 +24,7 @@ import ClientsEdit from '../views/Clients/Edit.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Tracker from '../views/Tracker.vue';
 import Profile from '../views/Profile.vue';
+import Reports from '../views/Reports/Index.vue';
 
 Vue.use(VueRouter);
 
@@ -56,7 +57,10 @@ const routes = [
     { path: '/clients/:id/edit', component: ClientsEdit, name: 'clients.edit' },
 
     //Profile route
-    { path: '/profile', component: Profile, name: 'profile' }
+    { path: '/profile', component: Profile, name: 'profile' },
+
+    //Reports routes
+    { path: '/reports', component: Reports, name: 'reports' },
 ];
 
 export default new VueRouter({

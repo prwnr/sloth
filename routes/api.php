@@ -44,6 +44,9 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
     Route::put('time/{time}/duration', 'TrackerController@updateTime')->middleware('permission:track_time');
     Route::apiResource('time', 'TrackerController')->middleware('permission:track_time');
 
+    //Report routes
+    Route::get('reports', 'ReportController@index')->middleware('permission:view_reports');
+
     Route::apiResource('tasks', 'TaskController')->only('index')->middleware('team:project');
 
     Route::get('/users/active', 'UserController@showActive')->name('users.active');

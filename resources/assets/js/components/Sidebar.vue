@@ -28,6 +28,13 @@
                 </li>
 
                 <li class="nav-item">
+                    <router-link v-if="$user.can('view_reports')" class="nav-link" :to="{ name: 'reports' }" tag="a">
+                        <i class="fa nav-icon fa-bar-chart"></i>
+                        <p>Reports</p>
+                    </router-link>
+                </li>
+
+                <li class="nav-item">
                     <router-link v-if="$user.can('manage_team')" class="nav-link" :to="{ name: 'members.index' }" tag="a">
                         <i class="fa nav-icon fa-users"></i>
                         <p>Team</p>
