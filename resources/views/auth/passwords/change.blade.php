@@ -7,7 +7,7 @@
         </div>
         <div class="card-body">
             <p class="text-center">{{ __('This is your first login on this account.') }}</p>
-            <p class="text-center">{{ __('Please change your password to more secure before you will move forward to Bison Tracker.') }}</p>
+            <p class="text-center">{{ __('Please change your password to more secure before you will start your slothful work.') }}</p>
             <form method="POST" action="{{ route('password.change') }}">
                 @csrf
                 <div class="form-group">
