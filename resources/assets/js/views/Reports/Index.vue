@@ -46,6 +46,7 @@
                     {title: 'Member', field: 'user_name', sortable: true},
                     {title: 'Client', field: 'client', sortable: true},
                     {title: 'Project', field: 'project', sortable: true},
+                    {title: 'Task', field: 'task', sortable: true},
                     {title: 'Date', field: 'date', sortable: true},
                     {title: 'Hours', field: 'hours', sortable: true},
                     {title: 'Is billable?', field: 'billable', sortable: true},
