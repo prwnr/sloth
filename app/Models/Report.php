@@ -3,6 +3,8 @@
 
 namespace App\Models;
 
+use App\Models\Date\DateRange;
+
 /**
  * Class Report
  * @package App\Models
@@ -11,11 +13,25 @@ class Report
 {
 
     /**
+     * @var DateRange
+     */
+    private $range;
+
+    /**
+     * Report constructor.
+     * @param DateRange $range
+     */
+    public function __construct(DateRange $range)
+    {
+        $this->range = $range;
+    }
+
+    /**
      * @return array
      */
     public function generate(): array
     {
-        $logs = TimeLog::all();
+        $logs = TimeLog::whereBetween('created_at', [$this->range->start(), $this->range->end()])->get();
         $report = [];
         $items = [];
 
@@ -45,5 +61,10 @@ class Report
         $report['total_hours'] = $totalHours;
 
         return $report;
+    }
+
+    public function setDateRange(DateRange $range): void
+    {
+
     }
 }

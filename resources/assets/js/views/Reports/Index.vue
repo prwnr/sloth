@@ -22,6 +22,7 @@
                             :total="items.length"
                             :query="query"
                             :HeaderSettings="false"
+                            :pagination="false"
                     />
 
                     <div class="col-lg-12 text-right p-3">
