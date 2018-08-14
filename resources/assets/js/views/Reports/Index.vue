@@ -11,7 +11,12 @@
         </section>
         <section class="content">
             <div class="card card-table">
-                <card-header :minimizable="false">Detailed reports</card-header>
+                <div class="card-header">
+                    <h5 class="card-title">Detailed reports</h5>
+                    <div class="card-tools">
+                        <date-range @rangeChange="fetchData"></date-range>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 
@@ -22,7 +27,7 @@
                             :total="items.length"
                             :query="query"
                             :HeaderSettings="false"
-                            :pagination="false"
+                            :Pagination="false"
                     />
 
                     <div class="col-lg-12 text-right p-3">
@@ -36,8 +41,13 @@
 
 <script>
     import StatusBar from '../../components/DataTable/Status';
+    import DateRange from '../../components/Report/DateRange';
 
     export default {
+        components: {
+            DateRange
+        },
+
         data() {
             return {
                 loading: true,
@@ -53,12 +63,12 @@
                     {title: 'Is billable?', field: 'billable', sortable: true},
                     {title: 'Status', field: 'in_progress', sortable: true, tdComp: StatusBar},
                 ],
-                query: {sort: 'member', order: 'asc'},
+                query: {sort: 'date', order: 'desc'},
             }
         },
 
         created() {
-            this.fetchData();
+            this.fetchData('week');
         },
 
         computed: {
@@ -74,10 +84,15 @@
         methods: {
             /**
              * Get data from API
+             * @param range
              */
-            fetchData() {
+            fetchData(range) {
                 this.loading = true;
-                axios.get('/api/reports').then(response => {
+                axios.get('/api/reports', {
+                    params: {
+                        range: range
+                    }
+                }).then(response => {
                     this.items = response.data.items;
                     this.totalHours = response.data.total_hours;
                     this.loading = false;

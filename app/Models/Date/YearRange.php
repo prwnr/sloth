@@ -17,7 +17,7 @@ class YearRange extends DateRange
      */
     protected function initialize(): void
     {
-        $this->start = Carbon::createFromFormat(self::FORMAT, $this->date)->startOfMonth();
-        $this->end = Carbon::createFromFormat(self::FORMAT, $this->date)->endOfMonth();
+        $this->start = Carbon::createFromFormat(self::FORMAT, $this->date)->startOfYear();
+        $this->end = Carbon::createFromFormat(self::FORMAT, $this->date)->endOfYear();
     }
 }

@@ -12,7 +12,10 @@ use Carbon\Carbon;
 abstract class DateRange
 {
 
-    public const FORMAT = 'Y-m-d';
+    public const WEEK = 'week';
+    public const MONTH = 'month';
+    public const YEAR = 'year';
+    protected const FORMAT = 'Y-m-d';
 
     /**
      * @var Carbon
