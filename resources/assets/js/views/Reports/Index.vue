@@ -12,7 +12,7 @@
         <section class="content">
             <div class="card card-table">
                 <div class="card-header">
-                    <h5 class="card-title">Detailed reports</h5>
+                    <h3 class="d-inline">Detailed reports</h3>
                     <div class="card-tools">
                         <date-range @rangeChange="fetchData"></date-range>
                     </div>

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models\Date;
 
 use Carbon\Carbon;
