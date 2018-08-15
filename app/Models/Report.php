@@ -52,14 +52,14 @@ class Report
                 'project' => $log->project->name,
                 'task' => $log->task ? $log->task->name : 'none',
                 'date' => $log->created_at->format('Y-m-d'),
-                'hours' => round($log->duration / 60, 2),
+                'hours' => $hours,
                 'billable' => $billable,
                 'in_progress' => (bool)$log->start,
             ];
         }
 
         $report['items'] = $items;
-        $report['total_hours'] = $totalHours;
+        $report['total_hours'] = round($totalHours, 2);
 
         return $report;
     }
