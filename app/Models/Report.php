@@ -38,7 +38,7 @@ class Report
         $totalHours = 0;
 
         foreach($this->getLogs() as $key => $log) {
-            $hours = round($log->duration / 60, 2);
+            $hours = round($log->duration / 60, 3);
             $totalHours += $hours;
 
             $billable = 'No';
@@ -59,7 +59,7 @@ class Report
         }
 
         $report['items'] = $items;
-        $report['total_hours'] = round($totalHours, 2);
+        $report['total_hours'] = round($totalHours, 3);
 
         return $report;
     }

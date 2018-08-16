@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Date\DateRangeFactory;
-use App\Models\Date\WeekRange;
+use App\Models\Date\CustomRange;
+use App\Models\Date\DateRange;
 use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,27 +17,27 @@ class ReportController extends Controller
 {
 
     /**
-     * @var DateRangeFactory
-     */
-    private $rangeFactory;
-
-    /**
-     * ReportController constructor.
-     * @param DateRangeFactory $rangeFactory
-     */
-    public function __construct(DateRangeFactory $rangeFactory)
-    {
-        $this->rangeFactory = $rangeFactory;
-    }
-
-    /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
-        $dateRange = $this->rangeFactory->make($request->input('range'));
-        $report = new Report($dateRange);
+        $report = new Report($this->getDateRange($request->input('range')));
         return response()->json($report->generate());
+    }
+
+    /**
+     * @param $range
+     * @return DateRange
+     */
+    private function getDateRange($range): DateRange
+    {
+        if (\is_array($range)) {
+            $start = Carbon::createFromFormat(DateRange::FORMAT, $range['start']);
+            $end = Carbon::createFromFormat(DateRange::FORMAT, $range['end']);
+            return new DateRange(DateRange::CUSTOM, $start, $end);
+        }
+
+        return new DateRange($range, Carbon::now());
     }
 }

@@ -88,10 +88,8 @@
              */
             fetchData(range) {
                 this.loading = true;
-                axios.get('/api/reports', {
-                    params: {
-                        range: range
-                    }
+                axios.post('/api/reports', {
+                    range: range
                 }).then(response => {
                     this.items = response.data.items;
                     this.totalHours = response.data.total_hours;
