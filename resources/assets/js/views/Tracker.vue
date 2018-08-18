@@ -219,6 +219,6 @@
 
 <style scoped>
     .modal-dialog {
-        margin-top: 10% !important;
+        margin-top: 5% !important;
     }
 </style>

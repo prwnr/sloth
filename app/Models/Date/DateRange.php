@@ -81,7 +81,7 @@ class DateRange
                 $this->useCustom();
                 return;
             default:
-                $this->useMonth();
+                $this->useWeek();
         }
     }
 
