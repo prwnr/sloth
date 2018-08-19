@@ -6,6 +6,7 @@ use App\Models\Date\CustomRange;
 use App\Models\Date\DateRange;
 use App\Models\Report;
 use Carbon\Carbon;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -22,7 +23,8 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $report = new Report($this->getDateRange($request->input('range')));
+        $filters = $request->input('filters');
+        $report = new Report($this->getDateRange($filters['range']));
         return response()->json($report->generate());
     }
 

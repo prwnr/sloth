@@ -14,7 +14,8 @@
                 <div class="card-header">
                     <h3 class="d-inline">Detailed reports</h3>
                     <div class="card-tools">
-                        <date-range @rangeChange="fetchData"></date-range>
+                        <filters class="mr-2" @applied="applyFilters"></filters>
+                        <date-range @rangeChange="applyRangeFilter"></date-range>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -35,24 +36,31 @@
                     </div>
                 </div>
             </div>
-            <back-button></back-button>
         </section>
     </div>
 </template>
 
 <script>
     import StatusBar from '../../components/DataTable/Status';
+    import Filters from '../../components/Report/Filters';
     import DateRange from '../../components/Report/DateRange';
 
     export default {
         components: {
-            DateRange
+            DateRange, Filters
         },
 
         data() {
             return {
                 loading: true,
                 items: [],
+                filters: {
+                    range: 'week',
+                    members: [],
+                    clients: [],
+                    projects: [],
+                    billable: []
+                },
                 totalHours: 0,
                 columns: [
                     {title: 'Member', field: 'user_name', sortable: true},
@@ -69,7 +77,7 @@
         },
 
         created() {
-            this.fetchData('week');
+            this.fetchData();
         },
 
         computed: {
@@ -84,13 +92,27 @@
 
         methods: {
             /**
-             * Get data from API
+             * @param filters
+             */
+            applyFilters(filters) {
+
+            },
+
+            /**
              * @param range
              */
-            fetchData(range) {
+            applyRangeFilter(range) {
+                  this.filters.range = range;
+                  this.fetchData();
+            },
+
+            /**
+             * Get data from API
+             */
+            fetchData() {
                 this.loading = true;
                 axios.post('/api/reports', {
-                    range: range
+                    filters: this.filters
                 }).then(response => {
                     this.items = response.data.items;
                     this.totalHours = response.data.total_hours;
