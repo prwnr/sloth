@@ -73,7 +73,7 @@
         created() {
             this.fetchData();
             //Disable dropdown close on clikc inside dropdown menu
-            $(document).on('click', '.dropdown-filters', function (e) {
+            $(document).on('click', '.dropdown-filters, .select2-selection__choice__remove', function (e) {
                 e.stopPropagation();
             });
         },
