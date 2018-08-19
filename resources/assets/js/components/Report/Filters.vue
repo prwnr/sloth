@@ -119,9 +119,9 @@
              */
             reset() {
                 this.applied = {
-                    members: this.members,
-                    clients: this.clients,
-                    projects: this.projects,
+                    members: [],
+                    clients: [],
+                    projects: [],
                     billable: this.billable
                 };
 

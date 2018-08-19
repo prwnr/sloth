@@ -95,7 +95,11 @@
              * @param filters
              */
             applyFilters(filters) {
-
+                this.filters.members = filters.members;
+                this.filters.projects = filters.projects;
+                this.filters.clients = filters.clients;
+                this.filters.billable = filters.billable;
+                this.fetchData();
             },
 
             /**

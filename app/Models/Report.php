@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Date\DateRange;
+use App\Models\Report\Filters;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -15,17 +14,27 @@ class Report
 {
 
     /**
-     * @var DateRange
+     * @var Builder
      */
-    private $range;
+    private $logs;
 
     /**
      * Report constructor.
-     * @param DateRange $range
      */
-    public function __construct(DateRange $range)
+    public function __construct()
     {
-        $this->range = $range;
+        $teamId = Auth::user()->team_id;
+        $this->logs = TimeLog::whereHas('user', function ($query) use ($teamId) {
+            $query->where('team_id', $teamId);
+        });
+    }
+
+    /**
+     * @param Filters $filters
+     */
+    public function apply(Filters $filters): void
+    {
+        $filters->all($this->logs);
     }
 
     /**
@@ -37,7 +46,7 @@ class Report
         $items = [];
         $totalHours = 0;
 
-        foreach($this->getLogs() as $key => $log) {
+        foreach($this->logs->get() as $key => $log) {
             $hours = round($log->duration / 60, 3);
             $totalHours += $hours;
 
@@ -62,20 +71,5 @@ class Report
         $report['total_hours'] = round($totalHours, 3);
 
         return $report;
-    }
-
-    /**
-     * @return Collection
-     */
-    private function getLogs(): Collection
-    {
-        $teamId = Auth::user()->team_id;
-        /** @var Builder $logs */
-        $logs = TimeLog::whereBetween('created_at', [$this->range->start(), $this->range->end()]);
-        $logs->whereHas('user', function ($query) use ($teamId) {
-            $query->where('team_id', $teamId);
-        });
-
-        return $logs->get();
     }
 }
