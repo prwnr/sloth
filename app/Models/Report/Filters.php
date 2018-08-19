@@ -80,7 +80,10 @@ class Filters
      */
     public function clients(Builder $builder): void
     {
-        $builder->whereIn('client_id', $this->options['clients'] ?? []);
+        $clients = $this->options['clients'] ?? [];
+        $builder->whereHas('project', function ($query) use ($clients) {
+            $query->whereIn('client_id', $clients);
+        });
     }
 
     /**
@@ -94,15 +97,14 @@ class Filters
         }
 
         $builder->where(function ($query) use ($billable) {
-            if (\count($billable) === 1 && !\in_array(0, $billable, true)) {
+            if (\in_array(1, $billable, true)) {
                 $query->whereNull('task_id');
             }
 
             $query->orWhereHas('task', function ($query) use ($billable) {
-                    $query->whereIn('billable', $billable);
-                });
+                $query->whereIn('billable', $billable);
+            });
         });
-
     }
 
     /**
