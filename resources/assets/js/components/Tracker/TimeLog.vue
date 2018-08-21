@@ -177,15 +177,24 @@
              * Start tracking time from current 'startTime' value
              */
             track() {
+                this.updateWorkedTime();
+
                 setInterval(() => {
                     if (!this.startTime) {
                         return;
                     }
 
-                    let start = moment(this.startTime);
-                    this.workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.duration);
+                    this.updateWorkedTime();
                 }, 1000);
             },
+
+            /**
+             * Updates worked time with a diff from moment
+             */
+            updateWorkedTime() {
+                let start = moment(this.startTime);
+                this.workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.duration);
+            }
         }
     }
 </script>
