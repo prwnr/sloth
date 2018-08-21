@@ -1,7 +1,7 @@
 <template>
     <div class="mt-4">
         <h5><strong>Tasks</strong></h5>             
-        <table class="table-striped table mt-2">
+        <table class="table table mt-2">
             <thead>
             <tr>
                 <th>Name</th>

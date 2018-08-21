@@ -18,11 +18,11 @@
             </form>
         </div>
     </div>
-    <div class="card card mb-3 mt-3">
+    <div class="card card-table">
         <div class="card-header">
             <i class="fa fa-table"></i> Members
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <datatable
                 :columns="columns"
                 :data="itemsData"
@@ -47,8 +47,10 @@
                     name: this.team.name
                 }),
                 columns: [
-                    {title: '#', field: 'id', sortable: true, colStyle: 'width: 50px;'},
+                    {title: '#', field: 'id', sortable: true, colStyle: 'width: 70px;'},
                     {title: 'Name', field: 'fullname', sortable: true },
+                    {title: 'Email', field: 'email', sortable: true },
+                    {title: 'Active?', field: 'active', sortable: true },
                 ],
                 query: {sort: 'id', order: 'asc'},
             }
@@ -76,7 +78,9 @@
                 axios.get('/api/members').then(response => {
                     this.items = response.data.data;
                     this.items.map(item => {
-                        return item.fullname = item.user.fullname;
+                        item.fullname = item.user.fullname;
+                        item.email = item.user.email;
+                        return item;
                     });
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -100,3 +104,9 @@
         }
     }
 </script>
+
+<style scoped>
+    .card-table {
+        margin-bottom: 1rem !important;
+    }
+</style>
