@@ -6,14 +6,14 @@
         <ul class="dropdown-menu dropdown-menu-right dropdown-filters" x-placement="top-start">
             <form id="filters" class="px-4 py-3">
                 <div class="row">
-                    <div class="form-group col-6">
+                    <div v-if="!disabled('members')" class="form-group" :class="[disabled('clients') ? 'col-12' : 'col-6']">
                         <label>Members</label>
                         <Select2 v-model="applied.members"
                                  :options="membersOptions"
                                  :settings="{ multiple: true }"
                         ></Select2>
                     </div>
-                    <div class="form-group col-6">
+                    <div v-if="!disabled('clients')" class="form-group" :class="[disabled('members') ? 'col-12' : 'col-6']">
                         <label>Clients</label>
                         <Select2 v-model="applied.clients"
                                  :options="clientsOptions"
@@ -21,14 +21,14 @@
                         ></Select2>
                     </div>
                 </div>
-                <div class="form-group">
+                <div v-if="!disabled('projects')" class="form-group">
                     <label>Projects</label>
                     <Select2 v-model="applied.projects"
                              :options="projectsOptions"
                              :settings="{ multiple: true }"
                     ></Select2>
                 </div>
-                <div class="form-group">
+                <div v-if="!disabled('billable')" class="form-group">
                     <label>Bilable?</label>
                     <div class="form-check">
                         <input type="checkbox" v-model="applied.billable" :disabled="shouldDisableBillabe('yes')" value="yes" class="form-check-input" id="billableCheck">
@@ -55,6 +55,17 @@
 
 <script>
     export default {
+        props: {
+            disableFilters: {
+                type: Array,
+                default: []
+            },
+            limitMember: {
+                type: Number,
+                default: 0
+            }
+        },
+
         data() {
             return {
                 members: [],
@@ -66,7 +77,7 @@
                     clients: [],
                     projects: [],
                     billable: ['yes', 'no']
-                }
+                },
             }
         },
 
@@ -111,6 +122,8 @@
              */
             apply() {
                 $('.filters .dropdown-toggle').click();
+
+                this.checkMemberLimit();
                 this.$emit('applied', this.applied);
             },
 
@@ -125,7 +138,17 @@
                     billable: this.billable
                 };
 
+                this.checkMemberLimit();
                 this.$emit('applied', this.applied);
+            },
+
+            /**
+             * Checks and sets filters withg member limit
+             */
+            checkMemberLimit() {
+                if (this.limitMember) {
+                    this.applied.members = [this.limitMember];
+                }
             },
 
             /**
@@ -134,6 +157,17 @@
              */
             shouldDisableBillabe(value) {
                 return this.applied.billable.length == 1 && this.applied.billable.includes(value);
+            },
+
+            /**
+             * Check if specific filter should be disabled
+             */
+            disabled(filter) {
+                if (this.disableFilters.includes(filter)) {
+                    return true;
+                }
+
+                return false;
             },
 
             /**

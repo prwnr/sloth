@@ -1,43 +1,32 @@
 <template>
-    <div class="content">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-10">
-                        <h1>Reports</h1>
-                    </div>
+    <section class="content">
+        <div class="card card-table">
+            <div class="card-header">
+                <h3 class="d-inline">My report</h3>
+                <div class="card-tools">
+                    <filters class="mr-2" :limit-member="$user.get('id')" :disable-filters="['members']" @applied="applyFilters"></filters>
+                    <date-range @rangeChange="applyRangeFilter"></date-range>
                 </div>
             </div>
-        </section>
-        <section class="content">
-            <div class="card card-table">
-                <div class="card-header">
-                    <h3 class="d-inline">Detailed reports</h3>
-                    <div class="card-tools">
-                        <filters class="mr-2" @applied="applyFilters"></filters>
-                        <date-range @rangeChange="applyRangeFilter"></date-range>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <loading v-if="loading"></loading>
+            <div class="card-body p-0">
+                <loading v-if="loading"></loading>
 
-                    <datatable
-                            v-if="!loading"
-                            :columns="columns"
-                            :data="itemsData"
-                            :total="items.length"
-                            :query="query"
-                            :HeaderSettings="false"
-                            :Pagination="false"
-                    />
+                <datatable
+                        v-if="!loading"
+                        :columns="columns"
+                        :data="itemsData"
+                        :total="items.length"
+                        :query="query"
+                        :HeaderSettings="false"
+                        :Pagination="false"
+                />
 
-                    <div class="col-lg-12 text-right p-3">
-                        <span class="text-bold">Total hours: </span> {{ totalHours }}
-                    </div>
+                <div class="col-lg-12 text-right p-3">
+                    <span class="text-bold">Total hours: </span> {{ totalHours }}
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
 </template>
 
 <script>
@@ -56,7 +45,7 @@
                 items: [],
                 filters: {
                     range: 'week',
-                    members: [],
+                    members: [this.$user.get('id')],
                     clients: [],
                     projects: [],
                     billable: []
@@ -83,7 +72,7 @@
         computed: {
             itemsData: function () {
                 if (this.query.sort) {
-                    this.items = _.orderBy(this.items, this.query.sort, this.query.order)
+                    this.items = _.orderBy(this.items, this.query.sort, this.query.order);
                 }
 
                 return this.items;
@@ -106,8 +95,8 @@
              * @param range
              */
             applyRangeFilter(range) {
-                  this.filters.range = range;
-                  this.fetchData();
+                this.filters.range = range;
+                this.fetchData();
             },
 
             /**

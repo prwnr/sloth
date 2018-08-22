@@ -35,18 +35,20 @@
                     <div class="card">
                         <div class="card-header p-2">
                             <ul class="nav nav-pills">
-                                <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Activity</a>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a>
-                                </li>
+                                <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Activity</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#reports" data-toggle="tab">My reports</a></li>
                                 <li v-if="$user.hasRole('admin')" class="nav-item">
                                     <a class="nav-link" href="#team" data-toggle="tab">My team</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
                             </ul>
                         </div>
                         <div class="card-body">
                             <div class="tab-content">
                                 <div class="tab-pane active" id="activity">
                                     <activity></activity>
+                                </div>
+                                <div class="tab-pane" id="reports">
+                                    <reports></reports>
                                 </div>
                                 <div class="tab-pane" id="settings">
                                     <settings @userUpdated="updateUser" :user="user.data"></settings>
@@ -66,6 +68,7 @@
 <script>
     import Team from './../components/Profile/Team.vue';
     import Settings from './../components/Profile/Settings.vue';
+    import Reports from './../components/Profile/Reports.vue';
     import Activity from './../components/Profile/Activity.vue';
     import User from "../models/User";
 
@@ -73,6 +76,7 @@
         components: {
             Team,
             Settings,
+            Reports,
             Activity
         },
 
