@@ -59,10 +59,6 @@
             disableFilters: {
                 type: Array,
                 default: []
-            },
-            limitMember: {
-                type: Number,
-                default: 0
             }
         },
 
@@ -123,7 +119,6 @@
             apply() {
                 $('.filters .dropdown-toggle').click();
 
-                this.checkMemberLimit();
                 this.$emit('applied', this.applied);
             },
 
@@ -138,17 +133,7 @@
                     billable: this.billable
                 };
 
-                this.checkMemberLimit();
                 this.$emit('applied', this.applied);
-            },
-
-            /**
-             * Checks and sets filters withg member limit
-             */
-            checkMemberLimit() {
-                if (this.limitMember) {
-                    this.applied.members = [this.limitMember];
-                }
             },
 
             /**

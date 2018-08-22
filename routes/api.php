@@ -46,6 +46,7 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
 
     //Report routes
     Route::post('reports', 'ReportController@index')->middleware('permission:view_reports');
+    Route::post('reports/{user}', 'ReportController@show');
 
     Route::apiResource('tasks', 'TaskController')->only('index')->middleware('team:project');
 

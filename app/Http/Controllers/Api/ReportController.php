@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Date\CustomRange;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,12 +22,31 @@ class ReportController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $options = $request->input('filters');
+        return response()->json($this->createReport($request->input('filters')));
+    }
 
+    /**
+     * @param Request $request
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function show(Request $request, User $user): JsonResponse
+    {
+        $options = $request->input('filters');
+        $options['members'] = [$user->id];
+
+        return response()->json($this->createReport($options));
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     */
+    private function createReport(array $options): array
+    {
         $filters = new Report\Filters($options);
         $report = new Report();
         $report->apply($filters);
-
-        return response()->json($report->generate());
+        return $report->generate();
     }
 }

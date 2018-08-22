@@ -35,26 +35,26 @@
                     <div class="card">
                         <div class="card-header p-2">
                             <ul class="nav nav-pills">
-                                <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Activity</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#reports" data-toggle="tab">My reports</a></li>
+                                <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab" @click="toggleTab">Activity</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#reports" data-toggle="tab" @click="toggleTab">My reports</a></li>
                                 <li v-if="$user.hasRole('admin')" class="nav-item">
-                                    <a class="nav-link" href="#team" data-toggle="tab">My team</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
+                                    <a class="nav-link" href="#team" data-toggle="tab" @click="toggleTab">My team</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab" @click="toggleTab">Settings</a></li>
                             </ul>
                         </div>
                         <div class="card-body">
                             <div class="tab-content">
                                 <div class="tab-pane active" id="activity">
-                                    <activity></activity>
+                                    <activity v-if="activeTab == 'activity'"></activity>
                                 </div>
                                 <div class="tab-pane" id="reports">
-                                    <reports></reports>
+                                    <reports v-if="activeTab == 'reports'"></reports>
                                 </div>
                                 <div class="tab-pane" id="settings">
-                                    <settings @userUpdated="updateUser" :user="user.data"></settings>
+                                    <settings v-if="activeTab == 'settings'" @userUpdated="updateUser" :user="user.data"></settings>
                                 </div>
                                 <div v-if="$user.hasRole('admin')" class="tab-pane" id="team">
-                                    <team @teamUpdated="updateTeam" :team="user.team"></team>
+                                    <team v-if="activeTab == 'team'" @teamUpdated="updateTeam" :team="user.team"></team>
                                 </div>
                             </div>
                         </div>
@@ -83,6 +83,7 @@
         data() {
             return {
                 loading: false,
+                activeTab: 'activity',
                 user: {
                     data: {},
                     roles: [],
@@ -136,6 +137,16 @@
                 if (team.name != this.user.team.name) {
                     this.user.team.name = team.name;
                 }
+            },
+
+            /**
+             * Sets activeTab to currently toggled tab
+             */
+            toggleTab(e) {
+                let name = e.currentTarget.getAttribute('href');
+                name = name.substr(1);
+
+                this.activeTab = name;
             }
         }
     }

@@ -4,7 +4,7 @@
             <div class="card-header">
                 <h3 class="d-inline">My report</h3>
                 <div class="card-tools">
-                    <filters class="mr-2" :limit-member="$user.get('id')" :disable-filters="['members']" @applied="applyFilters"></filters>
+                    <filters class="mr-2" :disable-filters="['members']" @applied="applyFilters"></filters>
                     <date-range @rangeChange="applyRangeFilter"></date-range>
                 </div>
             </div>
@@ -104,7 +104,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.post('/api/reports', {
+                axios.post('/api/reports/' + this.$user.get('id'), {
                     filters: this.filters
                 }).then(response => {
                     this.items = response.data.items;
