@@ -58,7 +58,7 @@
         props: {
             disableFilters: {
                 type: Array,
-                default: []
+                default: () => []
             }
         },
 

@@ -20,20 +20,7 @@
                 </div>
                 <div class="card-body p-0">
                     <loading v-if="loading"></loading>
-
-                    <datatable
-                            v-if="!loading"
-                            :columns="columns"
-                            :data="itemsData"
-                            :total="items.length"
-                            :query="query"
-                            :HeaderSettings="false"
-                            :Pagination="false"
-                    />
-
-                    <div class="col-lg-12 text-right p-3">
-                        <span class="text-bold">Total hours: </span> {{ totalHours }}
-                    </div>
+                    <report v-if="!loading" :data="reportData"></report>
                 </div>
             </div>
         </section>
@@ -41,53 +28,31 @@
 </template>
 
 <script>
-    import StatusBar from '../../components/DataTable/Status';
+    import Report from '../../components/DataTable/Report';
     import Filters from '../../components/Report/Filters';
     import DateRange from '../../components/Report/DateRange';
 
     export default {
         components: {
-            DateRange, Filters
+            DateRange, Filters, Report
         },
 
         data() {
             return {
                 loading: true,
-                items: [],
+                reportData: null,
                 filters: {
                     range: 'week',
                     members: [],
                     clients: [],
                     projects: [],
                     billable: []
-                },
-                totalHours: 0,
-                columns: [
-                    {title: 'Member', field: 'user_name', sortable: true},
-                    {title: 'Client', field: 'client', sortable: true},
-                    {title: 'Project', field: 'project', sortable: true},
-                    {title: 'Task', field: 'task', sortable: true},
-                    {title: 'Date', field: 'date', sortable: true},
-                    {title: 'Hours', field: 'hours', sortable: true},
-                    {title: 'Is billable?', field: 'billable', sortable: true},
-                    {title: 'Status', field: 'in_progress', sortable: true, tdComp: StatusBar},
-                ],
-                query: {sort: 'date', order: 'desc'},
+                }
             }
         },
 
         created() {
             this.fetchData();
-        },
-
-        computed: {
-            itemsData: function () {
-                if (this.query.sort) {
-                    this.items = _.orderBy(this.items, this.query.sort, this.query.order)
-                }
-
-                return this.items;
-            }
         },
 
         methods: {
@@ -118,8 +83,7 @@
                 axios.post('/api/reports', {
                     filters: this.filters
                 }).then(response => {
-                    this.items = response.data.items;
-                    this.totalHours = response.data.total_hours;
+                    this.reportData = response.data;
                     this.loading = false;
                 }).catch(error => {
                     this.$awn.alert(error.message);
