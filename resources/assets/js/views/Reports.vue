@@ -16,6 +16,10 @@
                     <div class="card-tools">
                         <filters class="mr-2" @applied="applyFilters"></filters>
                         <date-range @rangeChange="applyRangeFilter"></date-range>
+                        <button class="btn btn-default ml-2" type="button"
+                                @click="fetchData">
+                            <i class="fa fa-refresh" :class="{ 'fa-spin' : loading }"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -28,9 +32,9 @@
 </template>
 
 <script>
-    import Report from '../../components/DataTable/Report';
-    import Filters from '../../components/Report/Filters';
-    import DateRange from '../../components/Report/DateRange';
+    import Report from '../components/DataTable/Report';
+    import Filters from '../components/Report/Filters';
+    import DateRange from '../components/Report/DateRange';
 
     export default {
         components: {
@@ -84,7 +88,6 @@
                     filters: this.filters
                 }).then(response => {
                     this.reportData = response.data;
-                    this.loading = false;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 }).finally(() => {

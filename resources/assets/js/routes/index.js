@@ -24,7 +24,7 @@ import ClientsEdit from '../views/Clients/Edit.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Tracker from '../views/Tracker.vue';
 import Profile from '../views/Profile.vue';
-import Reports from '../views/Reports/Index.vue';
+import Reports from '../views/Reports.vue';
 
 Vue.use(VueRouter);
 
