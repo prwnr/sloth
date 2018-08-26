@@ -45,15 +45,18 @@ class Report
         $report = [];
         $items = [];
         $totalHours = 0;
+        $totalBillableHours = 0;
+        $salaryTotals = [];
 
+        /**
+         * @var int $key
+         * @var TimeLog $log
+         */
         foreach($this->logs->get() as $key => $log) {
-            $hours = round($log->duration / 60, 3);
-            $totalHours += $hours;
-
-            $billable = 'No';
-            if (!$log->task || ($log->task && $log->task->billable)) {
-                $billable = 'Yes';
-            }
+            $rowHours = $log->hours();
+            $totalHours += $rowHours;
+            $totalBillableHours += $log->isBillabe() ? $log->hours() : 0.0;
+            $this->sumSalary($log, $salaryTotals);
 
             $items[] = [
                 'user_name' => $log->user->fullname,
@@ -61,15 +64,34 @@ class Report
                 'project' => $log->project->name,
                 'task' => $log->task ? $log->task->name : 'none',
                 'date' => $log->created_at->format('Y-m-d'),
-                'hours' => $hours,
-                'billable' => $billable,
+                'rowHours' => $rowHours,
+                'billable' => $log->isBillabe() ? 'Yes' : 'No',
                 'in_progress' => (bool)$log->start,
             ];
         }
 
         $report['items'] = $items;
-        $report['total_hours'] = round($totalHours, 3);
+        $report['totals'] = [
+            'hours' => round($totalHours, 3),
+            'billable_hours' => round($totalBillableHours, 3),
+            'salary' => $salaryTotals
+        ];
 
         return $report;
+    }
+
+    /**
+     * @param TimeLog $log
+     * @param array $salaryTotals
+     */
+    private function sumSalary(TimeLog $log, array &$salaryTotals): void
+    {
+        $currencyCode = $log->currency()->code;
+        if (isset($salaryTotals[$currencyCode])) {
+            $salaryTotals[$currencyCode] += $log->salary();
+            return;
+        }
+
+        $salaryTotals[$currencyCode] = $log->salary();
     }
 }

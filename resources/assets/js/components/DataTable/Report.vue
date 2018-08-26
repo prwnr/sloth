@@ -9,8 +9,19 @@
                 :Pagination="pagination"
         />
 
-        <div class="col-lg-12 text-right p-3">
-            <span class="text-bold">Total hours: </span> {{ totalHours }}
+        <div class="col-lg-12 text-left p-3">
+            <span class="pr-2">
+                <span class="text-bold">Total hours: </span> {{ totals.hours }}
+            </span>
+            <span class="pr-2">
+                <span class="text-bold">Total billable hours: </span> {{ totals.billable_hours }}
+            </span>
+            <div v-if="showSalary">
+                <div class="text-bold">Total salary: <span v-if="totals.salary.length == 0">none</span></div>
+                <span v-if="totals.salary" v-for="(total, currency) in totals.salary" :key="currency">
+                    <strong class="pl-1">{{ currency }}</strong>: {{ total }};
+                </span>
+            </div>
         </div>
     </div>
 </template>
@@ -24,6 +35,10 @@
         },
 
         props: {
+            showSalary: {
+                type: Boolean,
+                default: true
+            },
             columns: {
                 type: Array,
                 default: () => [
@@ -66,7 +81,7 @@
         data() {
             return {
                 items: this.data.items,
-                totalHours: this.data.total_hours,
+                totals: this.data.totals,
             }
         },
 

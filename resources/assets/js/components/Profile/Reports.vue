@@ -12,7 +12,7 @@
                 <loading v-if="loading"></loading>
 
                 <loading v-if="loading"></loading>
-                <report v-if="!loading" :data="reportData"></report>
+                <report v-if="!loading" :show-salary="false" :data="reportData"></report>
             </div>
         </div>
     </section>
