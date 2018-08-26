@@ -28,5 +28,10 @@
     "name": "manage_roles",
     "display_name": "Manage roles",
     "description": "Allows user to create, edit and delete roles"
+  },
+  {
+    "name": "edit_time",
+    "display_name": "Edit time",
+    "description": "Allows user to edit his time logs"
   }
 ]

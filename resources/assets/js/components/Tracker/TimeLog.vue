@@ -30,7 +30,7 @@
                     <button v-if="!startTime && editing" class="btn btn-primary btn-flat" @click="update" title="Update">
                         <i class="fa fa-check"></i>
                     </button>
-                    <button v-if="!startTime" class="btn btn-default btn-flat"
+                    <button v-if="!startTime" :disabled="!editing && !$user.can('edit_time')" class="btn btn-default btn-flat"
                             :title="editTitle"
                             @click="editing = !editing">
                         <i v-if="!editing" class="fa fa-edit" title="Edit"></i>

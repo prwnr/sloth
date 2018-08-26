@@ -10,7 +10,7 @@
     "display_name": "Manager",
     "description": "Project manager role",
     "permissions": [
-      "track_time", "manage_projects",  "manage_clients", "view_reports"
+      "track_time", "manage_projects",  "manage_clients", "view_reports", "edit_time"
     ]
   },
   {
@@ -18,7 +18,7 @@
     "display_name": "Programmer",
     "description": "Programmer role",
     "permissions": [
-      "track_time"
+      "track_time", "edit_time"
     ]
   }
 ]
