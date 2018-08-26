@@ -174,7 +174,7 @@ class MemberController extends Controller
         }
 
         return response()->json([
-            'message' => __('Something went wrong and role could not be deleted. It may not exists, please try again')
+            'message' => __('Something went wrong and member could not be deleted. It may not exists, please try again')
         ], Response::HTTP_BAD_REQUEST);
     }
 }

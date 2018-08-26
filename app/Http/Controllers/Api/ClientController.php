@@ -117,7 +117,7 @@ class ClientController extends Controller
         } catch (\Exception $ex) {
             DB::rollBack();
             report($ex);
-            return response()->json(['message' => __('Failed to update role. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => __('Failed to update client. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
         return (new ClientResource($client))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -143,7 +143,7 @@ class ClientController extends Controller
         }
 
         return response()->json([
-            'message' => __('Something went wrong and project could not be deleted. It may not exists, please try again')
+            'message' => __('Something went wrong and client could not be deleted. It may not exists, please try again')
         ], Response::HTTP_BAD_REQUEST);
     }
 }

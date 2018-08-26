@@ -125,7 +125,7 @@ class ProjectController extends Controller
         } catch (\Exception $ex) {
             DB::rollBack();
             report($ex);
-            return response()->json(['message' => __('Something went wrong when creating new role. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => __('Something went wrong when updating project. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
         return (new ProjectResource($project))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -224,7 +224,7 @@ class ProjectController extends Controller
                 $currency = $task['currency'] === 0 ? $data['billing_currency'] : $task['currency'];
             }
 
-            $data = [
+            $taskData = [
                 'type' => $task['type'],
                 'name' => $task['name'],
                 'billable' => (bool)$task['billable'],
@@ -236,11 +236,11 @@ class ProjectController extends Controller
             $taskId = $task['id'] ?? 0;
             $taskModel = $project->tasks()->find($taskId);
             if ($taskModel && $taskModel->id) {
-                $taskModel->update($data);
+                $taskModel->update($taskData);
                 continue;
             }
 
-            $project->tasks()->create($data);
+            $project->tasks()->create($taskData);
         }
     }
 }

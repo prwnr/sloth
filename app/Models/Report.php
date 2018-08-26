@@ -70,6 +70,10 @@ class Report
             ];
         }
 
+        foreach($salaryTotals as $currency => $salary) {
+            $salaryTotals[$currency] = round($salary, 2);
+        }
+
         $report['items'] = $items;
         $report['totals'] = [
             'hours' => round($totalHours, 3),
