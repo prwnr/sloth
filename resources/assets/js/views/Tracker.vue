@@ -145,7 +145,7 @@
             deleteLog(logId) {
                 axios.delete('/api/time/' + logId).then(response => {
                     this.timeLogs = this.timeLogs.filter(item => item.id !== logId);
-
+                    EventHub.fire('log_deleted', logId);
                     this.$awn.success('Log succesfully deleted.');
                 }).catch(error => {
                     this.$awn.alert(error.message);

@@ -141,6 +141,7 @@
                         this.$emit('logAdded', response.data);
                     }
 
+                    EventHub.fire('log_created', response.data);
                     this.form.reset();
                     this.form.created_at = created_at;
                     this.form.user = this.$user.data.id;

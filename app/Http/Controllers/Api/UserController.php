@@ -36,14 +36,24 @@ class UserController extends Controller
      */
     public function timeLogs(Request $request, User $user)
     {
+        $logs = $user->logs();
+
         try {
             $date = $request->get('date');
-            $dateFilter = $this->getDateFilter($date);
+            if ($date) {
+                $dateFilter = $this->getDateFilter($date);
+                $logs->whereDate('created_at', $dateFilter);
+            }
         } catch (\Exception $ex) {
             return response()->json(['error' => 'Date format is invalid'], Response::HTTP_BAD_REQUEST);
         }
 
-        $logs = $user->logs()->whereDate('created_at', $dateFilter)->get();
+        $active = $request->get('active');
+        if ($active) {
+            $logs->whereNotNull('start');
+        }
+
+        $logs = $logs->get();
         $logs->loadMissing('project', 'task');
         return new TimeLogResource($logs);
     }

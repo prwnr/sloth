@@ -107,6 +107,7 @@
                     time: 'start'
                 }).then(response => {
                     this.startTime = response.data.data.start.date;
+                    EventHub.fire('log_updated', this.time);
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
@@ -123,6 +124,8 @@
                 axios.put('/api/time/' + this.time.id + '/duration', {
                     duration: this.time.duration,
                     time: 'stop'
+                }).then(response => {
+                    EventHub.fire('log_updated', this.time);
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });

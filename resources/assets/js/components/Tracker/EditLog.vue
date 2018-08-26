@@ -113,6 +113,7 @@
 
                     if (this.day !== this.form.created_at) {
                         this.$emit('dateChanged');
+                        EventHub.fire('log_updated', this.time);
                     }
 
                     this.$awn.success('Log successfully updated');
