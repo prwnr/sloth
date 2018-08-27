@@ -196,7 +196,12 @@
              */
             updateWorkedTime() {
                 let start = moment(this.startTime);
-                this.workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.duration);
+                let workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.duration);
+                if (!workedTime) {
+                    this.workedTime = 0;
+                    return;
+                }
+                this.workedTime = workedTime;
             }
         }
     }
