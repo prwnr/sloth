@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Team\Member;
-use App\Models\Team\TeamRelatedTrait;
+use App\Models\Team\Teamed;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
@@ -18,7 +18,7 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
  */
 class User extends Authenticatable
 {
-    use Notifiable, EntrustUserTrait, TeamRelatedTrait, HasApiTokens;
+    use Notifiable, EntrustUserTrait, Teamed, HasApiTokens;
 
     /**
      * Light user skin

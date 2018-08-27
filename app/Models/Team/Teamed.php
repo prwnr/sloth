@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Trait TeamRelatedTrait
+ * Trait Teamed
  * @package App\Models\Team
  */
-trait TeamRelatedTrait
+trait Teamed
 {
 
     /**

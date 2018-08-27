@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Member extends Model
 {
-    use TeamRelatedTrait;
+    use Teamed;
 
     /**
      * @var array

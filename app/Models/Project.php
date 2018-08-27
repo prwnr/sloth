@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Team\Member;
-use App\Models\Team\TeamRelatedTrait;
+use App\Models\Team\Teamed;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Project extends Model
 {
-    use TeamRelatedTrait;
+    use Teamed;
 
     public const MAX_BILLING_RATE = 999999.99;
 

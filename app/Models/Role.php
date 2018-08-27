@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Team\TeamRelatedTrait;
+use App\Models\Team\Teamed;
 use Illuminate\Support\Collection;
 use Zizaco\Entrust\EntrustRole;
 
@@ -13,7 +13,7 @@ use Zizaco\Entrust\EntrustRole;
 class Role extends EntrustRole
 {
 
-    use TeamRelatedTrait;
+    use Teamed;
 
     public const ADMIN = 'admin';
     public const MANAGER = 'manager';

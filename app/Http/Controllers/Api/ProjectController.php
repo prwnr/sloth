@@ -234,13 +234,7 @@ class ProjectController extends Controller
             ];
 
             $taskId = $task['id'] ?? 0;
-            $taskModel = $project->tasks()->find($taskId);
-            if ($taskModel && $taskModel->id) {
-                $taskModel->update($taskData);
-                continue;
-            }
-
-            $project->tasks()->create($taskData);
+            $project->tasks()->updateOrCreate(['id' => $taskId], $taskData);
         }
     }
 }
