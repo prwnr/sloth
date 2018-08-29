@@ -67,6 +67,7 @@
                     }
                 }).then(response => {
                     this.logs = response.data.data;
+                    EventHub.fire('sidebar_logs_loaded', this.logs);
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
