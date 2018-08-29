@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ProjectRequest;
-use App\Models\{Team, Client, Project};
+use App\Models\{Report\Filters, Report\ProjectReport, Team, Client, Project};
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -89,6 +89,13 @@ class ProjectController extends Controller
     {
         $project->loadMissing('members', 'client', 'billing', 'tasks', 'budgetCurrency', 'tasks.currency', 'billing.currency');
         $projectResource = new ProjectResource($project);
+
+        $report = new ProjectReport();
+        $filters = new Filters(['projects' => [$project->id]]);
+        $report->apply($filters);
+        $projectResource->additional([
+            'report' => $report->generate()
+        ]);
         return $projectResource;
     }
 
@@ -143,8 +150,8 @@ class ProjectController extends Controller
         try {
             $project->members()->sync([]);
             if ($project->delete()) {
-                DB::commit();                
-                return response()->json(null, Response::HTTP_NO_CONTENT);   
+                DB::commit();
+                return response()->json(null, Response::HTTP_NO_CONTENT);
             }
         } catch (\Exception $ex) {
             DB::rollBack();

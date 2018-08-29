@@ -31,7 +31,6 @@ class Filters
     public function __construct(array $options = [])
     {
         $this->options = $options;
-        $this->initRange();
     }
 
     /**
@@ -54,6 +53,7 @@ class Filters
      */
     public function range(Builder $builder): void
     {
+        $this->initRange();
         $builder->whereBetween('created_at', [
             $this->range->start(), $this->range->end()
         ]);

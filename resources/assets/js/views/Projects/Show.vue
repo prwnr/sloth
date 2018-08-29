@@ -51,25 +51,25 @@
                         </div>
                     </div>
 
-                    <div class="card card mb-3 mt-3" :class="{ 'border-bottom-0': project.members.length > 0}">
-                        <card-header>Assigned members</card-header>
-                        <div class="card-body" :class="{ 'p-0': project.members.length > 0}">
-                            <ul v-if="project.members.length > 0" class="list-group">
-                                <router-link
-                                        v-for="(member, index) in project.members"
-                                        :key="member.id"
-                                        :to="{ name: 'members.show', params: { id: member.id } }"
-                                        class="list-group-item border-right-0 border-left-0"
-                                        :class="{ 'border-top-0': index === 0}">
-                                    {{ member.user.fullname }}
-                                </router-link>
-                            </ul>
-                            <span v-else>No members assigned</span>
-                        </div>
-                    </div>
+                    <report-view v-if="projectReport" :data="projectReport" :budget="project.budget"></report-view>
+
                 </div>
 
                 <div class="col-lg-6">
+                    <div class="card mb-3">
+                        <card-header>Assigned members</card-header>
+                        <ul v-if="project.members.length > 0" class="list-group list-group-flush">
+                            <router-link
+                                    v-for="member in project.members"
+                                    :key="member.id"
+                                    :to="{ name: 'members.show', params: { id: member.id } }"
+                                    class="list-group-item">
+                                {{ member.user.fullname }}
+                            </router-link>
+                        </ul>
+                        <span v-else>No members assigned</span>
+                    </div>
+
                     <div class="card mb-3">
                         <card-header>Billings</card-header>
                         <div class="card-body">
@@ -90,11 +90,13 @@
 <script>
     import BillingsShow from '../../components/Billings/Show.vue';
     import TasksShow from '../../components/Tasks/Show.vue';
+    import ReportView from '../../components/Report/ReportView.vue';
 
     export default {
         components: {
             BillingsShow,
-            TasksShow
+            TasksShow,
+            ReportView
         },
         data() {
             return {
@@ -102,7 +104,8 @@
                     members: [],
                     client: {},
                     tasks: []
-                }
+                },
+                projectReport: null
             }
         },
 
@@ -116,7 +119,8 @@
              */
             fetchData() {
                 axios.get('/api/projects/' + this.$route.params.id).then(response => {
-                    this.project = response.data.data
+                    this.project = response.data.data;
+                    this.projectReport = response.data.report;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
