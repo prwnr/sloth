@@ -47,7 +47,7 @@ class OveralReport extends Report
                 'project' => $log->project->name,
                 'task' => $log->task ? $log->task->name : 'none',
                 'date' => $log->created_at->format('Y-m-d'),
-                'rowHours' => $rowHours,
+                'duration' => $rowHours,
                 'billable' => $log->isBillabe() ? 'Yes' : 'No',
                 'in_progress' => (bool)$log->start,
             ];

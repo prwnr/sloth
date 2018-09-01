@@ -24,9 +24,17 @@
                 this.logs = logs.length;
             },
             increment(log) {
+                if (!log.start) {
+                    return;
+                }
+
                 this.logs++;
             },
             decrement(log) {
+                if (this.logs == 0) {
+                    return;
+                }
+
                 this.logs--;
             }
         }
