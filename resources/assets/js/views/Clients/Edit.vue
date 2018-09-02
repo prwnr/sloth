@@ -131,8 +131,6 @@
                     </div>
                 </div>
             </form>
-
-            <back-button></back-button>
         </section>
     </div>
 </template>

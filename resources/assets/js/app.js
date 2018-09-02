@@ -24,7 +24,6 @@ Vue.use(VueSweetalert2);
 Vue.use(VueMask);
 
 Vue.component('auth-user', require('./components/AuthUser.vue'));
-Vue.component('back-button', require('./components/BackButton.vue'));
 Vue.component('form-error', require('./components/FormError.vue'));
 Vue.component('loading', require('./components/Loading.vue'));
 Vue.component('sidebar', require('./components/Sidebar.vue'));

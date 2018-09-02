@@ -107,7 +107,7 @@
                             </div>
                         </div>
 
-                        <div class="card">
+                        <div class="card mb-foot">
                             <card-header>Billings</card-header>
                             <div class="card-body">
                                 <billings-form v-if="currencies.length > 0 && billingTypes"
@@ -128,8 +128,6 @@
                     </div>
                 </div>
             </form>
-
-            <back-button></back-button>
         </section>
     </div>
 </template>

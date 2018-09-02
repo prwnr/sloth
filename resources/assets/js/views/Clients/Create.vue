@@ -125,8 +125,6 @@
                     </div>
                 </div>
             </form>
-
-            <back-button v-if="!isModal"></back-button>
         </section>
     </div>
 </template>

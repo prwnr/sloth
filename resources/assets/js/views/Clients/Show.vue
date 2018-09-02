@@ -75,8 +75,6 @@
                     </div>
                 </div>
             </div>
-
-            <back-button></back-button>
         </section>
     </div>
 </template>

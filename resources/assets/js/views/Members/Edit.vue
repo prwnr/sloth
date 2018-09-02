@@ -85,7 +85,7 @@
 
             <hr>
             <div class="row">
-                <div class="col-lg-6 mb-3">
+                <div class="col-lg-6 mb-foot">
                     <form @submit.prevent="changePassword" @keydown="formPassword.errors.clear($event.target.name)">
                         <div class="card mt-3">
                             <card-header>Member password</card-header>
@@ -116,8 +116,6 @@
                     </form>
                 </div>
             </div>
-
-            <back-button></back-button>
         </section>
     </div>
 </template>
