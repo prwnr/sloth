@@ -47,7 +47,7 @@
                     {title: 'Project', field: 'project', sortable: true},
                     {title: 'Task', field: 'task', sortable: true},
                     {title: 'Date', field: 'date', sortable: true},
-                    {title: 'Hours', field: 'hours', sortable: true},
+                    {title: 'Hours', field: 'duration', sortable: true},
                     {title: 'Is billable?', field: 'billable', sortable: true},
                     {title: 'Status', field: 'in_progress', sortable: true, tdComp: StatusBar},
                 ],

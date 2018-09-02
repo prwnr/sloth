@@ -46,6 +46,10 @@
              * @param log
              */
             addLog(log) {
+                if (!log.start) {
+                    return;
+                }
+
                 this.logs.push(log);
             },
 
