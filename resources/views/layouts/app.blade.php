@@ -25,7 +25,7 @@
         @include('blocks/sidebar')
 
         <div class="content-wrapper">
-            <router-view></router-view>
+            <router-view :key="$route.fullPath"></router-view>
         </div>
 
         @include('blocks/footer')

@@ -4,7 +4,7 @@
         <hr class="mb-2">
         <span v-if="logs.length == 0">You are too slothful to work on anything right now</span>
         <div class="mb-4" v-for="log in logs" :key="log.id">
-            <h6 class="mb-1">{{ log.created_at | formatDateTo('LL') }}</h6>
+            <h5 class="mb-1">{{ log.created_at | formatDateTo('LL') }}</h5>
             <div>Active since: {{ log.start | formatDateTo('LT') }}</div>
             {{ log.project.name }} <span v-if="log.description">- {{ log.description }}</span>
         </div>

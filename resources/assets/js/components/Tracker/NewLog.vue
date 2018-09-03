@@ -18,7 +18,7 @@
                 <div class="col-6">
                     <div class="form-group">
                         <label for="name">Select day</label>
-                        <date-picker :bootstrap-styling="true" format="yyyy-MM-dd" v-model="form.created_at"></date-picker>
+                        <date-picker :bootstrap-styling="true" format="yyyy-MM-dd" v-model="form.created_at" :monday-first="true"></date-picker>
                     </div>
                 </div>
             </div>

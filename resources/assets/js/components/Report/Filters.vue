@@ -1,5 +1,5 @@
 <template>
-    <div class="mb-2 d-inline filters">
+    <div class="mb-2 d-inline">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             Filters
         </button>

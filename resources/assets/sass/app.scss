@@ -81,6 +81,20 @@ footer.sticky-footer {
   font-family: $font-family-helvetica;
 }
 
+.calendar-icon .btn {
+  white-space: normal !important;
+  padding: 0 !important;
+}
+
+.calendar-icon .fa {
+  @include button-size($btn-padding-y, $btn-padding-x, $font-size-base, $btn-line-height, $btn-border-radius);
+}
+
+.calendar-icon .calendar-content {
+  right: 0 !important;
+  margin-top: 2px;
+}
+
 /*
  * Plugin: Select2
  * ---------------

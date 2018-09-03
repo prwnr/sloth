@@ -25,12 +25,12 @@
                         <div class="row">
                             <div class="form-group col-6">
                                 <label>From</label>
-                                <date-picker :disabled-dates="{ from: disableFrom }" :bootstrap-styling="true" format="yyyy-MM-dd" v-model="custom.start"></date-picker>
+                                <date-picker :disabled-dates="{ from: disableFrom }" :bootstrap-styling="true" format="yyyy-MM-dd" v-model="custom.start" :monday-first="true"></date-picker>
                             </div>
 
                             <div class="form-group col-6">
                                 <label>To</label>
-                                <date-picker :disabled-dates="{ to: disableTo }" :bootstrap-styling="true" format="yyyy-MM-dd" v-model="custom.end"></date-picker>
+                                <date-picker :disabled-dates="{ to: disableTo }" :bootstrap-styling="true" format="yyyy-MM-dd" v-model="custom.end" :monday-first="true"></date-picker>
                             </div>
                         </div>
                     </div>

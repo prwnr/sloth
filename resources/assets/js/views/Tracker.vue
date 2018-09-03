@@ -16,11 +16,28 @@
         <section class="content">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h3 class="text-center d-inline">Logs from: {{ currentDayText }}</h3>
-                    <div class="btn-group pull-right">
-                        <button class="btn btn-default" @click="previous"><i class="fa fa-angle-left"></i></button>
-                        <button class="btn btn-default" @click="reset">today</button>
-                        <button class="btn btn-default" @click="next"><i class="fa fa-angle-right"></i></button>
+                    <h3 class="d-inline">Logs from: {{ currentDayText }}</h3>
+                    <div class="card-tools">
+                        <div class="d-inline ">
+                            <div class="btn-group">
+                                <button class="btn btn-default" @click="previous"><i class="fa fa-angle-left"></i></button>
+                                <button class="btn btn-default" @click="reset">today</button>
+                                <button class="btn btn-default" @click="next"><i class="fa fa-angle-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="d-inline ml-2 calendar-icon">
+                            <date-picker
+                                    @selected="calendarChange"
+                                    wrapper-class="btn btn-default"
+                                    input-class="hide"
+                                    calendar-class="calendar-content"
+                                    :calendar-button="true"
+                                    calendar-button-icon="fa fa-calendar"
+                                    format="yyyy-MM-dd"
+                                    :monday-first="true"
+                                    v-model="calendarDay">
+                            </date-picker>
+                        </div>
                     </div>
                 </div>
                 <div class="p-3" v-if="timeLogs.length == 0">You haven't worked this day. Slothfully</div>
@@ -69,17 +86,20 @@
     import TimeLog from '../components/Tracker/TimeLog.vue';
     import NewLog from '../components/Tracker/NewLog.vue';
     import EditLog from '../components/Tracker/EditLog.vue';
+    import DatePicker from "vuejs-datepicker";
 
     export default {
         components: {
             EditLog,
             TimeLog,
-            NewLog
+            NewLog,
+            DatePicker
         },
 
         data() {
             return {
                 currentDay: '',
+                calendarDay: null,
                 previousDay: '',
                 nextDay: '',
                 today: '',
@@ -90,11 +110,17 @@
         },
 
         created() {
+            this.today = moment().format('YYYY-MM-DD');
             this.currentDay = moment().format('YYYY-MM-DD');
-            this.today = this.currentDay;
             this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
             this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
             this.fetchData();
+        },
+
+        watch: {
+            currentDay: function () {
+                this.calendarDay = this.currentDay;
+            }
         },
 
         computed: {
@@ -109,7 +135,6 @@
              */
             reset() {
                 this.changeDays(this.today);
-                this.fetchTimeLogs();
             },
 
             /**
@@ -117,7 +142,6 @@
              */
             previous() {
                 this.changeDays(this.previousDay);
-                this.fetchTimeLogs();
             },
 
             /**
@@ -125,17 +149,27 @@
              */
             next() {
                 this.changeDays(this.nextDay);
-                this.fetchTimeLogs();
+            },
+
+            /**
+             * Day change via date picker
+             * @param date
+             */
+            calendarChange(date) {
+                let pickedDate = moment(date).format('YYYY-MM-DD');
+                this.changeDays(pickedDate);
             },
 
             /**
              * Change days according to current date filter
+             * @param currentDay
              */
             changeDays(currentDay) {
                 this.currentDay = currentDay;
                 this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
                 this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
                 EventHub.fire('new_current_day', this.currentDay);
+                this.fetchTimeLogs();
             },
 
             /**
