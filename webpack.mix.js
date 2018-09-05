@@ -11,9 +11,9 @@ let mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/assets/js/app.js', 'public/js')
+mix.js('resources/js/app.js', 'public/js')
     .js('node_modules/admin-lte/dist/js/adminlte.js', 'public/js')
-    .sass('resources/assets/sass/app.scss', 'public/css')
+    .sass('resources/sass/app.scss', 'public/css')
     .autoload({
         jquery: ['$', 'window.jQuery', 'jQuery'],
     });
