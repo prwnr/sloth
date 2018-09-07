@@ -7,7 +7,7 @@
                     <span v-if="time.task">- {{ time.task.name }} ({{ time.task.billable_text }})</span>
                     <span class="log-buttons pl-3" v-if="mouseOver">
                     <span><i class="text-info fa fa-edit p-1" @click="editLog" data-toggle="modal" data-target="#editRow"></i></span>
-                    <span><i class="text-danger fa fa-trash p-1"  @click="deleteLog"></i></span>
+                    <span><i class="text-danger fa fa-trash p-1" @click="deleteLog"></i></span>
                 </span>
                 </div>
                 <div class="col-lg-12 mt-1 small p-0">
@@ -55,6 +55,7 @@
 
         data() {
             return {
+                firstTick: true,
                 mouseOver: false,
                 editing: false,
                 startTime: this.time.start,
@@ -106,6 +107,7 @@
                     duration: this.time.duration,
                     time: 'start'
                 }).then(response => {
+                    this.firstTick = true;
                     this.startTime = response.data.data.start.date;
                     EventHub.fire('log_updated', this.time);
                 }).catch(error => {
@@ -117,10 +119,7 @@
              * Stops currently running time
              */
             stop() {
-                let workedSeconds = this.timer.secondsToMinutes(this.workedTime);
-                this.time.duration += workedSeconds - this.time.duration;
-                this.duration = this.timer.format(this.workedTime);
-                this.startTime = null;
+                this.stopCounter();
                 axios.put('/api/time/' + this.time.id + '/duration', {
                     duration: this.time.duration,
                     time: 'stop'
@@ -129,6 +128,13 @@
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
+            },
+
+            stopCounter() {
+                let workedSeconds = this.timer.secondsToMinutes(this.workedTime);
+                this.time.duration += workedSeconds - this.time.duration;
+                this.duration = this.timer.format(this.workedTime);
+                this.startTime = null;
             },
 
             /**
@@ -140,9 +146,11 @@
                 axios.put('/api/time/' + this.time.id + '/duration', {
                     duration: newDuration,
                 }).then(response => {
+                    let timeDiff = this.timer.secondsToMinutes(seconds) - this.timer.secondsToMinutes(this.workedTime);
                     this.editing = false;
                     this.workedTime = seconds;
                     this.time.duration = newDuration;
+                    this.$emit('workedTimeChanged', timeDiff);
                     this.$awn.success('Time log successfully updated');
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -171,6 +179,9 @@
                     reverseButtons: true
                 }).then(result => {
                     if (result.value) {
+                        if (this.startTime) {
+                            this.stopCounter();
+                        }
                         this.$emit('logDeleted', this.time.id);
                     }
                 })
@@ -180,27 +191,37 @@
              * Start tracking time from current 'startTime' value
              */
             track() {
-                this.updateWorkedTime();
+                this.updateWorkedTime(true);
 
                 setInterval(() => {
                     if (!this.startTime) {
                         return;
                     }
 
-                    this.updateWorkedTime();
+                    this.updateWorkedTime(false);
+                    if (!this.firstTick && this.workedTime % 60 == 0) {
+                        this.$emit('minuteTick');
+                    }
+                    this.firstTick = false;
                 }, 1000);
             },
 
             /**
              * Updates worked time with a diff from moment
              */
-            updateWorkedTime() {
+            updateWorkedTime(emitEvent) {
                 let start = moment(this.startTime);
                 let workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.duration);
                 if (!workedTime) {
                     this.workedTime = 0;
                     return;
                 }
+
+                if (emitEvent) {
+                    let diff = this.timer.secondsToMinutes(workedTime) - this.time.duration;
+                    this.$emit('workedTimeChanged', diff);
+                }
+
                 this.workedTime = workedTime;
             }
         }

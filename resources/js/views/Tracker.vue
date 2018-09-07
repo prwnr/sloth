@@ -42,7 +42,18 @@
                 </div>
                 <div class="p-3" v-if="timeLogs.length == 0">You haven't worked this day. Slothfully</div>
                 <div class="list-group list-group-flush">
-                    <time-log v-for="time in timeLogs" :key="time.id" :time="time" :projects="projects" @logDeleted="deleteLog" @editTime="handleEditDialog"></time-log>
+                    <time-log
+                            v-for="time in timeLogs"
+                            :key="time.id"
+                            :time="time"
+                            :projects="projects"
+                            @logDeleted="deleteLog"
+                            @workedTimeChanged="addToTotalTime"
+                            @minuteTick="totalTime++"
+                            @editTime="handleEditDialog"></time-log>
+                </div>
+                <div v-if="timeLogs.length != 0" class="text-right p-2">
+                    <span class="pr-4">Today you worked for {{ totalTimeWorked }}</span>
                 </div>
             </div>
 
@@ -53,7 +64,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-log :projects="projects" :day="currentDay" @logAdded="log => this.timeLogs.push(log)"></new-log>
+                            <new-log :projects="projects" :day="currentDay" @logAdded="addLog"></new-log>
                         </div>
                     </div>
                 </div>
@@ -87,6 +98,7 @@
     import NewLog from '../components/Tracker/NewLog.vue';
     import EditLog from '../components/Tracker/EditLog.vue';
     import DatePicker from "vuejs-datepicker";
+    import Timer from "../utilities/Timer";
 
     export default {
         components: {
@@ -105,7 +117,9 @@
                 today: '',
                 timeLogs: [],
                 projects: [],
-                editedTime: null
+                editedTime: null,
+                totalTime: 0,
+                timer: new Timer()
             }
         },
 
@@ -126,6 +140,9 @@
         computed: {
             currentDayText: function () {
                 return moment(this.currentDay).format('LL');
+            },
+            totalTimeWorked: function () {
+                return this.timer.format(this.timer.minutesToSeconds(this.totalTime));
             }
         },
 
@@ -173,11 +190,28 @@
             },
 
             /**
+             * Add new log to logs array
+             * @param log
+             */
+            addLog(log) {
+                this.timeLogs.push(log)  ;
+                this.totalTime += log.duration;
+            },
+
+            /**
              * Delete log by ID
+             * @param logId
              */
             deleteLog(logId) {
                 axios.delete('/api/time/' + logId).then(response => {
-                    this.timeLogs = this.timeLogs.filter(item => item.id !== logId);
+                    this.timeLogs = this.timeLogs.filter(item => {
+                        if (item.id !== logId) {
+                            return true;
+                        }
+
+                        this.totalTime -= item.duration;
+                        return false;
+                    });
                     EventHub.fire('log_deleted', logId);
                     this.$awn.success('Log succesfully deleted.');
                 }).catch(error => {
@@ -206,6 +240,22 @@
                 $('#editRow').on('hidden.bs.modal', function (e) {
                     self.editedTime = null;
                 })
+            },
+
+            /**
+             * Sum total time duration of all logs from given day
+             */
+            sumTotalTime() {
+                for (let log of this.timeLogs) {
+                    this.totalTime += log.duration;
+                }
+            },
+
+            /**
+             * Add fixed time to current total time
+             */
+            addToTotalTime(minutes) {
+                this.totalTime += minutes;
             },
 
             /**
@@ -241,6 +291,7 @@
                     }
                 }).then(response => {
                     this.timeLogs = response.data.data;
+                    this.sumTotalTime();
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
