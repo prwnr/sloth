@@ -20,7 +20,7 @@
                         <span class="input-group-text"><i class="fa fa-clock-o" :class="{ 'tick' : startTime }"></i></span>
                     </div>
                     <input v-if="!editing" type="text" class="form-control flat text-right" :disabled="true" :value="displayTime"/>
-                    <time-input v-if="editing" v-model="duration"></time-input>
+                    <time-input v-if="editing" v-model="duration" @keyup.enter.native="update"></time-input>
                     <button v-if="!startTime && !editing" :disabled="disableStartButton" class="btn btn-success btn-flat" @click="start" title="Start">
                         <i class="fa fa-play"></i>
                     </button>
@@ -150,6 +150,7 @@
                     this.editing = false;
                     this.workedTime = seconds;
                     this.time.duration = newDuration;
+                    this.duration = this.timer.format(seconds);
                     this.$emit('workedTimeChanged', timeDiff);
                     this.$awn.success('Time log successfully updated');
                 }).catch(error => {

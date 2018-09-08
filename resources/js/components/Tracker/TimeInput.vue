@@ -1,30 +1,34 @@
 <template>
     <input type="text" class="form-control flat text-right" name="time"
-           v-bind:value="value"
-           v-on:input="$emit('input', $event.target.value)"
-           v-mask="'##:##'"
+           v-model="content"
+           @input="update"
            placeholder="00:00"
-           @keyup="correctTime"/>
+    />
 </template>
 
 <script>
     export default {
         props: ['value'],
 
+        data() {
+            return {
+                content: this.value ? this.value : ''
+            }
+        },
+
         methods: {
-            /**
-             * Makes sure that MM in HH:MM won't go over 60 minutes
-             */
-            correctTime() {
-                let time = this.value.split(':');
-                if (time.length != 2) {
-                    return;
+            update(e) {
+                if ((this.content.match(/:/g) || []).length >= 2) {
+                    this.content = this.content.substring(0, this.content.length - 1);
                 }
 
-                if (time[1] > 60) {
-                    this.value = time[0] + ':' + 60;
-                    return;
+                let input = this.content.split(':');
+                input[0] = input[0].replace(/[^0-9]/g, '');
+                if (input.length == 2) {
+                    input[1] = input[1].replace(/[^0-9]/g, '');
                 }
+                this.content = input.join(':');
+                this.$emit('input', this.content);
             },
         }
     }

@@ -13,7 +13,7 @@ class Timer {
         let hours = this.minutesToHours(minutes);
         minutes = minutes % 60;
 
-        return this.pad(hours) + ":" + this.pad(minutes);
+        return hours + ":" + this.pad(minutes);
     }
 
     /**
