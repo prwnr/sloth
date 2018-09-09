@@ -50,7 +50,8 @@
                     members: [],
                     clients: [],
                     projects: [],
-                    billable: []
+                    billable: [],
+                    status: 3
                 }
             }
         },
@@ -68,6 +69,7 @@
                 this.filters.projects = filters.projects;
                 this.filters.clients = filters.clients;
                 this.filters.billable = filters.billable;
+                this.filters.status = filters.status;
                 this.fetchData();
             },
 

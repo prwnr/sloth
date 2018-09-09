@@ -14,6 +14,10 @@ use Illuminate\Database\Eloquent\Builder;
 class Filters
 {
 
+    private const STATUS_FINISHED = 1;
+    private const STATUS_IN_PROGRESS = 2;
+    private const STATUS_ALL = 3;
+
     /**
      * @var array
      */
@@ -105,6 +109,26 @@ class Filters
                 $query->whereIn('billable', $billable);
             });
         });
+    }
+
+    /**
+     * @param Builder $builder
+     */
+    public function status(Builder $builder): void
+    {
+        if ((int)$this->options['status'] === self::STATUS_ALL) {
+            return;
+        }
+
+        if ((int)$this->options['status'] === self::STATUS_FINISHED) {
+            $builder->whereNull('start');
+            return;
+        }
+
+        if ((int)$this->options['status'] === self::STATUS_IN_PROGRESS) {
+            $builder->whereNotNull('start');
+            return;
+        }
     }
 
     /**

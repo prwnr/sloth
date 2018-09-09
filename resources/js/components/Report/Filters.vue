@@ -28,19 +28,27 @@
                              :settings="{ multiple: true }"
                     ></Select2>
                 </div>
-                <div v-if="!disabled('billable')" class="form-group">
-                    <label>Bilable?</label>
-                    <div class="form-check">
-                        <input type="checkbox" v-model="applied.billable" :disabled="shouldDisableBillabe('yes')" value="yes" class="form-check-input" id="billableCheck">
-                        <label class="form-check-label" for="billableCheck">
-                            Yes
-                        </label>
+                <div class="row">
+                    <div v-if="!disabled('billable')" class="form-group col-lg-6">
+                        <label>Bilable?</label>
+                        <div class="form-check">
+                            <input type="checkbox" v-model="applied.billable" :disabled="shouldDisableBillabe('yes')" value="yes" class="form-check-input" id="billableCheck">
+                            <label class="form-check-label" for="billableCheck">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" v-model="applied.billable" :disabled="shouldDisableBillabe('no')" value="no" class="form-check-input" id="nonBillableCheck">
+                            <label class="form-check-label" for="nonBillableCheck">
+                                No
+                            </label>
+                        </div>
                     </div>
-                    <div class="form-check">
-                        <input type="checkbox" v-model="applied.billable" :disabled="shouldDisableBillabe('no')" value="no" class="form-check-input" id="nonBillableCheck">
-                        <label class="form-check-label" for="nonBillableCheck">
-                            No
-                        </label>
+                    <div v-if="!disabled('status')" class="form-group col-lg-6">
+                        <label>Status</label>
+                        <select name="status" id="status" class="form-control" v-model="applied.status">
+                            <option v-for="(status, index) in statuses" :key="index" :value="index">{{ status }}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="dropdown-divider"></div>
@@ -68,18 +76,24 @@
                 clients: [],
                 projects: [],
                 billable: ['yes', 'no'],
+                statuses: {
+                    1: 'Finished',
+                    2: 'In progress',
+                    3: 'All'
+                },
                 applied: {
                     members: [],
                     clients: [],
                     projects: [],
-                    billable: ['yes', 'no']
+                    billable: ['yes', 'no'],
+                    status: 3
                 },
             }
         },
 
         created() {
             this.fetchData();
-            //Disable dropdown close on clikc inside dropdown menu
+            //Disable dropdown close on click inside dropdown menu
             $(document).on('click', '.dropdown-filters, .select2-selection__choice__remove', function (e) {
                 e.stopPropagation();
             });
@@ -130,7 +144,8 @@
                     members: [],
                     clients: [],
                     projects: [],
-                    billable: this.billable
+                    billable: this.billable,
+                    status: 3
                 };
 
                 this.$emit('applied', this.applied);

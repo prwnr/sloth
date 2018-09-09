@@ -53,7 +53,7 @@
                             @editTime="handleEditDialog"></time-log>
                 </div>
                 <div v-if="timeLogs.length != 0" class="text-right p-2">
-                    <span class="pr-4">Today you worked for {{ totalTimeWorked }}</span>
+                    <span class="pr-4">This day you worked for {{ totalTimeWorked }}</span>
                 </div>
             </div>
 
