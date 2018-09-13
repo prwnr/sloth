@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\Project;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 /**
@@ -29,7 +31,13 @@ class ProjectRequest extends FormRequest
      */
     public function rules()
     {
-        $uniqueProjectRule = Rule::unique('projects', 'code'); //TODO make code unique per Team
+        $uniqueProjectRule = Rule::unique('projects')->where(function (Builder $query) {
+            $data = $this->validationData();
+            $teamId = Auth::user()->team_id;
+
+            return $query->where('code', $data['code'] ?? '')->where('team_id', $teamId);
+        });
+
         if ($this->project) {
             $uniqueProjectRule = $uniqueProjectRule->ignore($this->project->id);
         }
