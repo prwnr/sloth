@@ -58,6 +58,18 @@ class TimeLog extends Model
     }
 
     /**
+     * @return float
+     */
+    public function memberSalary(): float
+    {
+        if (!$this->user->member) {
+            return 0.0;
+        }
+
+        return $this->hours() * $this->user->member->billing->rate;
+    }
+
+    /**
      * Get log rate by task or a project
      * @return float
      */

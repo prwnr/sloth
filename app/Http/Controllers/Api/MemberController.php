@@ -6,7 +6,7 @@ use App\Http\Requests\MemberRequest;
 use App\Http\Resources\Project as ProjectResource;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
-use App\Models\{Team, Team\Member, User};
+use App\Models\{Report\Filters, Report\MemberReport, Team, Team\Member, User};
 use Illuminate\Http\Response;
 use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Hash};
 use App\Http\Controllers\Controller;
@@ -109,7 +109,16 @@ class MemberController extends Controller
     public function show(Member $member)
     {
         $member->loadMissing(['projects', 'billing', 'user.roles', 'billing.currency', 'user.logs']);
-        return new MemberResource($member);
+
+        $report = new MemberReport();
+        $filters = new Filters(['members' => [$member->user->id]]);
+        $report->apply($filters);
+
+        $meberResource = new MemberResource($member);
+        $meberResource->additional([
+            'report' => $report->generate()
+        ]);
+        return $meberResource;
     }
 
     /**

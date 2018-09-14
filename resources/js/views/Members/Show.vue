@@ -43,6 +43,17 @@
                         </div>
                     </div>
 
+                    <report-view class="mb-3" v-if="report" :data="report"></report-view>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card mb-3">
+                        <card-header>Billings</card-header>
+                        <div class="card-body">
+                            <BillingsShow v-if="member.billing" :billing="member.billing"></BillingsShow>
+                        </div>
+                    </div>
+
                     <div class="card" :class="{ 'border-bottom-0': member.user.roles.length > 0}">
                         <card-header>Roles</card-header>
                         <div class="card-body" :class="{ 'p-0': member.user.roles.length > 0}">
@@ -52,15 +63,6 @@
                                          :class="{ 'border-top-0': index === 0}">
                                 {{ role.display_name }}
                             </router-link>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="card mb-3">
-                        <card-header>Billings</card-header>
-                        <div class="card-body">
-                            <BillingsShow v-if="member.billing" :billing="member.billing"></BillingsShow>
                         </div>
                     </div>
 
@@ -88,10 +90,12 @@
 
 <script>
     import BillingsShow from '../../components/Billings/Show.vue';
+    import ReportView from '../../components/Report/ReportView.vue';
 
     export default {
         components: {
-            'BillingsShow': BillingsShow
+            BillingsShow,
+            ReportView
         },
         data() {
             return {
@@ -100,13 +104,15 @@
                         roles: []
                     },
                     projects: []
-                }
+                },
+                report: null
             }
         },
 
         created() {
             axios.get('/api/members/' + this.$route.params.id).then(response => {
                 this.member = response.data.data;
+                this.report = response.data.report;
             }).catch(error => {
                 this.$awn.alert(error.message);
             });
