@@ -67,7 +67,7 @@
                                 {{ member.user.fullname }}
                             </router-link>
                         </ul>
-                        <span v-else>No members assigned</span>
+                        <span v-else class="pl-3 pr-3 pt-2 pb-2">No members assigned</span>
                     </div>
 
                     <div class="card mb-3">
