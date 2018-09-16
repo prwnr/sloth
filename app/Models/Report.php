@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Report\Filters;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,6 +17,14 @@ abstract class Report
      * @var Builder
      */
     protected $logs;
+
+    /**
+     * @param Filters $filters
+     */
+    public function apply(Filters $filters): void
+    {
+        $filters->all($this->logs);
+    }
 
     /**
      * Report constructor.

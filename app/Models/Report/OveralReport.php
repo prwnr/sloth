@@ -13,14 +13,6 @@ class OveralReport extends Report
 {
 
     /**
-     * @param Filters $filters
-     */
-    public function apply(Filters $filters): void
-    {
-        $filters->all($this->logs);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function generate(): array
@@ -36,9 +28,9 @@ class OveralReport extends Report
          * @var TimeLog $log
          */
         foreach($this->logs->get() as $key => $log) {
-            $rowHours = $log->hours();
+            $rowHours = $log->duration();
             $totalHours += $rowHours;
-            $totalBillableHours += $log->isBillabe() ? $log->hours() : 0.0;
+            $totalBillableHours += $log->isBillabe() ? $log->duration() : 0.0;
             $this->sumSalary($log, $salaryTotals);
 
             $items[] = [

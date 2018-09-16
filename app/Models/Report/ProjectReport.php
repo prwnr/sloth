@@ -30,8 +30,8 @@ class ProjectReport extends Report
 
         /** @var TimeLog $log */
         foreach ($this->logs->get() as $log) {
-            $hours += $log->hours();
-            $billableHours += $log->isBillabe() ? $log->hours() : 0.0;
+            $hours += $log->duration();
+            $billableHours += $log->isBillabe() ? $log->duration() : 0.0;
             $sale += $log->salary();
         }
 

@@ -6,10 +6,10 @@ use App\Models\Report;
 use App\Models\TimeLog;
 
 /**
- * Class MemberReport
+ * Class ClientReport
  * @package App\Models\Report
  */
-class MemberReport extends Report
+class ClientReport extends Report
 {
 
     /**
@@ -17,7 +17,7 @@ class MemberReport extends Report
      */
     public function apply(Filters $filters): void
     {
-        $filters->members($this->logs);
+        $filters->clients($this->logs);
     }
 
     /**
@@ -33,7 +33,7 @@ class MemberReport extends Report
         foreach ($this->logs->get() as $log) {
             $hours += $log->duration();
             $billableHours += $log->isBillabe() ? $log->duration() : 0.0;
-            $sale += $log->memberSalary();
+            $sale += $log->clientSalary();
         }
 
         $report = [

@@ -1,12 +1,12 @@
 <template>
     <div class="card mb-3">
         <card-header>Report</card-header>
-        <table class="table border-top-0">
-            <tr class="border-top-0">
+        <table class="table">
+            <tr class="row-no-border">
                 <td><strong>Total hours</strong></td>
                 <td>{{ data.total_hours }}</td>
             </tr>
-            <tr class="border-top-0">
+            <tr>
                 <td><strong>Total billable hours</strong></td>
                 <td>{{ data.total_billable_hours }}</td>
             </tr>
@@ -67,5 +67,7 @@
 </script>
 
 <style scoped>
-
+    .row-no-border td {
+        border-top: 0px !important;
+    }
 </style>

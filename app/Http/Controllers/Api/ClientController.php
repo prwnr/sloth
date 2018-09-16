@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use App\Http\Resources\Client as ClientResource;
+use App\Models\Report\ClientReport;
+use App\Models\Report\Filters;
 use App\Models\Team;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
@@ -81,7 +83,16 @@ class ClientController extends Controller
     public function show(Client $client)
     {
         $client->loadMissing('projects', 'billing', 'billing.currency');
-        return new ClientResource($client);
+
+        $report = new ClientReport();
+        $filters = new Filters(['clients' => [$client->id]]);
+        $report->apply($filters);
+
+        $clientResource = new ClientResource($client);
+        $clientResource->additional([
+            'report' => $report->generate()
+        ]);
+        return $clientResource;
     }
 
     /**

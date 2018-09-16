@@ -73,6 +73,8 @@
                             <BillingsShow v-if="client.billing" :billing="client.billing"></BillingsShow>
                         </div>
                     </div>
+
+                    <report-view class="mb-3" v-if="report" :data="report"></report-view>
                 </div>
             </div>
         </section>
@@ -81,23 +83,27 @@
 
 <script>
     import BillingsShow from '../../components/Billings/Show.vue';
+    import ReportView from '../../components/Report/ReportView.vue';
 
     export default {
         components: {
-            'BillingsShow': BillingsShow
+            BillingsShow,
+            ReportView
         },
 
         data() {
             return {
                 client: {
                     projects: []
-                }
+                },
+                report: null
             }
         },
 
         created() {
             axios.get('/api/clients/' + this.$route.params.id).then(response => {
                 this.client = response.data.data;
+                this.report = response.data.report;
             }).catch(error => {
                 this.$awn.alert(error.message);
             });
