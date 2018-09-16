@@ -2,17 +2,13 @@
     <div class="card mb-3">
         <card-header>Report</card-header>
         <table class="table">
-            <tr class="row-no-border">
-                <td><strong>Total hours</strong></td>
-                <td>{{ data.total_hours }}</td>
+            <tr v-for="(item, index) in items" :key="index">
+                <td><strong>{{ item.title }}</strong></td>
+                <td>{{ item.value }}</td>
             </tr>
-            <tr>
-                <td><strong>Total billable hours</strong></td>
-                <td>{{ data.total_billable_hours }}</td>
-            </tr>
-            <tr>
-                <td><strong>Total sales</strong></td>
-                <td><span :class="budgetLevel">{{ data.total_sale }}</span> <span class="small" v-if="budget">({{ budgetPercentage() }}%)</span></td>
+            <tr v-if="showBudget">
+                <td><strong>Budget used</strong></td>
+                <td><span :class="budgetLevel">{{ budgetPercentage() }}%</span></td>
             </tr>
         </table>
     </div>
@@ -21,25 +17,39 @@
 <script>
     export default {
         props: {
-            data: {
-                type: Object,
+            items: {
+                type: Array,
                 default: () => {
-                    return {
-                        total_hours: 0,
-                        total_sale: 0
-                    }
+                    return []
                 }
             },
 
             budget: {
-                type: Number,
-                default: 0
+                type: Object,
+                default: () => {
+                    return {
+                        sale: 0,
+                        total: 0
+                    }
+                }
+            }
+        },
+
+        data() {
+            return {
+                showBudget: false
+            }
+        },
+
+        created() {
+            if (this.budget.sale && this.budget.total) {
+                this.showBudget = true;
             }
         },
 
         computed: {
             budgetLevel: function () {
-                if (!this.budget) {
+                if (!this.showBudget) {
                     return '';
                 }
 
@@ -60,14 +70,18 @@
 
         methods: {
             budgetPercentage: function () {
-                return Math.round((this.data.total_sale / this.budget) * 100);
+                return Math.round((this.budget.sale / this.budget.total) * 100);
             }
         }
     }
 </script>
 
 <style scoped>
-    .row-no-border td {
+    .table tr:first-child td {
         border-top: 0px !important;
+    }
+
+    td {
+        padding-left: 1.25rem;
     }
 </style>

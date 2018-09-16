@@ -74,7 +74,7 @@
                         </div>
                     </div>
 
-                    <report-view class="mb-3" v-if="report" :data="report"></report-view>
+                    <report-view class="mb-3" v-if="reportItems" :items="reportItems"></report-view>
                 </div>
             </div>
         </section>
@@ -96,14 +96,19 @@
                 client: {
                     projects: []
                 },
-                report: null
+                reportItems: null
             }
         },
 
         created() {
             axios.get('/api/clients/' + this.$route.params.id).then(response => {
                 this.client = response.data.data;
-                this.report = response.data.report;
+                let report = response.data.report;
+                this.reportItems = [
+                    { title: 'Total hours', value: report.total_hours},
+                    { title: 'Total billable hours', value: report.total_billable_hours},
+                    { title: 'Total sales', value: report.total_sale}
+                ];
             }).catch(error => {
                 this.$awn.alert(error.message);
             });

@@ -51,7 +51,7 @@
                         </div>
                     </div>
 
-                    <report-view v-if="report" :data="report" :budget="project.budget"></report-view>
+                    <report-view v-if="reportItems" :items="reportItems" :budget="reportBudget"></report-view>
 
                 </div>
 
@@ -103,7 +103,8 @@
                     client: {},
                     tasks: []
                 },
-                report: null
+                reportItems: null,
+                reportBudget: null
             }
         },
 
@@ -118,7 +119,16 @@
             fetchData() {
                 axios.get('/api/projects/' + this.$route.params.id).then(response => {
                     this.project = response.data.data;
-                    this.report = response.data.report;
+                    let report = response.data.report;
+                    this.reportItems = [
+                        { title: 'Total hours', value: report.total_hours},
+                        { title: 'Total billable hours', value: report.total_billable_hours},
+                        { title: 'Total sales', value: report.total_sale}
+                    ];
+                    this.reportBudget = {
+                        sale: report.total_sale,
+                        total: this.project.budget
+                    };
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
