@@ -43,7 +43,7 @@
                         </div>
                     </div>
 
-                    <report-view class="mb-3" v-if="reportItems" :items="reportItems"></report-view>
+                    <report-view v-if="reportItems" :items="reportItems"></report-view>
                 </div>
 
                 <div class="col-lg-6">
@@ -116,7 +116,8 @@
                 this.reportItems = [
                     { title: 'Total hours', value: report.total_hours},
                     { title: 'Total billable hours', value: report.total_billable_hours},
-                    { title: 'Total sales', value: report.total_sale}
+                    { title: 'Total sale', value: report.total_sale},
+                    { title: 'Total earnings', value: report.total_earnings}
                 ];
             }).catch(error => {
                 this.$awn.alert(error.message);
