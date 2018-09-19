@@ -54,7 +54,7 @@ class TimeLog extends Model
             return 0.0;
         }
 
-        return $this->duration() * $this->payRate();
+        return round($this->duration() * $this->payRate(), 2);
     }
 
     /**
@@ -66,7 +66,7 @@ class TimeLog extends Model
             return 0.0;
         }
 
-        return $this->duration() * $this->user->member->billing->rate;
+        return round($this->duration() * $this->user->member->billing->rate, 2);
     }
 
     /**
@@ -78,7 +78,7 @@ class TimeLog extends Model
             return 0.0;
         }
 
-        return $this->duration() * $this->project->client->billing->rate;
+        return round($this->duration() * $this->project->client->billing->rate, 2);
     }
 
     /**

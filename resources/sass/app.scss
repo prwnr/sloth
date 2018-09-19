@@ -95,6 +95,14 @@ footer.sticky-footer {
   margin-top: 2px;
 }
 
+.report .table-hover tbody tr:hover {
+  background-color: inherit !important;
+}
+
+.report .table-striped tbody tr:nth-of-type(2n+1) {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
 /*
  * Plugin: Select2
  * ---------------

@@ -33,7 +33,7 @@ class OveralReport extends Report
             $totalBillableHours += $log->isBillabe() ? $log->duration() : 0.0;
             $this->sumSalary($log, $salaryTotals);
 
-            $items[] = [
+            $items[$key] = [
                 'user_name' => $log->user->fullname,
                 'client' => $log->project->client->company_name,
                 'project' => $log->project->name,
@@ -43,6 +43,8 @@ class OveralReport extends Report
                 'billable' => $log->isBillabe() ? 'Yes' : 'No',
                 'in_progress' => (bool)$log->start,
             ];
+
+            $this->addDetails($log, $items[$key]);
         }
 
         foreach($salaryTotals as $currency => $salary) {
@@ -57,6 +59,29 @@ class OveralReport extends Report
         ];
 
         return $report;
+    }
+
+    /**
+     * @param TimeLog $log
+     * @param array $item
+     */
+    private function addDetails(TimeLog $log, array &$item): void
+    {
+        $item['details'] = [
+            'description' => $log->description ?? null,
+            'project_salary' => [
+                'currency' => $log->currency()->code,
+                'amount' => $log->salary()
+            ],
+            'member_salary' => [
+                'currency' => $log->user->member ? $log->user->member->billing->currency->code : $log->currency()->code,
+                'amount' => $log->memberSalary()
+            ],
+            'client_salary' => [
+                'currency' => $log->project->client ? $log->project->client->billing->currency->code : $log->currency()->code,
+                'amount' => $log->clientSalary()
+            ]
+        ];
     }
 
     /**

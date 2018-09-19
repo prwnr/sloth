@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="report">
         <datatable
                 :columns="columns"
                 :data="itemsData"
@@ -10,7 +10,7 @@
                 :support-nested="true"
         />
 
-        <div class="col-lg-12 text-left p-3">
+        <div class="col-lg-12 text-left p-3 border-top">
             <span class="pr-2">
                 <span class="text-bold">Total hours: </span> {{ totals.hours }}
             </span>
