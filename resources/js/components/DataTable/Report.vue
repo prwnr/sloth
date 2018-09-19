@@ -7,6 +7,7 @@
                 :query="query"
                 :HeaderSettings="headerSettings"
                 :Pagination="pagination"
+                :support-nested="true"
         />
 
         <div class="col-lg-12 text-left p-3">
@@ -28,10 +29,13 @@
 
 <script>
     import StatusBar from './Status';
+    import Operations from './Operations';
+    import NestedRow from './NestedRow';
 
     export default {
+        name: 'Report',
         components: {
-            StatusBar
+            StatusBar, Operations, NestedRow
         },
 
         props: {
@@ -50,6 +54,7 @@
                     {title: 'Hours', field: 'duration', sortable: true},
                     {title: 'Is billable?', field: 'billable', sortable: true},
                     {title: 'Status', field: 'in_progress', sortable: true, tdComp: StatusBar},
+                    {title: 'Operation', tdComp: Operations}
                 ],
             },
             data: {

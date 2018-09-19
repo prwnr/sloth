@@ -1,5 +1,6 @@
 <template>
     <div class="card mb-3">
+        <!--TODO fix colapse-->
         <card-header>Report</card-header>
         <table class="table">
             <tr v-for="(item, index) in items" :key="index">
