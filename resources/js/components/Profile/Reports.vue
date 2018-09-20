@@ -12,7 +12,7 @@
                 <loading v-if="loading"></loading>
 
                 <loading v-if="loading"></loading>
-                <report v-if="!loading" :show-salary="false" :data="reportData"></report>
+                <report v-if="!loading" :show-salary="false" :data="reportData" :columns="columns"></report>
             </div>
         </div>
     </section>
@@ -39,7 +39,16 @@
                     projects: [],
                     billable: [],
                     status: 3,
-                }
+                },
+                columns: [
+                    {title: 'Member', field: 'user_name', sortable: true},
+                    {title: 'Client', field: 'client', sortable: true},
+                    {title: 'Project', field: 'project', sortable: true},
+                    {title: 'Task', field: 'task', sortable: true},
+                    {title: 'Date', field: 'date', sortable: true},
+                    {title: 'Hours', field: 'duration', sortable: true},
+                    {title: 'Status', field: 'in_progress', sortable: true, tdComp: 'StatusBar'},
+                ]
             }
         },
 
