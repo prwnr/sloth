@@ -1,17 +1,13 @@
 <template>
-    <div class="-nested-dsp-row-comp">
-        <button class="btn btn-xs btn-link -nested-dsp-row-close-btn"
-                @click="nested.$toggle(false)">
-            <i class="fa fa-times fa-lg"></i>
-        </button>
-        <h5>Log details</h5>
-        <dl class="dl-horizontal">
+    <div class="nested-dsp-row-comp">
+        <div class="callout callout-info" style="margin-bottom: 0px !important">
+            <h5>Details about log</h5>
+
             <span class="pr-3"><strong>Member earned</strong>: {{ details.member_salary.amount }} {{ details.member_salary.currency }}</span>
             <span class="pr-3"><strong>Earned on the project</strong>: {{ details.project_salary.amount }} {{ details.project_salary.currency }}</span>
             <span class="pr-3"><strong>Client salary</strong>: {{ details.client_salary.amount }} {{ details.client_salary.currency }}</span>
             <br>
-            <strong>Task description</strong>: <span v-if="details.description">{{ details.description }}</span> <span v-else class="small">(none)</span>
-        </dl>
+            <strong>Task description</strong>: <span v-if="details.description">{{ details.description }}</span> <span v-else class="small">(none)</span>        </div>
     </div>
 </template>
 
@@ -28,14 +24,7 @@
 </script>
 
 <style>
-    .-nested-dsp-row-comp {
+    .nested-dsp-row-comp {
         position: relative;
-        padding: 10px;
-    }
-
-    .-nested-dsp-row-close-btn {
-        position: absolute;
-        top: 5px;
-        right: 5px;
     }
 </style>
