@@ -1,17 +1,18 @@
 <template>
     <div class="card mb-3">
-        <!--TODO fix colapse-->
         <card-header>Report</card-header>
-        <table class="table">
-            <tr v-for="(item, index) in items" :key="index">
-                <td><strong>{{ item.title }}</strong></td>
-                <td>{{ item.value }}</td>
-            </tr>
-            <tr v-if="showBudget">
-                <td><strong>Budget used</strong></td>
-                <td><span :class="budgetLevel">{{ budgetPercentage() }}%</span></td>
-            </tr>
-        </table>
+        <div class="card-body p-0">
+            <table class="table">
+                <tr v-for="(item, index) in items" :key="index">
+                    <td><strong>{{ item.title }}</strong></td>
+                    <td>{{ item.value }}</td>
+                </tr>
+                <tr v-if="showBudget">
+                    <td><strong>Budget used</strong></td>
+                    <td><span :class="budgetLevel">{{ budgetPercentage() }}%</span></td>
+                </tr>
+            </table>
+        </div>
     </div>
 </template>
 
