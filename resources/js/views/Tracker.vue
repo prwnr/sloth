@@ -182,6 +182,7 @@
              * @param currentDay
              */
             changeDays(currentDay) {
+                this.totalTime = 0;
                 this.currentDay = currentDay;
                 this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
                 this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
