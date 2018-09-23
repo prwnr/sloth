@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Date\CustomRange;
-use App\Models\Report\{Filters, OveralReport};
+use App\Models\Report\OveralReport;
 use App\Models\User;
 use Illuminate\Http\{JsonResponse, Request};
 use App\Http\Controllers\Controller;
@@ -43,9 +43,8 @@ class ReportController extends Controller
      */
     private function createReport(array $options): array
     {
-        $filters = new Filters($options);
         $report = new OveralReport();
-        $report->apply($filters);
+        $report->addFilters($options);
         return $report->generate();
     }
 }

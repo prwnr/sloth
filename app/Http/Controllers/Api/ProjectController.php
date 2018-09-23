@@ -91,8 +91,7 @@ class ProjectController extends Controller
         $projectResource = new ProjectResource($project);
 
         $report = new ProjectReport();
-        $filters = new Filters(['projects' => [$project->id]]);
-        $report->apply($filters);
+        $report->addFilters(['projects' => [$project->id]]);
         $projectResource->additional([
             'report' => $report->generate()
         ]);

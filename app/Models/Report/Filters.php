@@ -21,7 +21,7 @@ class Filters
     /**
      * @var array
      */
-    private $options;
+    private $options = [];
 
     /**
      * @var DateRange
@@ -29,10 +29,25 @@ class Filters
     private $range;
 
     /**
-     * Filters constructor.
+     * @param $filter
+     * @param $argument
+     * @throws ReportFilterNotExists
+     */
+    public function __call($filter, $argument)
+    {
+        $filterName = ucfirst($filter);
+        $filterMethod = "apply{$filterName}";
+        if (!method_exists($this, $filterMethod)) {
+            throw new ReportFilterNotExists("Attempted to use unknown filter: $filter");
+        }
+
+        $this->$filterMethod(array_pop($argument));
+    }
+
+    /**
      * @param array $options
      */
-    public function __construct(array $options = [])
+    public function addOptions(array $options): void
     {
         $this->options = $options;
     }
@@ -41,13 +56,14 @@ class Filters
      * Apply all filters
      * @param Builder $builder
      */
-    public function all(Builder $builder): void
+    public function applyAll(Builder $builder): void
     {
-        $this->range($builder);
+        $this->applyRange($builder);
         foreach ($this->options as $field => $value) {
             if (empty($value)) {
                 continue;
             }
+
             $this->$field($builder);
         }
     }
@@ -55,7 +71,7 @@ class Filters
     /**
      * @param Builder $builder
      */
-    public function range(Builder $builder): void
+    public function applyRange(Builder $builder): void
     {
         $this->initRange();
         $builder->whereBetween('created_at', [
@@ -66,7 +82,7 @@ class Filters
     /**
      * @param Builder $builder
      */
-    public function members(Builder $builder): void
+    public function applyMembers(Builder $builder): void
     {
         $builder->whereIn('user_id', $this->options['members'] ?? []);
     }
@@ -74,7 +90,7 @@ class Filters
     /**
      * @param Builder $builder
      */
-    public function projects(Builder $builder): void
+    public function applyProjects(Builder $builder): void
     {
         $builder->whereIn('project_id', $this->options['projects'] ?? []);
     }
@@ -82,7 +98,7 @@ class Filters
     /**
      * @param Builder $builder
      */
-    public function clients(Builder $builder): void
+    public function applyClients(Builder $builder): void
     {
         $clients = $this->options['clients'] ?? [];
         $builder->whereHas('project', function ($query) use ($clients) {
@@ -93,7 +109,7 @@ class Filters
     /**
      * @param Builder $builder
      */
-    public function billable(Builder $builder): void
+    public function applyBillable(Builder $builder): void
     {
         $billable = [];
         foreach ($this->options['billable'] as $billing) {
@@ -114,7 +130,7 @@ class Filters
     /**
      * @param Builder $builder
      */
-    public function status(Builder $builder): void
+    public function applyStatus(Builder $builder): void
     {
         if ((int)$this->options['status'] === self::STATUS_ALL) {
             return;

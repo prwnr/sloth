@@ -111,8 +111,7 @@ class MemberController extends Controller
         $member->loadMissing(['projects', 'billing', 'user.roles', 'billing.currency', 'user.logs']);
 
         $report = new MemberReport();
-        $filters = new Filters(['members' => [$member->user->id]]);
-        $report->apply($filters);
+        $report->addFilters(['members' => [$member->user->id]]);
 
         $meberResource = new MemberResource($member);
         $meberResource->additional([

@@ -19,11 +19,17 @@ abstract class Report
     protected $logs;
 
     /**
-     * @param Filters $filters
+     * @var Filters
      */
-    public function apply(Filters $filters): void
+    protected $filters;
+
+    /**
+     * @param array $options
+     */
+    public function addFilters(array $options): void
     {
-        $filters->all($this->logs);
+        $this->filters->addOptions($options);
+        $this->filters->applyAll($this->logs);
     }
 
     /**
@@ -31,6 +37,7 @@ abstract class Report
      */
     public function __construct()
     {
+        $this->filters = new Filters();
         $teamId = Auth::user()->team_id;
         $this->logs = TimeLog::whereHas('user', function ($query) use ($teamId) {
             $query->where('team_id', $teamId);

@@ -13,11 +13,12 @@ class MemberReport extends Report
 {
 
     /**
-     * @param Filters $filters
+     * @param array $options
      */
-    public function apply(Filters $filters): void
+    public function addFilters(array $options): void
     {
-        $filters->members($this->logs);
+        $this->filters->addOptions($options);
+        $this->filters->applyMembers($this->logs);
     }
 
     /**

@@ -85,8 +85,7 @@ class ClientController extends Controller
         $client->loadMissing('projects', 'billing', 'billing.currency');
 
         $report = new ClientReport();
-        $filters = new Filters(['clients' => [$client->id]]);
-        $report->apply($filters);
+        $report->addFilters(['clients' => [$client->id]]);
 
         $clientResource = new ClientResource($client);
         $clientResource->additional([
