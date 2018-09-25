@@ -9,7 +9,7 @@
                         <div class="card">
                             <card-header :minimizable="false">Total hours worked per month</card-header>
                             <div class="card-body">
-                                <bar-chart :data="chartData" :options="{maintainAspectRatio: false}"></bar-chart>
+                                <bar-chart v-if="chartData" :data="chartData" :options="{maintainAspectRatio: false}"></bar-chart>
                             </div>
                         </div>
                     </div>
@@ -28,22 +28,28 @@
         },
         data() {
             return {
-                chartData: {
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'Septemer', 'October', 'November', 'December'],
-                    datasets: [
-                        {
-                            label: 'total hours worked',
-                            backgroundColor: '#f87979',
-                            data: [0, 0, 0, 100, 20, 100, 170, 30, 0, 0, 0, 12]
-                        }
-                    ]
-                }
-
+                loaded: false,
+                report: [],
+                chartData: null
             }
         },
 
         created() {
-            axios.get('api/');
+            axios.get('api/reports/' + this.$user.get('id') + '/hours/year').then(response => {
+                this.chartData = {
+                    labels: response.data.labels,
+                    datasets: [
+                        {
+                            label: 'hours',
+                            backgroundColor: '#f87979',
+                            data: response.data.hours
+                        }
+                    ]
+                };
+                this.loaded = true;
+            }).catch(error => {
+                this.$awn.alert(error.message);
+            });
         }
     }
 </script>
