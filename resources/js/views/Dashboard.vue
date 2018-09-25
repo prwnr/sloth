@@ -9,7 +9,7 @@
                         <div class="card">
                             <card-header :minimizable="false">Total hours worked per month</card-header>
                             <div class="card-body">
-                                <bar-chart :data="chartData"></bar-chart>
+                                <bar-chart :data="chartData" :options="{maintainAspectRatio: false}"></bar-chart>
                             </div>
                         </div>
                     </div>
