@@ -5,7 +5,7 @@
                 <h3 class="d-inline">My report</h3>
                 <div class="card-tools">
                     <filters class="mr-2" :disable-filters="['members']" @applied="applyFilters"></filters>
-                    <date-range @rangeChange="applyRangeFilter"></date-range>
+                    <date-range @change="applyRangeFilter"></date-range>
                 </div>
             </div>
             <div class="card-body p-0">

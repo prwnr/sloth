@@ -7,7 +7,12 @@
                 <div class="col-lg-12">
                     <div class="col-lg-6 mb-3">
                         <div class="card">
-                            <card-header :minimizable="false">Total hours worked per month</card-header>
+                            <div class="card-header">
+                                <h3 class="d-inline">Total hours worked per month</h3>
+                                <div class="card-tools">
+                                    <date-range :allow-custom="false" @change="applyRangeFilter"></date-range>
+                                </div>
+                            </div>
                             <div class="card-body">
                                 <bar-chart v-if="chartData" :data="chartData" :options="{maintainAspectRatio: false}"></bar-chart>
                             </div>
@@ -21,35 +26,54 @@
 
 <script>
     import BarChart from '../components/Charts/BarChart';
+    import DateRange from '../components/Report/DateRange';
 
     export default {
         components: {
-            BarChart
+            BarChart, DateRange
         },
         data() {
             return {
-                loaded: false,
+                period: 'week',
                 report: [],
                 chartData: null
             }
         },
 
         created() {
-            axios.get('api/reports/' + this.$user.get('id') + '/hours/year').then(response => {
-                this.chartData = {
-                    labels: response.data.labels,
-                    datasets: [
-                        {
-                            label: 'hours',
-                            backgroundColor: '#f87979',
-                            data: response.data.hours
-                        }
-                    ]
-                };
-                this.loaded = true;
-            }).catch(error => {
-                this.$awn.alert(error.message);
-            });
+            this.fetchData();
+        },
+
+        methods: {
+            /**
+             * @param range
+             */
+            applyRangeFilter(range) {
+                this.period = range;
+                console.log('test')
+                this.fetchData();
+            },
+
+            /**
+             * Fetch chart data
+             */
+            fetchData() {
+                this.chartData = null;
+                axios.get('api/reports/' + this.$user.get('id') + '/hours/' + this.period).then(response => {
+                    this.chartData = {
+                        labels: response.data.labels,
+                        datasets: [
+                            {
+                                label: 'hours',
+                                backgroundColor: '#f87979',
+                                data: response.data.hours
+                            }
+                        ]
+                    };
+                }).catch(error => {
+                    this.$awn.alert(error.message);
+                });
+            }
         }
     }
 </script>

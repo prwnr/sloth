@@ -6,11 +6,11 @@
         <ul class="dropdown-menu dropdown-menu-right" x-placement="top-start">
             <a href="#" class="dropdown-item text-right" v-for="(option, index) in options" :key="index"
                @click="changeRange(option)">{{ option | capitalize }}</a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item text-right" data-toggle="modal" data-target="#customRange">Custom</a>
+            <div v-if="allowCustom" class="dropdown-divider"></div>
+            <a v-if="allowCustom" href="#" class="dropdown-item text-right" data-toggle="modal" data-target="#customRange">Custom</a>
         </ul>
 
-        <div class="modal fade" id="customRange" tabindex="-1" role="dialog" aria-hidden="true">
+        <div v-if="allowCustom" class="modal fade" id="customRange" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content card-primary card-outline">
                     <div class="modal-header">
@@ -21,7 +21,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <p>Select your range filter for reports</p>
+                        <p>Select your range filter</p>
                         <div class="row">
                             <div class="form-group col-6">
                                 <label>From</label>
@@ -54,6 +54,13 @@
     export default {
         components: {
             DatePicker
+        },
+
+        props: {
+            allowCustom: {
+                type: Boolean,
+                default: true
+            }
         },
 
         data() {
@@ -92,7 +99,7 @@
                     end: ''
                 }
 
-                this.$emit('rangeChange', range);
+                this.$emit('change', range);
             },
 
             /**
@@ -105,7 +112,7 @@
                     end: moment(this.custom.end).format('YYYY-MM-DD')
                 };
                 this.range = range.start + ' - ' + range.end;
-                this.$emit('rangeChange', range);
+                this.$emit('change', range);
             },
 
             /**
@@ -119,7 +126,7 @@
 
                 if (!this.options.includes(this.range)) {
                     this.range = 'week';
-                    this.$emit('rangeChange', 'week');
+                    this.$emit('change', 'week');
                 }
             }
         },

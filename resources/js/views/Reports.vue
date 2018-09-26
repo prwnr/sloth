@@ -15,7 +15,7 @@
                     <h3 class="d-inline">Detailed reports</h3>
                     <div class="card-tools">
                         <filters class="mr-2" @applied="applyFilters"></filters>
-                        <date-range @rangeChange="applyRangeFilter"></date-range>
+                        <date-range @change="applyRangeFilter"></date-range>
                         <button class="btn btn-default ml-2" type="button"
                                 @click="fetchData">
                             <i class="fa fa-refresh" :class="{ 'fa-spin' : loading }"></i>
