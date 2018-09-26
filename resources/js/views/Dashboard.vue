@@ -8,7 +8,7 @@
                     <div class="col-lg-6 mb-3">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="d-inline">Total hours worked per month</h3>
+                                <h3 class="d-inline">Total hours worked this {{ this.period }}</h3>
                                 <div class="card-tools">
                                     <date-range :allow-custom="false" @change="applyRangeFilter"></date-range>
                                 </div>
@@ -50,7 +50,6 @@
              */
             applyRangeFilter(range) {
                 this.period = range;
-                console.log('test')
                 this.fetchData();
             },
 

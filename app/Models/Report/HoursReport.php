@@ -57,7 +57,11 @@ class HoursReport extends Report
             $totalHours[$number] = round($sum / 60, 3);
         }
 
-        ksort($totalHours);
+
+        if ($this->period === DateRange::WEEK) {
+            $totalHours = first_to_last($totalHours);
+        }
+
         return [
             'hours' => array_values($totalHours),
             'labels' => $this->getPeriodLabels()
@@ -77,7 +81,7 @@ class HoursReport extends Report
             return array_fill(1, 12, 0);
         }
 
-        return array_fill(1, 7, 0);
+        return array_fill(0, 7, 0);
     }
 
     /**
@@ -97,6 +101,6 @@ class HoursReport extends Report
             return $months;
         }
 
-        return Carbon::getDays();
+        return first_to_last(Carbon::getDays());
     }
 }
