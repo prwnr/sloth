@@ -14,7 +14,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <bar-chart v-if="chartData" :data="chartData" :options="{maintainAspectRatio: false}"></bar-chart>
+                                <bar-chart v-if="chartData" :data="chartData" :options="chartOptions"></bar-chart>
                             </div>
                         </div>
                     </div>
@@ -36,7 +36,17 @@
             return {
                 period: 'week',
                 report: [],
-                chartData: null
+                chartData: null,
+                chartOptions: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
             }
         },
 
