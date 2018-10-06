@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Date\CustomRange;
-use App\Models\Report\HoursReport;
+use App\Models\Report\Periodic\HoursReport;
 use App\Models\Report\OveralReport;
 use App\Models\User;
 use Illuminate\Http\{JsonResponse, Request};

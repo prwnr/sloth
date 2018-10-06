@@ -1,52 +1,24 @@
 <?php
 
-namespace App\Models\Report;
+namespace App\Models\Report\Periodic;
 
 use App\Models\Date\DateRange;
-use App\Models\Report;
+use App\Models\Report\PeriodicReport;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class HoursReport
  * @package App\Models\Report
  */
-class HoursReport extends Report
+class HoursReport extends PeriodicReport
 {
-
-    /**
-     * @var string
-     */
-    private $period;
-
-    /**
-     * @param array $options
-     */
-    public function addFilters(array $options): void
-    {
-        $options['range'] = $this->period ?: DateRange::YEAR;
-        parent::addFilters($options);
-    }
-
-    /**
-     * @param string $period
-     */
-    public function setPeriod(string $period): void
-    {
-        $this->period = $period;
-    }
 
     /**
      * {@inheritdoc}
      */
     public function generate(): array
     {
-        $groupFormat = $this->period === DateRange::YEAR ? 'm' : 'd';
-        /** @var Collection $items */
-        $items = $this->logs->get()->groupBy(function ($query) use ($groupFormat) {
-            return Carbon::parse($query->created_at)->format($groupFormat);
-        });
-
+        $items = $this->gatherItems();
         $totalHours = $this->getPeriodsArray();
         foreach ($items as $period => $item) {
             $sum = $item->sum('duration');
