@@ -1,25 +1,25 @@
 <template>
     <div class="card">
         <div class="card-header">
-            <h3 class="d-inline">Total hours worked this {{ this.period }}</h3>
+            <h3 class="d-inline">Hours per project worked this {{ this.period }}</h3>
             <div class="card-tools">
                 <date-range :allow-custom="false" @change="applyRangeFilter"></date-range>
             </div>
         </div>
         <div class="card-body">
-            <bar-chart v-if="chartData" :data="chartData" :options="chartOptions"></bar-chart>
+            <pie-chart v-if="chartData" :data="chartData" :options="chartOptions"></pie-chart>
         </div>
     </div>
 </template>
 
 <script>
-    import BarChart from '../Charts/BarChart';
+    import PieChart from '../Charts/PieChart';
     import DateRange from '../Report/DateRange';
     import Color from '../../utilities/Color';
 
     export default {
         components: {
-            BarChart, DateRange
+            PieChart, DateRange
         },
         data() {
             return {
@@ -28,13 +28,6 @@
                 chartData: null,
                 chartOptions: {
                     maintainAspectRatio: false,
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
                 }
             }
         },
@@ -57,13 +50,18 @@
              */
             fetchData() {
                 this.chartData = null;
-                axios.get('api/reports/' + this.$user.get('id') + '/hours/' + this.period).then(response => {
+                axios.get('api/reports/' + this.$user.get('id') + '/projects/' + this.period).then(response => {
+                    let labelsNum = response.data.labels.length;
+                    let colors = [];
+                    for (let i = 0; i < labelsNum; i++) {
+                        colors.push(Color.randomRgb());
+                    }
                     this.chartData = {
                         labels: response.data.labels,
                         datasets: [
                             {
                                 label: 'hours',
-                                backgroundColor: Color.randomRgb(),
+                                backgroundColor: colors,
                                 data: response.data.hours
                             }
                         ]
@@ -71,7 +69,7 @@
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
-            }
+            },
         }
     }
 </script>
