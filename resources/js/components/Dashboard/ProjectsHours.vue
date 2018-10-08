@@ -8,6 +8,7 @@
         </div>
         <div class="card-body">
             <pie-chart v-if="chartData" :data="chartData" :options="chartOptions"></pie-chart>
+            <p class="text-center mb-0 " v-else>No data</p>
         </div>
     </div>
 </template>
@@ -52,6 +53,10 @@
                 this.chartData = null;
                 axios.get('api/reports/' + this.$user.get('id') + '/projects/' + this.period).then(response => {
                     let labelsNum = response.data.labels.length;
+                    if (labelsNum === 0) {
+                        return;
+                    }
+
                     let colors = [];
                     for (let i = 0; i < labelsNum; i++) {
                         colors.push(Color.randomRgb());

@@ -35,7 +35,8 @@
                             }
                         }]
                     }
-                }
+                },
+                background: Color.randomRgb()
             }
         },
 
@@ -63,7 +64,7 @@
                         datasets: [
                             {
                                 label: 'hours',
-                                backgroundColor: Color.randomRgb(),
+                                backgroundColor: this.background,
                                 data: response.data.hours
                             }
                         ]

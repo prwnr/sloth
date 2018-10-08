@@ -18,6 +18,7 @@ class UserProjectsReport extends PeriodicReport
     public function generate(): array
     {
         $this->logs->selectRaw('project_id, sum(duration) as total_duration');
+        $this->logs->whereNull('start');
         $this->logs->groupBy('project_id');
         $items = $this->gatherItems();
 
