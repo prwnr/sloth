@@ -50,6 +50,7 @@
              * Fetch chart data
              */
             fetchData() {
+                let color = new Color();
                 this.chartData = null;
                 axios.get('api/reports/' + this.$user.get('id') + '/projects/' + this.period).then(response => {
                     let labelsNum = response.data.labels.length;
@@ -59,7 +60,7 @@
 
                     let colors = [];
                     for (let i = 0; i < labelsNum; i++) {
-                        colors.push(Color.randomRgb());
+                        colors.push(color.randomRgb());
                     }
                     this.chartData = {
                         labels: response.data.labels,
@@ -73,6 +74,8 @@
                     };
                 }).catch(error => {
                     this.$awn.alert(error.message);
+                }).finally(() => {
+                    color.clearGenerated();
                 });
             },
         }

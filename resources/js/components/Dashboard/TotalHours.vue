@@ -36,7 +36,6 @@
                         }]
                     }
                 },
-                background: Color.randomRgb()
             }
         },
 
@@ -58,19 +57,23 @@
              */
             fetchData() {
                 this.chartData = null;
+                let color = new Color();
+                let background = color.randomRgb();
                 axios.get('api/reports/' + this.$user.get('id') + '/hours/' + this.period).then(response => {
                     this.chartData = {
                         labels: response.data.labels,
                         datasets: [
                             {
                                 label: 'hours',
-                                backgroundColor: this.background,
+                                backgroundColor: background,
                                 data: response.data.hours
                             }
                         ]
                     };
                 }).catch(error => {
                     this.$awn.alert(error.message);
+                }).finally(() => {
+                    color.clearGenerated();
                 });
             }
         }
