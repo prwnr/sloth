@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Date\CustomRange;
-use App\Models\Report\Periodic\HoursReport;
-use App\Models\Report\OveralReport;
-use App\Models\Report\Periodic\UserProjectsReport;
+use App\Models\Report\{Periodic\HoursReport, FullReport, Periodic\UserProjectsReport};
 use App\Models\User;
 use Illuminate\Http\{JsonResponse, Request};
 use App\Http\Controllers\Controller;
@@ -23,7 +21,7 @@ class ReportController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        return response()->json($this->createReport($request->input('filters')));
+        return response()->json($this->createFullReport($request->input('filters')));
     }
 
     /**
@@ -36,7 +34,7 @@ class ReportController extends Controller
         $options = $request->input('filters');
         $options['members'] = [$user->id];
 
-        return response()->json($this->createReport($options));
+        return response()->json($this->createFullReport($options));
     }
 
     /**
@@ -47,9 +45,7 @@ class ReportController extends Controller
      */
     public function userHours(Request $request, User $user, string $period): JsonResponse
     {
-        $report = new HoursReport();
-        $report->setPeriod($period);
-        $report->addFilters(['members' => [$user->id]]);
+        $report = new HoursReport(['members' => [$user->id]], $period);
 
         return response()->json($report->generate());
     }
@@ -62,9 +58,7 @@ class ReportController extends Controller
      */
     public function userProjects(Request $request, User $user, string $period): JsonResponse
     {
-        $report = new UserProjectsReport();
-        $report->setPeriod($period);
-        $report->addFilters(['members' => [$user->id]]);
+        $report = new UserProjectsReport(['members' => [$user->id]], $period);
 
         return response()->json($report->generate());
     }
@@ -73,10 +67,9 @@ class ReportController extends Controller
      * @param array $options
      * @return array
      */
-    private function createReport(array $options): array
+    private function createFullReport(array $options): array
     {
-        $report = new OveralReport();
-        $report->addFilters($options);
+        $report = new FullReport($options);
         return $report->generate();
     }
 }

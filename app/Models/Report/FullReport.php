@@ -6,10 +6,10 @@ use App\Models\Report;
 use App\Models\TimeLog;
 
 /**
- * Class OveralReport
+ * Class FullReport
  * @package App\Models\Report
  */
-class OveralReport extends Report
+class FullReport extends Report
 {
 
     /**

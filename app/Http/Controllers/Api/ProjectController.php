@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ProjectRequest;
-use App\Models\{Report\Filters, Report\ProjectReport, Team, Client, Project};
+use App\Models\{Report\ProjectReport, Team, Client, Project};
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -90,8 +90,8 @@ class ProjectController extends Controller
         $project->loadMissing('members', 'client', 'billing', 'tasks', 'budgetCurrency', 'tasks.currency', 'billing.currency');
         $projectResource = new ProjectResource($project);
 
-        $report = new ProjectReport();
-        $report->addFilters(['projects' => [$project->id]]);
+        $report = new ProjectReport(['projects' => [$project->id]]);
+
         $projectResource->additional([
             'report' => $report->generate()
         ]);

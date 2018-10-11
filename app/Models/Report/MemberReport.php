@@ -13,15 +13,6 @@ class MemberReport extends Report
 {
 
     /**
-     * @param array $options
-     */
-    public function addFilters(array $options): void
-    {
-        $this->filters->addOptions($options);
-        $this->filters->applyMembers($this->logs);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function generate(): array

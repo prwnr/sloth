@@ -11,14 +11,6 @@ use App\Models\TimeLog;
  */
 class ProjectReport extends Report
 {
-    /**
-     * @param array $options
-     */
-    public function addFilters(array $options): void
-    {
-        $this->filters->addOptions($options);
-        $this->filters->applyProjects($this->logs);
-    }
 
     /**
      * {@inheritdoc}

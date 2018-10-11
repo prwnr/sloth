@@ -6,7 +6,6 @@ use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use App\Http\Resources\Client as ClientResource;
 use App\Models\Report\ClientReport;
-use App\Models\Report\Filters;
 use App\Models\Team;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
@@ -84,8 +83,7 @@ class ClientController extends Controller
     {
         $client->loadMissing('projects', 'billing', 'billing.currency');
 
-        $report = new ClientReport();
-        $report->addFilters(['clients' => [$client->id]]);
+        $report = new ClientReport(['clients' => [$client->id]]);
 
         $clientResource = new ClientResource($client);
         $clientResource->additional([

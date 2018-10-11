@@ -25,26 +25,21 @@ abstract class PeriodicReport extends Report
     protected $items;
 
     /**
-     * @param array $options
-     */
-    public function addFilters(array $options): void
-    {
-        $options['range'] = $this->period ?: DateRange::YEAR;
-        parent::addFilters($options);
-    }
-
-    /**
+     * PeriodicReport constructor.
+     * @param array $filterOptions
      * @param string $period
      */
-    public function setPeriod(string $period): void
+    public function __construct(array $filterOptions, ?string $period = null)
     {
         $this->period = $period;
+        $filterOptions['range'] = $this->period ?: DateRange::YEAR;
+        parent::__construct($filterOptions);
     }
 
     /**
      * @return Collection
      */
-    public function gatherItems(): Collection
+    protected function groupItems(): Collection
     {
         $groupFormat = $this->period === DateRange::YEAR ? 'm' : 'd';
         return $this->logs->get()->groupBy(function ($query) use ($groupFormat) {

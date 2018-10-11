@@ -18,8 +18,8 @@ class HoursReport extends PeriodicReport
      */
     public function generate(): array
     {
-        $items = $this->gatherItems();
-        $totalHours = $this->getPeriodsArray();
+        $items = $this->groupItems();
+        $totalHours = $this->preparePeriodsArray();
         foreach ($items as $period => $item) {
             $sum = $item->sum('duration');
             $number = ltrim($period, '0');
@@ -36,14 +36,14 @@ class HoursReport extends PeriodicReport
 
         return [
             'hours' => array_values($totalHours),
-            'labels' => $this->getPeriodLabels()
+            'labels' => $this->makeLabels()
         ];
     }
 
     /**
      * @return array
      */
-    private function getPeriodsArray(): array
+    private function preparePeriodsArray(): array
     {
         if ($this->period === DateRange::MONTH) {
             return array_fill(1, Carbon::now()->daysInMonth, 0);
@@ -59,7 +59,7 @@ class HoursReport extends PeriodicReport
     /**
      * @return array
      */
-    private function getPeriodLabels(): array
+    private function makeLabels(): array
     {
         if ($this->period === DateRange::MONTH) {
             return array_keys(array_fill(1, Carbon::now()->daysInMonth, 0));

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Report\Filters;
+use App\Models\Report\LogsFilter;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,29 +19,24 @@ abstract class Report
     protected $logs;
 
     /**
-     * @var Filters
+     * @var LogsFilter
      */
     protected $filters;
 
     /**
-     * @param array $options
-     */
-    public function addFilters(array $options): void
-    {
-        $this->filters->addOptions($options);
-        $this->filters->applyAll($this->logs);
-    }
-
-    /**
      * Report constructor.
+     * @param array $filterOptions
      */
-    public function __construct()
+    public function __construct(array $filterOptions)
     {
-        $this->filters = new Filters();
         $teamId = Auth::user()->team_id;
         $this->logs = TimeLog::whereHas('user', function ($query) use ($teamId) {
             $query->where('team_id', $teamId);
         });
+
+        $this->filters = new LogsFilter($this->logs);
+        $this->filters->setOptions($filterOptions);
+        $this->filters->applyOptions();
     }
 
     /**

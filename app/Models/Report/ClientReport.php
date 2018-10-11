@@ -13,15 +13,6 @@ class ClientReport extends Report
 {
 
     /**
-     * @param array $options
-     */
-    public function addFilters(array $options): void
-    {
-        $this->filters->addOptions($options);
-        $this->filters->applyClients($this->logs);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function generate(): array

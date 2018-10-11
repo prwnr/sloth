@@ -6,12 +6,11 @@ use App\Models\Date\DateRange;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
-
 /**
- * Class Filters
+ * Class LogsFilter
  * @package App\Models\Report
  */
-class Filters
+class LogsFilter
 {
 
     private const STATUS_FINISHED = 1;
@@ -27,6 +26,20 @@ class Filters
      * @var DateRange
      */
     private $range;
+
+    /**
+     * @var Builder
+     */
+    private $builder;
+
+    /**
+     * LogsFilter constructor.
+     * @param Builder $logsBuilder
+     */
+    public function __construct(Builder $logsBuilder)
+    {
+        $this->builder = $logsBuilder;
+    }
 
     /**
      * @param $filter
@@ -47,76 +60,74 @@ class Filters
     /**
      * @param array $options
      */
-    public function addOptions(array $options): void
+    public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
     /**
      * Apply all filters
-     * @param Builder $builder
      */
-    public function applyAll(Builder $builder): void
+    public function applyOptions(): void
     {
-        $this->applyRange($builder);
         foreach ($this->options as $field => $value) {
             if (empty($value)) {
                 continue;
             }
 
-            $this->$field($builder);
+            $this->$field();
         }
     }
 
     /**
-     * @param Builder $builder
+     * Apply range filter (initialize it first)
      */
-    public function applyRange(Builder $builder): void
+    public function applyRange(): void
     {
         $this->initRange();
-        $builder->whereBetween('created_at', [
+        $this->builder->whereBetween('created_at', [
             $this->range->start(), $this->range->end()
         ]);
     }
 
     /**
-     * @param Builder $builder
+     * Apply members filter
      */
-    public function applyMembers(Builder $builder): void
+    public function applyMembers(): void
     {
-        $builder->whereIn('user_id', $this->options['members'] ?? []);
+        $this->builder->whereIn('user_id', $this->options['members'] ?? []);
     }
 
     /**
-     * @param Builder $builder
+     * Apply projects filter
      */
-    public function applyProjects(Builder $builder): void
+    public function applyProjects(): void
     {
-        $builder->whereIn('project_id', $this->options['projects'] ?? []);
+        $this->builder->whereIn('project_id', $this->options['projects'] ?? []);
     }
 
     /**
-     * @param Builder $builder
+     * Apply clients filter
      */
-    public function applyClients(Builder $builder): void
+    public function applyClients(): void
     {
         $clients = $this->options['clients'] ?? [];
-        $builder->whereHas('project', function ($query) use ($clients) {
+        $this->builder->whereHas('project', function ($query) use ($clients) {
             $query->whereIn('client_id', $clients);
         });
     }
 
     /**
-     * @param Builder $builder
+     * Apply billable filter
      */
-    public function applyBillable(Builder $builder): void
+    public function applyBillable(): void
     {
         $billable = [];
         foreach ($this->options['billable'] as $billing) {
             $billable[] = $billing == 'yes' ? 1 : 0;
         }
 
-        $builder->where(function ($query) use ($billable) {
+        $this->builder->where(function ($query) use ($billable) {
             if (\in_array(1, $billable, true)) {
                 $query->whereNull('task_id');
             }
@@ -128,21 +139,21 @@ class Filters
     }
 
     /**
-     * @param Builder $builder
+     * Apply status filter
      */
-    public function applyStatus(Builder $builder): void
+    public function applyStatus(): void
     {
         if ((int)$this->options['status'] === self::STATUS_ALL) {
             return;
         }
 
         if ((int)$this->options['status'] === self::STATUS_FINISHED) {
-            $builder->whereNull('start');
+            $this->builder->whereNull('start');
             return;
         }
 
         if ((int)$this->options['status'] === self::STATUS_IN_PROGRESS) {
-            $builder->whereNotNull('start');
+            $this->builder->whereNotNull('start');
             return;
         }
     }
@@ -153,7 +164,6 @@ class Filters
     private function initRange(): void
     {
         $range = $this->options['range'] ?? null;
-        unset($this->options['range']);
 
         if (!$range) {
             $range = 'week';
