@@ -43,7 +43,7 @@ class TrackerController extends Controller
             $timeLog = TimeLog::create([
                 'user_id' => $data['user'],
                 'project_id' => $data['project'],
-                'task_id' => $data['task'],
+                'task_id' => $data['task'] ?? null,
                 'description' => $data['description'],
                 'start' => $hasDuration ? null : Carbon::now(),
                 'duration' => $hasDuration ? $data['duration'] : 0,
