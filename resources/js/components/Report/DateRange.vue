@@ -5,7 +5,7 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-right" x-placement="top-start">
             <a href="#" class="dropdown-item text-right" v-for="(option, index) in options" :key="index"
-               @click="changeRange(option)">{{ option | capitalize }}</a>
+               @click.prevent="changeRange(option)">{{ option | capitalize }}</a>
             <div v-if="allowCustom" class="dropdown-divider"></div>
             <a v-if="allowCustom" href="#" class="dropdown-item text-right" data-toggle="modal" data-target="#customRange">Custom</a>
         </ul>
