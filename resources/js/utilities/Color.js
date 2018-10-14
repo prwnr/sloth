@@ -17,13 +17,13 @@ class Color {
      * Get random RGB color
      * @returns {string}
      */
-    randomRgb() {
+    random() {
         let H = this.colorsSet[Math.floor(Math.random() * this.colorsSet.length)];
         let S = Math.floor(Math.random() * (75 - 50 + 1)) + 50;
         let L = Math.floor(Math.random() * (65 - 45 + 1)) + 45;
 
         if (this.generated.includes(`${H + S + L}`)) {
-            return this.randomRgb();
+            return this.random();
         }
 
         this.generated.push(`${H + S + L}`);

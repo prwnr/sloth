@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Date\CustomRange;
-use App\Models\Report\{Periodic\HoursReport, FullReport, Periodic\UserProjectsReport};
+use App\Models\Report\{Periodic\HoursReport, FullReport, Periodic\SalesReport, Periodic\UserProjectsReport};
 use App\Models\User;
 use Illuminate\Http\{JsonResponse, Request};
 use App\Http\Controllers\Controller;
@@ -59,6 +59,18 @@ class ReportController extends Controller
     public function userProjects(Request $request, User $user, string $period): JsonResponse
     {
         $report = new UserProjectsReport(['members' => [$user->id]], $period);
+
+        return response()->json($report->generate());
+    }
+
+    /**
+     * @param Request $request
+     * @param string $period
+     * @return JsonResponse
+     */
+    public function sales(Request $request, string $period): JsonResponse
+    {
+        $report = new SalesReport([], $period);
 
         return response()->json($report->generate());
     }

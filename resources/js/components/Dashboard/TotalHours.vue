@@ -58,7 +58,7 @@
             fetchData() {
                 this.chartData = null;
                 let color = new Color();
-                let background = color.randomRgb();
+                let background = color.random();
                 axios.get('api/reports/' + this.$user.get('id') + '/hours/' + this.period).then(response => {
                     this.chartData = {
                         labels: response.data.labels,
