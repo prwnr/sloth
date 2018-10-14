@@ -29,13 +29,16 @@ class SalesReport extends PeriodicReport
                 if ($this->period === DateRange::WEEK) {
                     $number = Carbon::createFromFormat('d', $number)->dayOfWeek;
                 }
-                if (!isset($sales[$log->project_id])) {
-                    $sales[$log->project_id] = [];
-                    $sales[$log->project_id]['label'] = $log->project->name;
-                    $sales[$log->project_id]['data'] = $this->preparePeriodsArray();
+
+                $projectCurrencyId = $log->project_id . '-' . $log->currency()->id;
+                if (!isset($sales[$projectCurrencyId])) {
+                    $sales[$projectCurrencyId] = [];
+                    $sales[$projectCurrencyId]['label'] = $log->project->name . "({$log->currency()->code})";
+                    $sales[$projectCurrencyId]['data'] = $this->preparePeriodsArray();
                 }
 
-                $sales[$log->project_id]['data'][$number] += round($salary, 2);
+                $sales[$projectCurrencyId]['data'][$number] += round($salary, 2);
+                $sales[$projectCurrencyId]['data'][$number] = round($sales[$projectCurrencyId]['data'][$number], 2);
             }
         }
 
