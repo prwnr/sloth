@@ -1,15 +1,6 @@
 <template>
     <div class="sidebar">
-        <div class="user-panel pl-3 mt-3 pb-3 mb-3 d-flex">
-            <div class="user-panel-icon">
-                <i class="fa fa-user-circle"></i>
-            </div>
-            <div class="info">
-                <router-link :to="{ name: 'profile' }" :title="$user.get('fullname')" class="d-block">
-                    {{ $user.get('fullname') }}
-                </router-link>
-            </div>
-        </div>
+        <team-switch></team-switch>
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -67,7 +58,12 @@
 </template>
 
 <script>
+    import TeamSwitch from './TeamSwitch';
+
     export default {
+        components: {
+            TeamSwitch
+        }
     }
 </script>
 
