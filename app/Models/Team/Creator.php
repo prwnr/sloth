@@ -2,7 +2,7 @@
 
 namespace App\Models\Team;
 
-use App\Models\{Permission, Role, Team, User};
+use App\Models\{Currency, Permission, Role, Team, User};
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\{Facades\DB, Facades\Hash, Facades\Storage};
@@ -28,6 +28,11 @@ class Creator
      * @var array
      */
     private $data;
+
+    /**
+     * @var Member
+     */
+    private $member;
 
     /**
      * @var User
@@ -98,8 +103,20 @@ class Creator
             'firstname' => $this->data['firstname'],
             'lastname' => $this->data['lastname'],
             'email' => $this->data['email'],
-            'password' => Hash::make($this->data['password'])
+            'password' => Hash::make($this->data['password']),
+            'owns_team' => $this->team->id
         ]);
+
+        $this->member = new Member();
+        $this->member->user()->associate($this->user);
+        $this->member->team()->associate($this->team);
+        $billing = $this->member->billing()->create([
+            'rate' => 0,
+            'type' => '',
+            'currency_id' => Currency::first()->id
+        ]);
+        $this->member->billing()->associate($billing);
+        $this->member->save();
     }
 
     /**
@@ -189,7 +206,7 @@ class Creator
                 ['team_id', '=', $this->team->id]
             ])->firstOrFail();
 
-            $this->user->attachRole($role);
+            $this->member->attachRole($role);
         } catch (ModelNotFoundException $ex) {
             throw new TeamCreatorException('Couldn\t assign admin role to user. ' . $ex->getMessage());
         }

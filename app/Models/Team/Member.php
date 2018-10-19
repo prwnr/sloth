@@ -8,6 +8,7 @@ use App\Models\{
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 /**
  * Class Member
@@ -15,20 +16,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Member extends Model
 {
-    use Teamed;
+    use Teamed, EntrustUserTrait;
 
     /**
      * @var array
      */
     protected $fillable = [
         'first_login',
-    ];
-
-    /**
-     * @var array
-     */
-    protected $appends = [
-        'active'
     ];
 
     /**
@@ -60,18 +54,5 @@ class Member extends Model
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class);
-    }
-
-    /**
-     * Get is_active attribute as Yes/No string
-     * @return string
-     */
-    public function getActiveAttribute(): string
-    {
-        if ($this->is_active) {
-            return __('Yes');
-        }
-
-        return __('No');
     }
 }

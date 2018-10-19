@@ -5,12 +5,10 @@ namespace App\Models;
 use App\Models\Team\Member;
 use App\Models\Team\Teamed;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\HasApiTokens;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 /**
  * Class User
@@ -18,7 +16,7 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
  */
 class User extends Authenticatable
 {
-    use Notifiable, EntrustUserTrait, Teamed, HasApiTokens;
+    use Notifiable, Teamed, HasApiTokens;
 
     /**
      * Light user skin
@@ -67,7 +65,7 @@ class User extends Authenticatable
      * Hash password
      * @param $input
      */
-    public function setPasswordAttribute($input)
+    public function setPasswordAttribute($input): void
     {
         if ($input) {
             $this->attributes['password'] = app('hash')->needsRehash($input) ? Hash::make($input) : $input;
@@ -75,11 +73,31 @@ class User extends Authenticatable
     }
 
     /**
-     * @return HasOne
+     * @return bool
      */
-    public function member(): HasOne
+    public function ownsTeam(): bool
     {
-        return $this->hasOne(Member::class);
+        if ($this->team_id === $this->owns_team) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return Member
+     */
+    public function member(): Member
+    {
+        return Member::findFromTeam($this->team)->firstOrFail();
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function members(): HasMany
+    {
+        return $this->hasMany(Member::class);
     }
 
     /**
@@ -96,18 +114,17 @@ class User extends Authenticatable
      */
     public function getAllInfoData(): array
     {
-        $this->loadMissing('member');
-        $roles = $this->roles()->select(['id', 'name', 'display_name'])->get();
+        $roles = $this->member()->roles()->select(['id', 'name', 'display_name'])->get();
         $permissions = [];
         foreach (Permission::all() as $perm) {
-            if ($this->can($perm->name)) {
+            if ($this->member()->can($perm->name)) {
                 $permissions[] = $perm->name;
             }
         }
 
         return [
             'data' => $this,
-            'projects' => $this->member ? $this->member->projects : Project::findFromTeam($this->team)->get(),
+            'projects' => $this->member() ? $this->member()->projects : Project::findFromTeam($this->team)->get(),
             'permissions' => $permissions,
             'roles' => $roles,
             'team' => $this->team

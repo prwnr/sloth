@@ -21,6 +21,7 @@ class CreateTeamsTable extends Migration
 
         Schema::table('users', function (Blueprint $table) {
             $table->integer('team_id')->unsigned()->nullable();
+            $table->integer('owns_team')->nullable();
 
             $table->foreign('team_id')->references('id')->on('teams')
                 ->onUpdate('cascade')->onDelete('cascade');
@@ -37,6 +38,7 @@ class CreateTeamsTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign('users_team_id_foreign');
             $table->dropColumn('team_id');
+            $table->dropColumn('owns_team');
         });
 
         Schema::dropIfExists('teams');

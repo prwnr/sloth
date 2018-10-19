@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,9 +18,10 @@ class FirstLogin
      */
     public function handle($request, Closure $next)
     {
-        $member = Auth::user()->member;
+        /** @var User $user */
+        $user = Auth::user();
 
-        if (!is_null($member) && $member->first_login) {
+        if ($user->member() !== null && $user->member()->first_login && $user->ownsTeam()) {
             return redirect('changePassword');
         }
         return $next($request);

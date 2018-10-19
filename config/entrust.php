@@ -51,7 +51,7 @@ return [
     | Update the User if it is in a different namespace.
     |
     */
-    'user' => \App\Models\User::class,
+    'user' => \App\Models\Team\Member::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -62,7 +62,7 @@ return [
     | database.
     |
     */
-    'users_table' => 'users',
+    'users_table' => 'members',
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +73,7 @@ return [
     | database.
     |
     */
-    'role_user_table' => 'role_user',
+    'role_user_table' => 'role_member',
 
     /*
     |--------------------------------------------------------------------------
@@ -84,7 +84,7 @@ return [
     | relation between roles and users
     |
     */
-    'user_foreign_key' => 'user_id',
+    'user_foreign_key' => 'member_id',
 
     /*
     |--------------------------------------------------------------------------

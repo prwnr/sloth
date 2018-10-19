@@ -66,7 +66,19 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return new UserResource($user);
+        $teams = [];
+        foreach ($user->members as $member) {
+            $teams[] = [
+                'id' => $member->team->id,
+                'name' => $member->team->name
+            ];
+        }
+
+        $resource = new UserResource($user);
+        $resource->additional([
+            'teams' => $teams
+        ]);
+        return $resource;
     }
 
     /**

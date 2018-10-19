@@ -22,7 +22,9 @@
         methods: {
             fetchTeams() {
                 axios.get('/api/users/' + this.$user.get('id')).then(response => {
-                    this.teams.push(response.data.data.team);
+                    response.data.teams.forEach(team => {
+                        this.teams.push(team);
+                    });
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });

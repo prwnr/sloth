@@ -17,7 +17,6 @@ class CreateMembersTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('team_id')->unsigned();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')

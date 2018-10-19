@@ -15,7 +15,7 @@ class CreateProjectsTable extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('code')->unique()->nullable(false);
+            $table->string('code')->nullable(false);
             $table->string('name')->nullable(false);
             $table->float('budget');
             $table->string('budget_period');
@@ -24,6 +24,8 @@ class CreateProjectsTable extends Migration
             $table->integer('team_id')->unsigned();
             $table->integer('billing_id')->unsigned()->nullable();
             $table->timestamps();
+
+            $table->unique(['code', 'team_id']);
 
             $table->foreign('team_id')->references('id')->on('teams')
                 ->onUpdate('cascade')->onDelete('cascade');

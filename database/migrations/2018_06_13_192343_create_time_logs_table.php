@@ -17,7 +17,7 @@ class CreateTimeLogsTable extends Migration
             $table->increments('id');
             $table->integer('project_id')->unsigned();
             $table->integer('task_id')->unsigned()->nullable(true);
-            $table->integer('user_id')->unsigned();
+            $table->integer('member_id')->unsigned();
             $table->string('description', 200)->nullable(true);
             $table->dateTime('start')->nullable(true);
             $table->integer('duration')->default(0);
@@ -26,7 +26,7 @@ class CreateTimeLogsTable extends Migration
             $table->foreign('project_id')->references('id')->on('projects')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('task_id')->references('id')->on('tasks');
-            $table->foreign('user_id')->references('id')->on('users')
+            $table->foreign('member_id')->references('id')->on('members')
                 ->onUpdate('cascade')->onDelete('cascade');
         });
     }
