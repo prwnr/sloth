@@ -104,7 +104,7 @@
                 return this.members.map(function (item) {
                     return {
                         id: item.id,
-                        text: item.fullname
+                        text: item.user.fullname
                     }
                 });
             },
@@ -193,7 +193,7 @@
              * Load members
              */
             fetchMembers() {
-                axios.get('/api/users').then(response => {
+                axios.get('/api/members').then(response => {
                     this.members = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

@@ -108,7 +108,7 @@ class MemberController extends Controller
      */
     public function show(Member $member)
     {
-        $member->loadMissing(['projects', 'billing', 'user.roles', 'billing.currency', 'user.logs']);
+        $member->loadMissing(['projects', 'billing', 'roles', 'billing.currency', 'logs']);
 
         $report = new MemberReport(['members' => [$member->user->id]]);
 

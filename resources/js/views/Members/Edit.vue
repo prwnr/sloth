@@ -230,7 +230,7 @@
                     this.form.firstname = this.member.user.firstname;
                     this.form.lastname = this.member.user.lastname;
                     this.form.email = this.member.user.email;
-                    this.form.roles = this.member.user.roles.map(item => item.id);
+                    this.form.roles = this.member.roles.map(item => item.id);
                     this.form.projects = this.member.projects.map(item => item.id);
                     this.form.billing_rate = this.member.billing.rate;
                     this.form.billing_type = this.member.billing.type;

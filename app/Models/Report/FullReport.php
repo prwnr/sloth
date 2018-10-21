@@ -34,7 +34,7 @@ class FullReport extends Report
             $this->sumSalary($log, $salaryTotals);
 
             $items[$key] = [
-                'user_name' => $log->user->fullname,
+                'user_name' => $log->member->user->fullname,
                 'client' => $log->project->client->company_name,
                 'project' => $log->project->name,
                 'task' => $log->task ? $log->task->name : 'none',
@@ -74,7 +74,7 @@ class FullReport extends Report
                 'amount' => $log->salary()
             ],
             'member_salary' => [
-                'currency' => $log->user->member ? $log->user->member->billing->currency->code : $log->currency()->code,
+                'currency' => $log->member ? $log->member->billing->currency->code : $log->currency()->code,
                 'amount' => $log->memberSalary()
             ],
             'client_salary' => [
