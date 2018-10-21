@@ -36,7 +36,7 @@ class UserController extends Controller
      */
     public function timeLogs(Request $request, User $user)
     {
-        $logs = $user->logs();
+        $logs = $user->member()->logs();
 
         try {
             $date = $request->get('date');

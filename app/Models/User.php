@@ -101,11 +101,41 @@ class User extends Authenticatable
     }
 
     /**
-     * @return HasMany
+     * Check if users current active member has a permission by its name.
+     *
+     * @param string|array $permission Permission string or array of permissions.
+     * @param bool $requireAll All permissions in the array are required.
+     *
+     * @return bool
      */
-    public function logs(): HasMany
+    public function can($permission, $requireAll = false): bool
     {
-        return $this->hasMany(TimeLog::class);
+        if (\is_array($permission)) {
+            foreach ($permission as $permName) {
+                $hasPerm = $this->member()->can($permName);
+
+                if ($hasPerm && !$requireAll) {
+                    return true;
+                }
+
+                if (!$hasPerm && $requireAll) {
+                    return false;
+                }
+            }
+
+            return $requireAll;
+        }
+
+        foreach ($this->member()->cachedRoles() as $role) {
+            // Validate against the Permission table
+            foreach ($role->member()->cachedPermissions() as $perm) {
+                if (str_is($permission, $perm->name)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

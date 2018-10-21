@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Team\Member;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,15 +19,15 @@ class TimeLog extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'project_id', 'task_id', 'description', 'start', 'duration', 'created_at'
+        'member_id', 'project_id', 'task_id', 'description', 'start', 'duration', 'created_at'
     ];
 
     /**
      * @return BelongsTo
      */
-    public function user(): BelongsTo
+    public function member(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Member::class);
     }
 
     /**
@@ -62,11 +63,11 @@ class TimeLog extends Model
      */
     public function memberSalary(): float
     {
-        if (!$this->user->member) {
+        if (!$this->member) {
             return 0.0;
         }
 
-        return round($this->duration() * $this->user->member->billing->rate, 2);
+        return round($this->duration() * $this->member->billing->rate, 2);
     }
 
     /**

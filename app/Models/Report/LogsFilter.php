@@ -95,7 +95,7 @@ class LogsFilter
      */
     public function applyMembers(): void
     {
-        $this->builder->whereIn('user_id', $this->options['members'] ?? []);
+        $this->builder->whereIn('member_id', $this->options['members'] ?? []);
     }
 
     /**

@@ -2,12 +2,11 @@
 
 namespace App\Models\Team;
 
-use App\Models\{
-    Billing, Project, User
-};
+use App\Models\{Billing, Project, TimeLog, User};
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 /**
@@ -38,6 +37,14 @@ class Member extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function logs(): HasMany
+    {
+        return $this->hasMany(TimeLog::class);
     }
 
     /**

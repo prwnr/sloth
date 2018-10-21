@@ -30,7 +30,7 @@ abstract class Report
     public function __construct(array $filterOptions)
     {
         $teamId = Auth::user()->team_id;
-        $this->logs = TimeLog::whereHas('user', function ($query) use ($teamId) {
+        $this->logs = TimeLog::whereHas('member', function ($query) use ($teamId) {
             $query->where('team_id', $teamId);
         });
 
