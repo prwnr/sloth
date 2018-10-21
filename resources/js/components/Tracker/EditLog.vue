@@ -68,7 +68,7 @@
                 duration: null,
                 timer: new Timer(),
                 form: new Form({
-                    user: this.$user.data.id,
+                    member: this.$user.member.id,
                     project: this.time.project.id,
                     task: this.time.task ? this.time.task.id : null,
                     description: this.time.description ? this.time.description : '',

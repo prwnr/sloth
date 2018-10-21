@@ -34,7 +34,7 @@
                 reportData: [],
                 filters: {
                     range: 'week',
-                    members: [this.$user.get('id')],
+                    members: [this.$user.member.id],
                     clients: [],
                     projects: [],
                     billable: [],
@@ -82,7 +82,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.post('/api/reports/' + this.$user.get('id'), {
+                axios.post('/api/reports/' + this.$user.member.id, {
                     filters: this.filters
                 }).then(response => {
                     this.reportData = response.data;

@@ -34,7 +34,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'firstname', 'lastname', 'company_name', 'email', 'password',
+        'firstname', 'lastname', 'email', 'password', 'owns_team'
     ];
 
     /**
@@ -157,7 +157,8 @@ class User extends Authenticatable
             'projects' => $this->member() ? $this->member()->projects : Project::findFromTeam($this->team)->get(),
             'permissions' => $permissions,
             'roles' => $roles,
-            'team' => $this->team
+            'team' => $this->team,
+            'member' => $this->member()
         ];
     }
 }

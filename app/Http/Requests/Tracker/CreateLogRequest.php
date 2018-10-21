@@ -17,7 +17,7 @@ class CreateLogRequest extends LogRequest
     public function rules(): array
     {
         return [
-            'user' => [
+            'member' => [
                 'required', 'numeric'
             ],
             'project' => [

@@ -13,6 +13,7 @@ class User {
         this.projects = data.projects;
         this.roles = data.roles;
         this.permissions = data.permissions;
+        this.member = data.member;
     }
 
     /**

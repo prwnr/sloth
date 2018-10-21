@@ -79,7 +79,7 @@
                 duration: null,
                 timer: new Timer(),
                 form: new Form({
-                    user: this.$user.data.id,
+                    member: this.$user.member.id,
                     project: '',
                     task: '',
                     description: '',
@@ -145,7 +145,7 @@
                     EventHub.fire('log_created', response.data);
                     this.form.reset();
                     this.form.created_at = created_at;
-                    this.form.user = this.$user.data.id;
+                    this.form.member = this.$user.member.id;
                     this.duration = null;
                     this.$awn.success('New time log created');
                     $('#newLog').modal('hide');

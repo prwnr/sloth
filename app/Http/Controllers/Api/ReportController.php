@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Date\CustomRange;
 use App\Models\Report\{Periodic\HoursReport, FullReport, Periodic\SalesReport, Periodic\UserProjectsReport};
-use App\Models\User;
+use App\Models\Team\Member;
 use Illuminate\Http\{JsonResponse, Request};
 use App\Http\Controllers\Controller;
 
@@ -26,39 +26,39 @@ class ReportController extends Controller
 
     /**
      * @param Request $request
-     * @param User $user
+     * @param Member $member
      * @return JsonResponse
      */
-    public function show(Request $request, User $user): JsonResponse
+    public function show(Request $request, Member $member): JsonResponse
     {
         $options = $request->input('filters');
-        $options['members'] = [$user->id];
+        $options['members'] = [$member->id];
 
         return response()->json($this->createFullReport($options));
     }
 
     /**
      * @param Request $request
-     * @param User $user
+     * @param Member $member
      * @param string $period
      * @return JsonResponse
      */
-    public function userHours(Request $request, User $user, string $period): JsonResponse
+    public function userHours(Request $request, Member $member, string $period): JsonResponse
     {
-        $report = new HoursReport(['members' => [$user->id]], $period);
+        $report = new HoursReport(['members' => [$member->id]], $period);
 
         return response()->json($report->generate());
     }
 
     /**
      * @param Request $request
-     * @param User $user
+     * @param Member $member
      * @param string $period
      * @return JsonResponse
      */
-    public function userProjects(Request $request, User $user, string $period): JsonResponse
+    public function userProjects(Request $request, Member $member, string $period): JsonResponse
     {
-        $report = new UserProjectsReport(['members' => [$user->id]], $period);
+        $report = new UserProjectsReport(['members' => [$member->id]], $period);
 
         return response()->json($report->generate());
     }
