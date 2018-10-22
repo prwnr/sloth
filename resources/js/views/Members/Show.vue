@@ -35,10 +35,6 @@
                                     <td><strong>Email</strong></td>
                                     <td>{{ member.user.email }}</td>
                                 </tr>
-                                <tr>
-                                    <td><strong>Active</strong></td>
-                                    <td>{{ member.active }}</td>
-                                </tr>
                             </table>
                         </div>
                     </div>
@@ -54,10 +50,10 @@
                         </div>
                     </div>
 
-                    <div class="card" :class="{ 'border-bottom-0': member.user.roles.length > 0}">
+                    <div class="card" :class="{ 'border-bottom-0': member.roles.length > 0}">
                         <card-header>Roles</card-header>
-                        <div class="card-body" :class="{ 'p-0': member.user.roles.length > 0}">
-                            <router-link v-for="(role, index) in member.user.roles" :key="role.id" tag="a"
+                        <div class="card-body" :class="{ 'p-0': member.roles.length > 0}">
+                            <router-link v-for="(role, index) in member.roles" :key="role.id" tag="a"
                                          :to="{ name: 'roles.show', params: { id: role.id } }"
                                          class="list-group-item border-right-0 border-left-0"
                                          :class="{ 'border-top-0': index === 0}">
@@ -100,9 +96,8 @@
         data() {
             return {
                 member: {
-                    user: {
-                        roles: []
-                    },
+                    user: {},
+                    roles: [],
                     projects: []
                 },
                 reportItems: null

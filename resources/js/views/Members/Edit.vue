@@ -40,9 +40,8 @@
 
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input id="email" type="email" class="form-control" v-model="form.email"
-                                           name="email" placeholder="Email" required>
-                                    <form-error :text="form.errors.get('email')" :show="form.errors.has('email')"></form-error>
+                                    <input id="email" type="email" class="form-control disabled" disabled v-model="member.user.email"
+                                           name="email" placeholder="Email">
                                 </div>
                             </div>
                         </div>
@@ -129,7 +128,9 @@
         },
         data() {
             return {
-                member: {},
+                member: {
+                    user: {}
+                },
                 roles: [],
                 projects: [],
                 currencies: [],
@@ -137,7 +138,6 @@
                 form: new Form({
                     firstname: '',
                     lastname: '',
-                    email: '',
                     roles: [],
                     projects: [],
                     billing_rate: '',

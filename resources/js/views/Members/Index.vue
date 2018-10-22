@@ -45,7 +45,6 @@
                     {title: '#', field: 'id', sortable: true, colStyle: 'width: 70px;'},
                     {title: 'Name', field: 'fullname', sortable: true},
                     {title: 'Email', field: 'email', sortable: true},
-                    {title: 'Active?', field: 'active', sortable: true},
                     {title: 'Updated at', field: 'updated_at', sortable: true},
                     {
                         title: 'Actions',

@@ -108,7 +108,7 @@ class MemberController extends Controller
      */
     public function show(Member $member)
     {
-        $member->loadMissing(['projects', 'billing', 'roles', 'billing.currency', 'logs']);
+        $member->loadMissing(['projects', 'billing', 'user', 'roles', 'billing.currency', 'logs']);
 
         $report = new MemberReport(['members' => [$member->user->id]]);
 
@@ -133,11 +133,10 @@ class MemberController extends Controller
             DB::beginTransaction();
             $member->user()->update([
                 'firstname' => $data['firstname'],
-                'lastname' => $data['lastname'],
-                'email' => $data['email'],
+                'lastname' => $data['lastname']
             ]);
 
-            $member->user->roles()->sync($data['roles'] ?? []);
+            $member->roles()->sync($data['roles'] ?? []);
             $member->billing()->update([
                 'rate' => $data['billing_rate'],
                 'type' => $data['billing_type'],

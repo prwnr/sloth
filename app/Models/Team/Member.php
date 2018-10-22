@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 /**
@@ -30,6 +31,53 @@ class Member extends Model
     protected $with = [
         'user'
     ];
+
+    /**
+     * @var array
+     */
+    protected $appends = [
+        'editable', 'deletable'
+    ];
+
+    /**
+     * @return bool
+     */
+    public function getEditableAttribute(): bool
+    {
+        return $this->isEditable();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDeletableAttribute(): bool
+    {
+        return $this->isDeletable();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEditable(): bool
+    {
+        if ($this->user->ownsTeam() && Auth::user()->id !== $this->user->id) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeletable(): bool
+    {
+        if ($this->user->ownsTeam() || Auth::user()->id === $this->user->id) {
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * @return BelongsTo
