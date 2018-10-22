@@ -103,6 +103,16 @@
             }
         },
 
+        watch: {
+            role: function () {
+                if (!this.role.editable) {
+                    this.$awn.alert('You are not allowed to edit this role')
+                    this.$router.push({ name: 'roles.index'});
+                    return;
+                }
+            }
+        },
+
         methods: {
             submitForm() {
                 this.$awn.async(

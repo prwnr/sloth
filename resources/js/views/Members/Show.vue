@@ -8,7 +8,7 @@
                     </div>
                     <div class="col-md-2">
                         <router-link
-                                v-if="member.id"
+                                v-if="member.id && member.editable"
                                 :to="{ name: 'members.edit', params: { id: member.id } }"
                                 class="btn btn-success btn-block ">Edit
                         </router-link>

@@ -174,6 +174,16 @@
             }
         },
 
+        watch: {
+            member: function () {
+                if (!this.member.editable) {
+                    this.$awn.alert('You are not allowed to edit this member')
+                    this.$router.push({ name: 'members.index'});
+                    return;
+                }
+            }
+        },
+
         methods: {
             submitForm() {
                 this.$awn.async(
