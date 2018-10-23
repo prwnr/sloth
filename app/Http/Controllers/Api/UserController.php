@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\{UserPasswordRequest, UserRequest};
-use App\Http\Resources\{TimeLog as TimeLogResource,
-    User as UserResource,
-    Users as UsersCollectionResource};
+use App\Http\Resources\{TimeLog as TimeLogResource, User as UserResource, Users as UsersCollectionResource};
+use App\Models\Team;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -110,6 +109,24 @@ class UserController extends Controller
             $user->update($data);
 
             return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        } catch (\Exception $ex) {
+            return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function switchTeam(Request $request, User $user)
+    {
+        try {
+            $team = Team::find($request->input('team'));
+            $user->team()->associate($team);
+            $user->save();
+
+            return response($user->getAllInfoData())->setStatusCode(Response::HTTP_ACCEPTED);
         } catch (\Exception $ex) {
             return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

@@ -19,12 +19,32 @@
             this.fetchTeams();
         },
 
+        watch: {
+            currentTeam: function() {
+                this.switchTeam();
+            }
+        },
+
         methods: {
             fetchTeams() {
-                axios.get('/api/users/' + this.$user.get('id')).then(response => {
+                axios.get(`/api/users/${this.$user.get('id')}`).then(response => {
                     response.data.teams.forEach(team => {
                         this.teams.push(team);
                     });
+                }).catch(error => {
+                    this.$awn.alert(error.message);
+                });
+            },
+
+            /**
+             * Switch team and reloads user data
+             */
+            switchTeam() {
+                axios.put(`/api/users/${this.$user.get('id')}/switch`, {
+                    team: this.currentTeam
+                }).then(response => {
+                    EventHub.fire('team_change', response.data);
+                    this.$router.push({ name: 'dashboard' });
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });

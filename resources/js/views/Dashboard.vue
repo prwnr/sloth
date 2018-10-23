@@ -4,12 +4,12 @@
         </section>
         <section class="content">
             <div class="col-lg-12">
-                <div v-if="$user.can('view_reports')" class="row">
+                <div v-if="user.can('view_reports')" class="row">
                     <div class="col-12">
                         <h2>Reports charts</h2>
                     </div>
                     <div class="col-12">
-                        <sales></sales>
+                        <sales :key="key"></sales>
                     </div>
                 </div>
                 <div class="row">
@@ -17,10 +17,10 @@
                         <h2>Personal charts</h2>
                     </div>
                     <div class="col-6 mb-5">
-                        <total-hours></total-hours>
+                        <total-hours :key="key"></total-hours>
                     </div>
                     <div class="col-6 mb-5">
-                        <projects-hours></projects-hours>
+                        <projects-hours :key="key"></projects-hours>
                     </div>
                 </div>
             </div>
@@ -36,6 +36,25 @@
     export default {
         components: {
             TotalHours, ProjectsHours, Sales
+        },
+
+        data() {
+            return {
+                user: this.$user,
+                key: this.$user.member.id
+            }
+        },
+
+        created() {
+            EventHub.listen('user_change', () => {
+                console.log(1);
+                this.user = this.$user;
+                this.key = this.$user.member.id;
+            })
+        },
+
+        destroyed() {
+            EventHub.forget('user_change');
         }
     }
 </script>

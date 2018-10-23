@@ -19,16 +19,6 @@ class User extends Authenticatable
     use Notifiable, Teamed, HasApiTokens;
 
     /**
-     * Light user skin
-     */
-    public CONST THEME_LIGHT = 'light';
-
-    /**
-     * Dark user skin
-     */
-    public CONST THEME_DARK = 'dark';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -89,7 +79,7 @@ class User extends Authenticatable
      */
     public function member(): Member
     {
-        return Member::findFromTeam($this->team)->firstOrFail();
+        return Member::findFromTeam($this->team)->where('user_id', $this->id)->firstOrFail();
     }
 
     /**

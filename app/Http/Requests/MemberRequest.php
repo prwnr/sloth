@@ -28,11 +28,6 @@ class MemberRequest extends FormRequest
      */
     public function rules()
     {
-        $uniqueUserRule = Rule::unique('users', 'email'); //TODO make email unique per Team
-        if ($this->member && $this->member->user) {
-            $uniqueUserRule = $uniqueUserRule->ignore($this->member->user->id);
-        }
-
         return [
             'firstname' => [
                 'required', 'string', 'max:255'
@@ -41,7 +36,7 @@ class MemberRequest extends FormRequest
                 'required', 'string', 'max:255'
             ],
             'email' => [
-                'required', 'string', 'email', 'max:255', $uniqueUserRule
+                'nullable', 'string', 'email', 'max:255'
             ],
             'roles' => [
                 'required', 'array', 'min:1'

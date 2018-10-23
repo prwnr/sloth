@@ -55,17 +55,18 @@ class MemberController extends Controller
 
         try {
             DB::beginTransaction();
-            $password = str_random(10);
             /** @var User $user */
-            $user = $team->users()->create([
-                'firstname' => $data['firstname'],
-                'lastname' => $data['lastname'],
-                'email' => $data['email'],
-                'password' => Hash::make($password)
-            ]);
+            $user = User::where('email', $data['email'])->first();
+            if (!$user) {
+                $password = str_random(10);
+                $user = $team->users()->create([
+                    'firstname' => $data['firstname'],
+                    'lastname' => $data['lastname'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($password)
+                ]);
+            }
 
-            $user->attachRoles($data['roles']);
-            $user->save();
             $member = new Member();
             $member->user()->associate($user);
             $member->team()->associate($team);
@@ -75,8 +76,9 @@ class MemberController extends Controller
                 'currency_id' => $data['billing_currency']
             ]);
             $member->billing()->associate($billing);
-
             $member->save();
+
+            $member->attachRoles($data['roles']);
             $member->projects()->sync($data['projects'] ?? []);
 
             DB::commit();

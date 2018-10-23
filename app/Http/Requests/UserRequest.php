@@ -28,7 +28,7 @@ class UserRequest extends FormRequest
      */
     public function rules()
     {
-        $uniqueUserRule = Rule::unique('users', 'email'); //TODO make email unique per Team
+        $uniqueUserRule = Rule::unique('users', 'email');
         if ($this->user) {
             $uniqueUserRule = $uniqueUserRule->ignore($this->user->id);
         }
@@ -39,14 +39,13 @@ class UserRequest extends FormRequest
 
         return [
             'firstname' => $requiredStringRules,
-            'skin' => $requiredStringRules,
             'lastname' => $requiredStringRules,
             'email' => [
                 'required', 'string', 'email', 'max:255', $uniqueUserRule
             ],
             'password' => [
                 'nullable', 'string', 'min:6', 'confirmed'
-            ],'nullable|string|min:6|confirmed'
+            ]
         ];
     }
 }

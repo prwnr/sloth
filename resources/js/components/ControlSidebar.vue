@@ -23,6 +23,7 @@
             EventHub.listen('log_updated', this.updateLogs);
             EventHub.listen('log_deleted', this.removeLog);
             EventHub.listen('log_created', this.addLog);
+            EventHub.listen('user_change', this.fetchTimeLogs);
             this.fetchTimeLogs();
         },
 

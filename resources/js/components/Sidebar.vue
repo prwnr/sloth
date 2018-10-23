@@ -12,42 +12,42 @@
                 </li>
 
                 <li class="nav-item">
-                    <router-link v-if="$user.can('track_time')" class="nav-link" :to="{ name: 'tracker' }" tag="a">
+                    <router-link v-if="user.can('track_time')" class="nav-link" :to="{ name: 'tracker' }" tag="a">
                         <i class="fa nav-icon fa-clock-o"></i>
                         <p>Time</p>
                     </router-link>
                 </li>
 
                 <li class="nav-item">
-                    <router-link v-if="$user.can('view_reports')" class="nav-link" :to="{ name: 'reports' }" tag="a">
+                    <router-link v-if="user.can('view_reports')" class="nav-link" :to="{ name: 'reports' }" tag="a">
                         <i class="fa nav-icon fa-bar-chart"></i>
                         <p>Reports</p>
                     </router-link>
                 </li>
 
                 <li class="nav-item">
-                    <router-link v-if="$user.can('manage_team')" class="nav-link" :to="{ name: 'members.index' }" tag="a">
+                    <router-link v-if="user.can('manage_team')" class="nav-link" :to="{ name: 'members.index' }" tag="a">
                         <i class="fa nav-icon fa-users"></i>
                         <p>Team</p>
                     </router-link>
                 </li>
 
                 <li class="nav-item">
-                    <router-link v-if="$user.can('manage_clients')" class="nav-link" :to="{ name: 'clients.index' }" tag="a">
+                    <router-link v-if="user.can('manage_clients')" class="nav-link" :to="{ name: 'clients.index' }" tag="a">
                         <i class="fa nav-icon fa-user"></i>
                         <p>Clients</p>
                     </router-link>
                 </li>
 
                 <li class="nav-item">
-                    <router-link v-if="$user.can('manage_projects')" class="nav-link" :to="{ name: 'projects.index' }" tag="a">
+                    <router-link v-if="user.can('manage_projects')" class="nav-link" :to="{ name: 'projects.index' }" tag="a">
                         <i class="fa nav-icon fa-briefcase"></i>
                         <p>Projects</p>
                     </router-link>
                 </li>
 
                 <li class="nav-item">
-                    <router-link v-if="$user.can('manage_roles')" class="nav-link" :to="{ name: 'roles.index' }" tag="a">
+                    <router-link v-if="user.can('manage_roles')" class="nav-link" :to="{ name: 'roles.index' }" tag="a">
                         <i class="fa nav-icon fa-universal-access"></i>
                         <p>Roles and permissions</p>
                     </router-link>
@@ -63,6 +63,22 @@
     export default {
         components: {
             TeamSwitch
+        },
+
+        data() {
+            return {
+                user: this.$user
+            }
+        },
+
+        created() {
+            EventHub.listen('user_change', () => {
+                this.user = this.$user;
+            });
+        },
+
+        destroyed() {
+            EventHub.forget('user_change');
         }
     }
 </script>
