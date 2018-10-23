@@ -263,7 +263,7 @@
              * Fetch tracker data
              */
             fetchData() {
-                if (!this.$user.data.member) {
+                if (!this.$user.member) {
                     axios.get('/api/projects').then(response => {
                         this.projects = response.data.data;
                     }).catch(error => {
@@ -274,7 +274,7 @@
                     return;
                 }
 
-                axios.get('/api/members/' + this.$user.data.member.id + '/projects').then(response => {
+                axios.get('/api/members/' + this.$user.member.id + '/projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

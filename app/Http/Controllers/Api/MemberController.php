@@ -55,17 +55,7 @@ class MemberController extends Controller
 
         try {
             DB::beginTransaction();
-            /** @var User $user */
-            $user = User::where('email', $data['email'])->first();
-            if (!$user) {
-                $password = str_random(10);
-                $user = $team->users()->create([
-                    'firstname' => $data['firstname'],
-                    'lastname' => $data['lastname'],
-                    'email' => $data['email'],
-                    'password' => Hash::make($password)
-                ]);
-            }
+            [$user, $password] = $this->createUser($team, $data);
 
             $member = new Member();
             $member->user()->associate($user);
@@ -184,5 +174,28 @@ class MemberController extends Controller
         return response()->json([
             'message' => __('Something went wrong and member could not be deleted. It may not exists, please try again')
         ], Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @param $team
+     * @param $data
+     * @return array
+     */
+    private function createUser($team, $data): array
+    {
+        $password = null;
+        /** @var User $user */
+        $user = User::where('email', $data['email'])->first();
+        if (!$user) {
+            $password = str_random(10);
+            $user = $team->users()->create([
+                'firstname' => $data['firstname'],
+                'lastname' => $data['lastname'],
+                'email' => $data['email'],
+                'password' => Hash::make($password)
+            ]);
+        }
+
+        return [$user, $password];
     }
 }

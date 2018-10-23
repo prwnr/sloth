@@ -6,20 +6,34 @@ use App\Models\User;
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Class WelcomeMail
+ * @package App\Mail
+ */
 class WelcomeMail extends Mailable
 {
+    /**
+     * @var User
+     */
     public $user;
+
+    /**
+     * @var string
+     */
     public $password;
-    public $from;
+
+    /**
+     * @var string
+     */
+    public $team;
 
     /**
      * WelcomeMail constructor.
      *
-     * @param $user
-     * @param $password
-     * @param $from
+     * @param User $user
+     * @param string $password
      */
-    public function __construct(User $user, string $password)
+    public function __construct(User $user, ?string $password)
     {
         $from = [
             'address' => !blank(Auth::user()->email) ? Auth::user()->email : config('mail.from.address'),
@@ -27,6 +41,7 @@ class WelcomeMail extends Mailable
         ];
 
         $this->user = $user;
+        $this->team = $user->team->name;
         $this->password = $password;
         $this->from = $from;
     }
@@ -37,10 +52,19 @@ class WelcomeMail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): self
     {
-        return $this->from(['address' => $this->from['address'], 'name' => $this->from['name']])
-            ->view('mail.welcome');
+        if ($this->password) {
+            return $this->from([
+                'address' => $this->from['address'],
+                'name' => $this->from['name']
+            ])->view('mail.welcome_new');
+        }
+
+        return $this->from([
+            'address' => $this->from['address'],
+            'name' => $this->from['name']
+        ])->view('mail.welcome_again');
     }
 
 }
