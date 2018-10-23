@@ -47,7 +47,6 @@
 
         created() {
             EventHub.listen('user_change', () => {
-                console.log(1);
                 this.user = this.$user;
                 this.key = this.$user.member.id;
             })
