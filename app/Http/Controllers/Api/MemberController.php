@@ -159,8 +159,7 @@ class MemberController extends Controller
     {
         DB::beginTransaction();
         try {
-            $user = $member->user;
-            if ($user->delete() && ($member->billing && $member->billing->delete())) {
+            if ($member->delete() && ($member->billing && $member->billing->delete())) {
                 DB::commit();
                 return response()->json(null, Response::HTTP_NO_CONTENT);   
             }
