@@ -65,7 +65,7 @@ class Member extends Model
      */
     public function isDeletable(): bool
     {
-        if ($this->user->ownsTeam() || Auth::user()->id === $this->user->id) {
+        if (Auth::user()->id === $this->user->id || $this->isCurrentTeamOwner()) {
             return false;
         }
 
@@ -102,5 +102,17 @@ class Member extends Model
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isCurrentTeamOwner(): bool
+    {
+        if ($this->user->team_id === Auth::user()->team_id && $this->user->ownsTeam()) {
+            return true;
+        }
+
+        return false;
     }
 }
