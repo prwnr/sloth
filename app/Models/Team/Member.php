@@ -21,13 +21,6 @@ class Member extends Model
     /**
      * @var array
      */
-    protected $fillable = [
-        'first_login',
-    ];
-
-    /**
-     * @var array
-     */
     protected $with = [
         'user'
     ];

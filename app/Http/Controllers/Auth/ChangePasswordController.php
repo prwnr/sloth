@@ -31,15 +31,12 @@ class ChangePasswordController extends Controller
     public function changePassword(Request $request)
     {
         $this->validator($request->all())->validate();
-        $currentUser = Auth::user();
+        $user = Auth::user();
 
         try {
             DB::beginTransaction();
-            $currentUser->member()->update([
-                'first_login' => false
-            ]);
-
-            $currentUser->update([
+            $user->update([
+                'first_login' => false,
                 'password' => Hash::make($request->input('password'))
             ]);
 

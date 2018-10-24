@@ -104,7 +104,8 @@ class Creator
             'lastname' => $this->data['lastname'],
             'email' => $this->data['email'],
             'password' => Hash::make($this->data['password']),
-            'owns_team' => $this->team->id
+            'owns_team' => $this->team->id,
+            'first_login' => false
         ]);
 
         $this->member = new Member();

@@ -21,7 +21,7 @@ class FirstLogin
         /** @var User $user */
         $user = Auth::user();
 
-        if ($user->member() !== null && $user->member()->first_login && $user->ownsTeam()) {
+        if ($user->first_login) {
             return redirect('changePassword');
         }
         return $next($request);
