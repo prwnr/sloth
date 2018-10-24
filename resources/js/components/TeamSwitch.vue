@@ -43,7 +43,7 @@
                 axios.put(`/api/users/${this.$user.get('id')}/switch`, {
                     team: this.currentTeam
                 }).then(response => {
-                    EventHub.fire('team_change', response.data);
+                    this.$emit('change', response.data);
                     this.$router.push({ name: 'dashboard' });
                 }).catch(error => {
                     this.$awn.alert(error.message);

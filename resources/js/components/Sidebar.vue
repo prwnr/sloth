@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar">
-        <team-switch></team-switch>
+        <team-switch @change="updateUser"></team-switch>
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -59,6 +59,7 @@
 
 <script>
     import TeamSwitch from './TeamSwitch';
+    import User from '../models/User.js';
 
     export default {
         components: {
@@ -71,14 +72,13 @@
             }
         },
 
-        created() {
-            EventHub.listen('user_change', () => {
+        methods: {
+            updateUser(user) {
+                Vue.prototype.$user = new User(user);
+                EventHub.fire('user_change', true);
+                EventHub.fire('dashboard_change', true);
                 this.user = this.$user;
-            });
-        },
-
-        destroyed() {
-            EventHub.forget('user_change');
+            }
         }
     }
 </script>

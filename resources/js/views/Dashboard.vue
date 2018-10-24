@@ -9,7 +9,7 @@
                         <h2>Reports charts</h2>
                     </div>
                     <div class="col-12">
-                        <sales :key="key"></sales>
+                        <sales :key="$user.member.id"></sales>
                     </div>
                 </div>
                 <div class="row">
@@ -17,10 +17,10 @@
                         <h2>Personal charts</h2>
                     </div>
                     <div class="col-6 mb-5">
-                        <total-hours :key="key"></total-hours>
+                        <total-hours :key="$user.member.id"></total-hours>
                     </div>
                     <div class="col-6 mb-5">
-                        <projects-hours :key="key"></projects-hours>
+                        <projects-hours :key="$user.member.id"></projects-hours>
                     </div>
                 </div>
             </div>
@@ -46,14 +46,13 @@
         },
 
         created() {
-            EventHub.listen('user_change', () => {
+            EventHub.listen('dashboard_change', () => {
                 this.user = this.$user;
-                this.key = this.$user.member.id;
             })
         },
 
         destroyed() {
-            EventHub.forget('user_change');
+            EventHub.forget('dashboard_change');
         }
     }
 </script>
