@@ -21,10 +21,11 @@
                             <p class="text-muted text-center">{{ roles }}</p>
                             <ul class="list-group list-group-unbordered mb-3">
                                 <li class="list-group-item">
-                                    <b>Team</b> <a class="float-right">{{ user.team.name }}</a>
+                                    <b>Teams: </b>
+                                    <a class="float-right">{{ teamsText }}</a>
                                 </li>
                                 <li class="list-group-item">
-                                    <b>Projects</b> <a class="float-right">{{ user.projects.length }}</a>
+                                    <b>Projects:</b> <a class="float-right">{{ user.projects.length }}</a>
                                 </li>
                             </ul>
                         </div>
@@ -84,6 +85,7 @@
             return {
                 loading: false,
                 activeTab: 'reports',
+                teams: [],
                 user: {
                     data: {},
                     roles: [],
@@ -102,16 +104,21 @@
             roles: function () {
                 let roles = this.user.roles.map(item => item.display_name);
                 return roles.join(', ');
+            },
+            teamsText: function () {
+                let teams = this.teams.map(item => item.name);
+                return teams.join(', ');
             }
         },
 
         methods: {
             fetchUser() {
                 this.loading = true;
-                axios.get('/api/users/active').then(response => {
+                axios.get(`/api/users/${this.$user.get('id')}`).then(response => {
                     this.user = new User(response.data);
+                    this.teams = response.data.teams;
                 }).catch(error => {
-                    reject(error.response.data);
+                    this.$awn.alert(error.message);
                 }).finally(() => {
                     this.loading = false;
                 });

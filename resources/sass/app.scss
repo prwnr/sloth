@@ -99,6 +99,16 @@ footer.sticky-footer {
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
+.card {
+  .table-card tr:first-child td {
+    border-top: 0px !important;
+  }
+
+  .table-card td {
+    padding-left: 1.25rem;
+  }
+}
+
 /*
  * Plugin: Select2
  * ---------------

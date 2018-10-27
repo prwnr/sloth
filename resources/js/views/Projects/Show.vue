@@ -21,8 +21,8 @@
                 <div class="col-lg-6">
                     <div class="card mb-3">
                         <card-header>Details</card-header>
-                        <div class="card-body">
-                            <table class="table table-striped mb-0">
+                        <div class="card-body p-0">
+                            <table class="table table-card table-striped mb-0">
                                 <tr>
                                     <td><strong>Name</strong></td>
                                     <td>{{ project.name }}</td>

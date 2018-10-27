@@ -21,8 +21,8 @@
                 <div class="col-lg-6">
                     <div class="card mb-3">
                         <card-header>Details</card-header>
-                        <div class="card-body">
-                            <table class="table table-striped">
+                        <div class="card-body p-0">
+                            <table class="table table-card table-striped">
                                 <tr>
                                     <td><strong>First name</strong></td>
                                     <td>{{ member.user.firstname }}</td>

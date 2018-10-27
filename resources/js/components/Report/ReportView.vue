@@ -2,7 +2,7 @@
     <div class="card mb-3">
         <card-header>Report</card-header>
         <div class="card-body p-0">
-            <table class="table">
+            <table class="table table-card">
                 <tr v-for="(item, index) in items" :key="index">
                     <td><strong>{{ item.title }}</strong></td>
                     <td>{{ item.value }}</td>
@@ -79,11 +79,5 @@
 </script>
 
 <style scoped>
-    .table tr:first-child td {
-        border-top: 0px !important;
-    }
 
-    td {
-        padding-left: 1.25rem;
-    }
 </style>
