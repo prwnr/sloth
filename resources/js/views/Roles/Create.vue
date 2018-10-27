@@ -84,7 +84,7 @@
         },
 
         computed: {
-            usersSelectOptions: function () {
+            membersSelectOptions: function () {
                 return this.users.map(function (item) {
                     return {
                         id: item.id,
@@ -110,14 +110,14 @@
              * Load data for component
              */
             fetchData() {
-                this.fetchUsers();
+                this.fetchMembers();
                 this.fetchPerms();
             },
 
             /**
              * Load users to use in component
              */
-            fetchUsers() {
+            fetchMembers() {
                 axios.get('/api/users').then(response => {
                     this.users = response.data.data
                 }).catch(error => {

@@ -39,22 +39,22 @@
                         </div>
                     </div>
 
-                    <div v-if="role.users" class="card" :class="{ 'border-bottom-0': role.users.length > 0}">
-                        <card-header>Assigned users</card-header>
-                        <div class="card-body" :class="{ 'p-0': role.users.length > 0}">
-                            <ul v-if="role.users.length > 0" class="list-group">
+                    <div v-if="role.members" class="card" :class="{ 'border-bottom-0': role.members.length > 0}">
+                        <card-header>Assigned members</card-header>
+                        <div class="card-body" :class="{ 'p-0': role.members.length > 0}">
+                            <ul v-if="role.members.length > 0" class="list-group">
                                 <router-link
-                                        v-if="user.member"
-                                        v-for="(user, index) in role.users"
-                                        :key="user.member.id"
-                                        :to="{ name: 'members.show', params: { id: user.member.id } }"
+                                        v-if="member"
+                                        v-for="(member, index) in role.members"
+                                        :key="member.id"
+                                        :to="{ name: 'members.show', params: { id: member.id } }"
                                         class="list-group-item border-right-0 border-left-0"
                                         :class="{ 'border-top-0': index === 0}">
-                                    {{ user.fullname }}
+                                    {{ member.user.fullname }}
                                 </router-link>
-                                <span v-else class="list-group-item border-right-0 border-left-0" :class="{ 'border-top-0': index === 0}">{{ user.fullname }}</span>
+                                <span v-else class="list-group-item border-right-0 border-left-0" :class="{ 'border-top-0': index === 0}">{{ member.user.fullname }}</span>
                             </ul>
-                            <span v-if="role.users.length == 0">No users assigned</span>
+                            <span v-if="role.members.length == 0">No members assigned</span>
                         </div>
                     </div>
                 </div>

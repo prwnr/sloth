@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Team\Member;
 use App\Models\Team\Teamed;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
+use Zend\Diactoros\Exception\DeprecatedMethodException;
 use Zizaco\Entrust\EntrustRole;
 
 /**
@@ -87,5 +91,22 @@ class Role extends EntrustRole
         }
 
         return true;
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(Member::class, Config::get('entrust.role_user_table'), Config::get('entrust.role_foreign_key'), Config::get('entrust.user_foreign_key'));
+    }
+
+    /**
+     * @deprecated Roles are assigned to members. Use members method to access them
+     * @return BelongsToMany
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->members();
     }
 }

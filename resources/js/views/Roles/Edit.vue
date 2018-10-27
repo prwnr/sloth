@@ -42,10 +42,10 @@
                         </div>
 
                         <div class="card">
-                            <card-header>Assigned users</card-header>
+                            <card-header>Assigned members</card-header>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <Select2 v-model="form.users" :options="usersSelectOptions" :settings="{ multiple: true }"></Select2>
+                                    <Select2 v-model="form.members" :options="membersSelectOptions" :settings="{ multiple: true }"></Select2>
                                 </div>
                             </div>
                         </div>
@@ -77,12 +77,12 @@
         data() {
             return {
                 role: {},
-                users: [],
+                members: [],
                 permissions: [],
                 form: new Form({
                     display_name: '',
                     description: '',
-                    users: [],
+                    members: [],
                     permissions: [],
                 })
             }
@@ -93,11 +93,11 @@
         },
 
         computed: {
-            usersSelectOptions: function () {
-                return this.users.map(function (item) {
+            membersSelectOptions: function () {
+                return this.members.map(function (item) {
                     return {
                         id: item.id,
-                        text: item.fullname
+                        text: item.user.fullname
                     }
                 });
             }
@@ -129,7 +129,7 @@
              */
             fetchData() {
                 this.fetchRole();
-                this.fetchUsers();
+                this.fetchMembers();
                 this.fetchPerms();
             },
 
@@ -141,7 +141,7 @@
                     this.role = response.data.data;
                     this.form.display_name = this.role.display_name;
                     this.form.description = this.role.description;
-                    this.form.users = this.role.users.map(item => item.id);
+                    this.form.members = this.role.members.map(item => item.id);
                     this.form.permissions = this.role.perms.map(item => item.id);
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -151,9 +151,9 @@
             /**
              * Load users to use in component
              */
-            fetchUsers() {
-                axios.get('/api/users').then(response => {
-                    this.users = response.data.data
+            fetchMembers() {
+                axios.get('/api/members').then(response => {
+                    this.members = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });

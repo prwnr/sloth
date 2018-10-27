@@ -51,7 +51,7 @@ class RoleController extends Controller
                 'description' => $data['description']
             ]);
 
-            $role->users()->sync($data['users'] ?? []);
+            $role->members()->sync($data['members'] ?? []);
             $role->perms()->sync($data['permissions'] ?? []);
             DB::commit();
         } catch (\Exception $ex) {
@@ -71,7 +71,7 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $role->loadMissing(['users', 'perms', 'users.member']);
+        $role->loadMissing(['perms', 'members']);
         return new RoleResource($role);
     }
 
@@ -108,7 +108,7 @@ class RoleController extends Controller
                 'description' => $data['description']
             ]);
 
-            $role->users()->sync($data['users'] ?? []);
+            $role->members()->sync($data['members'] ?? []);
             $role->perms()->sync($data['permissions'] ?? []);
             $role->touch();
             DB::commit();
