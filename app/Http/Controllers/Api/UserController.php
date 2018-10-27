@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\{Facades\Auth, Facades\Hash};
-use Illuminate\Http\{Request, Response};
+use Illuminate\Http\{JsonResponse, Request, Response};
 
 /**
  * Class UserController
@@ -22,7 +22,7 @@ class UserController extends Controller
      *
      * @return UsersCollectionResource
      */
-    public function index()
+    public function index(): UsersCollectionResource
     {
         $users = User::findFromTeam(Auth::user()->team)->get();
         return new UsersCollectionResource($users);
@@ -33,7 +33,7 @@ class UserController extends Controller
      * @param User $user
      * @return TimeLogResource
      */
-    public function timeLogs(Request $request, User $user)
+    public function timeLogs(Request $request, User $user): TimeLogResource
     {
         $logs = $user->member()->logs();
 
@@ -63,7 +63,7 @@ class UserController extends Controller
      * @param User $user
      * @return UserResource
      */
-    public function show(User $user)
+    public function show(User $user): UserResource
     {
         $teams = [];
         foreach ($user->members as $member) {
@@ -85,7 +85,7 @@ class UserController extends Controller
      *
      * @return UserResource
      */
-    public function showActive()
+    public function showActive(): UserResource
     {
         $user = Auth::user();
         return new UserResource($user);
@@ -96,9 +96,9 @@ class UserController extends Controller
      *
      * @param UserRequest $request
      * @param User $user
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(UserRequest $request, User $user)
+    public function update(UserRequest $request, User $user): JsonResponse
     {
         $data = $request->all();
 
@@ -117,16 +117,16 @@ class UserController extends Controller
     /**
      * @param Request $request
      * @param User $user
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function switchTeam(Request $request, User $user)
+    public function switchTeam(Request $request, User $user): JsonResponse
     {
         try {
             $team = Team::find($request->input('team'));
             $user->team()->associate($team);
             $user->save();
 
-            return response($user->getAllInfoData())->setStatusCode(Response::HTTP_ACCEPTED);
+            return response()->json($user->getAllInfoData())->setStatusCode(Response::HTTP_ACCEPTED);
         } catch (\Exception $ex) {
             return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -135,9 +135,9 @@ class UserController extends Controller
     /**
      * @param UserPasswordRequest $request
      * @param User $user
-     * @return $this|\Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function updatePassword(UserPasswordRequest $request, User $user)
+    public function updatePassword(UserPasswordRequest $request, User $user): JsonResponse
     {
         try {
             $user->update([

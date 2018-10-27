@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\TeamRequest;
 use App\Models\Team;
 use App\Http\Resources\Team as TeamResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
@@ -21,9 +22,9 @@ class TeamController extends Controller
      *
      * @param TeamRequest $request
      * @param  \App\Models\Team $team
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(TeamRequest $request, Team $team)
+    public function update(TeamRequest $request, Team $team): JsonResponse
     {
         try {
             $team->update([

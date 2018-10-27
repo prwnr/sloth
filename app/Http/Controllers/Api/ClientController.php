@@ -8,6 +8,7 @@ use App\Http\Resources\Client as ClientResource;
 use App\Models\Report\ClientReport;
 use App\Models\Team;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,7 @@ class ClientController extends Controller
      *
      * @return ClientResource
      */
-    public function index()
+    public function index(): ClientResource
     {
         $clients = Client::findFromTeam(Auth::user()->team)->get();
         $clients->loadMissing('billing');
@@ -35,9 +36,9 @@ class ClientController extends Controller
      * Store a newly created resource in storage.
      *
      * @param ClientRequest $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function store(ClientRequest $request)
+    public function store(ClientRequest $request): JsonResponse
     {
         $data = $request->all();
         /** @var Team $team */
@@ -79,7 +80,7 @@ class ClientController extends Controller
      * @param  \App\Models\Client $client
      * @return ClientResource
      */
-    public function show(Client $client)
+    public function show(Client $client): ClientResource
     {
         $client->loadMissing('projects', 'billing', 'billing.currency');
 
@@ -97,9 +98,9 @@ class ClientController extends Controller
      *
      * @param ClientRequest $request
      * @param  \App\Models\Client $client
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(ClientRequest $request, Client $client)
+    public function update(ClientRequest $request, Client $client): JsonResponse
     {
         $data = $request->all();
 
@@ -134,10 +135,10 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Client $client
+     * @return JsonResponse
      */
-    public function destroy(Client $client)
+    public function destroy(Client $client): JsonResponse
     {
         DB::beginTransaction();
         try {

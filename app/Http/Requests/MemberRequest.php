@@ -29,12 +29,6 @@ class MemberRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstname' => [
-                'required', 'string', 'max:255'
-            ],
-            'lastname' => [
-                'required', 'string', 'max:255'
-            ],
             'email' => [
                 'nullable', 'string', 'email', 'max:255'
             ],

@@ -7,6 +7,7 @@ use App\Models\TimeLog;
 use App\Http\Resources\TimeLog as TimeLogResource;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -16,23 +17,14 @@ use Illuminate\Support\Facades\DB;
  */
 class TrackerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return void
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param CreateLogRequest $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function store(CreateLogRequest $request)
+    public function store(CreateLogRequest $request): JsonResponse
     {
         $data = $request->all();
         $hasDuration = $data['duration'] ?? false;
@@ -62,24 +54,13 @@ class TrackerController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param TimeLog $time
-     * @return void
-     */
-    public function show(TimeLog $time)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param UpdateLogRequest $request
      * @param  \App\Models\TimeLog $time
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(UpdateLogRequest $request, TimeLog $time)
+    public function update(UpdateLogRequest $request, TimeLog $time): JsonResponse
     {
         $data = $request->all();
         try {
@@ -106,9 +87,9 @@ class TrackerController extends Controller
      *
      * @param UpdateTimeRequest $request
      * @param  \App\Models\TimeLog $time
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function updateTime(UpdateTimeRequest $request, TimeLog $time)
+    public function updateTime(UpdateTimeRequest $request, TimeLog $time): JsonResponse
     {
         $data = $request->all();
         if (isset($data['time'])) {
@@ -139,10 +120,10 @@ class TrackerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\TimeLog  $time
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\TimeLog $time
+     * @return JsonResponse
      */
-    public function destroy(TimeLog $time)
+    public function destroy(TimeLog $time): JsonResponse
     {
         try {
             DB::beginTransaction();

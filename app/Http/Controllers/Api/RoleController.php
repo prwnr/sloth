@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleRequest;
 use App\Http\Resources\Role as RoleResource;
 use App\Models\{Role, User};
-use Illuminate\Http\{RedirectResponse, Response};
+use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Session};
 
 /**
@@ -21,7 +21,7 @@ class RoleController extends Controller
      *
      * @return RoleResource
      */
-    public function index()
+    public function index(): RoleResource
     {
         $roles = Role::findFromTeam(Auth::user()->team)->get();
         return new RoleResource($roles);
@@ -31,9 +31,9 @@ class RoleController extends Controller
      * Store a newly created resource in storage.
      *
      * @param RoleRequest $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function store(RoleRequest $request)
+    public function store(RoleRequest $request): JsonResponse
     {
         $data = $request->all();
 
@@ -69,7 +69,7 @@ class RoleController extends Controller
      * @param Role $role
      * @return RoleResource
      */
-    public function show(Role $role)
+    public function show(Role $role): RoleResource
     {
         $role->loadMissing(['perms', 'members']);
         return new RoleResource($role);
@@ -80,9 +80,9 @@ class RoleController extends Controller
      *
      * @param RoleRequest $request
      * @param Role $role
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function update(RoleRequest $request, Role $role)
+    public function update(RoleRequest $request, Role $role): JsonResponse
     {
         if (!$role->isEditable()) {
             Session::flash('alert-danger', 'You can\'t edit this role');
@@ -125,9 +125,9 @@ class RoleController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Role $role
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function destroy(Role $role)
+    public function destroy(Role $role): JsonResponse
     {
         if (!$role->isDeletable()) {
             return response()->json(['message' => __('You can\'t delete this role')], Response::HTTP_FORBIDDEN);

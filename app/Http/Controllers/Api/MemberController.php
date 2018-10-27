@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\MemberRequest;
 use App\Http\Resources\Project as ProjectResource;
 use App\Mail\WelcomeMail;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 use App\Models\{Report\MemberReport, Team, Team\Member, User};
 use Illuminate\Http\Response;
@@ -24,7 +25,7 @@ class MemberController extends Controller
      *
      * @return MemberResource
      */
-    public function index()
+    public function index(): MemberResource
     {
         $members = Member::findFromTeam(Auth::user()->team)->get();
         return new MemberResource($members);
@@ -34,7 +35,7 @@ class MemberController extends Controller
      * @param Member $member
      * @return ProjectResource
      */
-    public function showProjects(Member $member)
+    public function showProjects(Member $member): ProjectResource
     {
         $projects = $member->projects()->where('team_id', '=', $member->user->team_id)->get();
         $projects->loadMissing('tasks');
@@ -45,9 +46,9 @@ class MemberController extends Controller
      * Store a newly created resource in storage.
      *
      * @param MemberRequest $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function store(MemberRequest $request)
+    public function store(MemberRequest $request): JsonResponse
     {
         $data = $request->all();
         /** @var Team $team */
@@ -98,7 +99,7 @@ class MemberController extends Controller
      * @param  \App\Models\Team\Member $member
      * @return MemberResource
      */
-    public function show(Member $member)
+    public function show(Member $member): MemberResource
     {
         $member->loadMissing(['projects', 'billing', 'user', 'roles', 'billing.currency', 'logs']);
 
@@ -116,18 +117,13 @@ class MemberController extends Controller
      *
      * @param MemberRequest $request
      * @param  \App\Models\Team\Member $member
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(MemberRequest $request, Member $member)
+    public function update(MemberRequest $request, Member $member): JsonResponse
     {
         $data = $request->all();
         try {
             DB::beginTransaction();
-            $member->user()->update([
-                'firstname' => $data['firstname'],
-                'lastname' => $data['lastname']
-            ]);
-
             $member->roles()->sync($data['roles'] ?? []);
             $member->billing()->update([
                 'rate' => $data['billing_rate'],
@@ -152,10 +148,10 @@ class MemberController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Team\Member  $member
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Team\Member $member
+     * @return JsonResponse
      */
-    public function destroy(Member $member)
+    public function destroy(Member $member): JsonResponse
     {
         DB::beginTransaction();
         try {

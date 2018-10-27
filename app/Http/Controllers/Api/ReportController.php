@@ -38,12 +38,11 @@ class ReportController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param Member $member
      * @param string $period
      * @return JsonResponse
      */
-    public function userHours(Request $request, Member $member, string $period): JsonResponse
+    public function userHours(Member $member, string $period): JsonResponse
     {
         $report = new HoursReport(['members' => [$member->id]], $period);
 
@@ -51,12 +50,11 @@ class ReportController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param Member $member
      * @param string $period
      * @return JsonResponse
      */
-    public function userProjects(Request $request, Member $member, string $period): JsonResponse
+    public function userProjects(Member $member, string $period): JsonResponse
     {
         $report = new UserProjectsReport(['members' => [$member->id]], $period);
 
@@ -64,11 +62,10 @@ class ReportController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param string $period
      * @return JsonResponse
      */
-    public function sales(Request $request, string $period): JsonResponse
+    public function sales(string $period): JsonResponse
     {
         $report = new SalesReport([], $period);
 

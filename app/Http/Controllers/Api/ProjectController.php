@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ProjectRequest;
 use App\Models\{Report\ProjectReport, Team, Client, Project};
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -22,7 +23,7 @@ class ProjectController extends Controller
      *
      * @return ProjectResource
      */
-    public function index()
+    public function index(): ProjectResource
     {
         $projects = Project::findFromTeam(Auth::user()->team)->get();
         $projects->loadMissing('tasks');
@@ -33,7 +34,7 @@ class ProjectController extends Controller
      * Return available budget periods
      * @return array
      */
-    public function budgetPeriods()
+    public function budgetPeriods(): array
     {
         return Project::BUDGET_PERIOD;
     }
@@ -42,9 +43,9 @@ class ProjectController extends Controller
      * Store a newly created resource in storage.
      *
      * @param ProjectRequest $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function store(ProjectRequest $request)
+    public function store(ProjectRequest $request): JsonResponse
     {
         $data = $request->all();
 
@@ -85,7 +86,7 @@ class ProjectController extends Controller
      * @param  \App\Models\Project $project
      * @return ProjectResource
      */
-    public function show(Project $project)
+    public function show(Project $project): ProjectResource
     {
         $project->loadMissing('members', 'client', 'billing', 'tasks', 'budgetCurrency', 'tasks.currency', 'billing.currency');
         $projectResource = new ProjectResource($project);
@@ -103,9 +104,9 @@ class ProjectController extends Controller
      *
      * @param ProjectRequest $request
      * @param  \App\Models\Project $project
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(ProjectRequest $request, Project $project)
+    public function update(ProjectRequest $request, Project $project): JsonResponse
     {
         $data = $request->all();
 
@@ -140,10 +141,10 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Project $project
+     * @return JsonResponse
      */
-    public function destroy(Project $project)
+    public function destroy(Project $project): JsonResponse
     {
         DB::beginTransaction();
         try {

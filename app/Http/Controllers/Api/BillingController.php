@@ -21,7 +21,7 @@ class BillingController extends Controller
      *
      * @return BillingResource
      */
-    public function types()
+    public function types(): BillingResource
     {
         return new BillingResource(Billing::getRateTypes());
     }

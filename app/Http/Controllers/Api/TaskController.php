@@ -16,7 +16,7 @@ class TaskController extends Controller
      *
      * @return array
      */
-    public function index()
+    public function index(): array
     {
         $tasks = [];
         foreach (Task::getTypes() as $type => $name) {
