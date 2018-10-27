@@ -4,7 +4,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-10">
-                        <h1>{{ form.firstname }} {{ form.lastname }} member</h1>
+                        <h1>{{ member.user.firstname }} {{ member.user.lastname }} member</h1>
                     </div>
                     <div class="col-md-2">
                         <router-link
@@ -26,16 +26,14 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="firstname">First name</label>
-                                    <input id="firstname" type="text" class="form-control" v-model="form.firstname"
+                                    <input id="firstname" type="text" class="form-control" disabled v-model="member.user.firstname"
                                            name="firstname" value="" placeholder="First name" required>
-                                    <form-error :text="form.errors.get('firstname')" :show="form.errors.has('firstname')"></form-error>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="lastname">Last name</label>
-                                    <input id="lastname" type="text" class="form-control" v-model="form.lastname"
+                                    <input id="lastname" type="text" class="form-control" disabled v-model="member.user.lastname"
                                            name="lastname" value="" placeholder="Last name" required>
-                                    <form-error :text="form.errors.get('lastname')" :show="form.errors.has('lastname')"></form-error>
                                 </div>
 
                                 <div class="form-group">
@@ -136,8 +134,6 @@
                 currencies: [],
                 billingTypes: [],
                 form: new Form({
-                    firstname: '',
-                    lastname: '',
                     roles: [],
                     projects: [],
                     billing_rate: '',
@@ -237,8 +233,6 @@
             fetchMember() {
                 axios.get('/api/members/' + this.$route.params.id).then(response => {
                     this.member = response.data.data;
-                    this.form.firstname = this.member.user.firstname;
-                    this.form.lastname = this.member.user.lastname;
                     this.form.email = this.member.user.email;
                     this.form.roles = this.member.roles.map(item => item.id);
                     this.form.projects = this.member.projects.map(item => item.id);
