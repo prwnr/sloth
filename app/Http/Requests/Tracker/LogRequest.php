@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Tracker;
 
 use App\Models\Project;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -51,15 +52,17 @@ class LogRequest extends FormRequest
     private function isTaskRequired(): bool
     {
         $projectInput = $this->get('project');
-        if ($projectInput) {
-            /** @var Project $project */
-            $project = Project::find($projectInput);
-            if ($project) {
-                $tasks = $project->tasks()->where('is_deleted', false)->get();
-                return \count($tasks) > 0;
-            }
+        if (!$projectInput) {
+            return false;
         }
 
-        return false;
+        try {
+            /** @var Project $project */
+            $project = Project::findOrFail($projectInput);
+            $tasks = $project->tasks()->where('is_deleted', false)->get();
+            return \count($tasks) > 0;
+        } catch (ModelNotFoundException $ex) {
+            return false;
+        }
     }
 }

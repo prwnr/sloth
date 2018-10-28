@@ -15,16 +15,16 @@ class RoleRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * @param null $keys
-     * @return array|void
+     * @return array
      */
-    public function all($keys = null)
+    public function all($keys = null): array
     {
         $data = parent::all($keys);
         $data['name'] = str_slug($data['display_name'] ?? '', '_');
@@ -37,7 +37,7 @@ class RoleRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => [
