@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Client extends Model
 {
-    use Teamed;
 
     /**
      * @var string

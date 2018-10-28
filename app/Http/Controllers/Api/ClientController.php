@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ClientRequest;
-use App\Models\Client;
 use App\Http\Resources\Client as ClientResource;
 use App\Models\Report\ClientReport;
-use App\Models\Team;
 use App\Http\Controllers\Controller;
+use App\Repositories\ClientRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -21,15 +19,27 @@ class ClientController extends Controller
 {
 
     /**
+     * @var ClientRepository
+     */
+    private $clientRepository;
+
+    /**
+     * ClientController constructor.
+     * @param ClientRepository $clientRepository
+     */
+    public function __construct(ClientRepository $clientRepository)
+    {
+        $this->clientRepository = $clientRepository;
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return ClientResource
      */
     public function index(): ClientResource
     {
-        $clients = Client::findFromTeam(Auth::user()->team)->get();
-        $clients->loadMissing('billing');
-        return new ClientResource($clients);
+        return new ClientResource($this->clientRepository->allWith(['billing']));
     }
 
     /**
@@ -40,33 +50,11 @@ class ClientController extends Controller
      */
     public function store(ClientRequest $request): JsonResponse
     {
-        $data = $request->all();
-        /** @var Team $team */
-        $team = Auth::user()->team;
-
         try {
-            DB::beginTransaction();
-            $client = $team->clients()->create([
-                'company_name' => $data['company_name'],
-                'street' => $data['street'],
-                'zip' => $data['zip'],
-                'country' => $data['country'],
-                'city' => $data['city'],
-                'vat' => $data['vat'],
-                'fullname' => $data['fullname'],
-                'email' => $data['email']]);
-
-            $billing = $client->billing()->create([
-                'rate' => $data['billing_rate'],
-                'type' => $data['billing_type'],
-                'currency_id' => $data['billing_currency']
-            ]);
-            $client->billing()->associate($billing);
-            $client->save();
-
-            DB::commit();
+            $client = DB::transaction(function () use ($request) {
+                return $this->clientRepository->create($request->all());
+            });
         } catch (\Exception $ex) {
-            DB::rollBack();
             report($ex);
             return response()->json(['message' => __('Something went wrong when creating new client. Please try again')], Response::HTTP_BAD_REQUEST);
         }
@@ -77,13 +65,12 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Client $client
+     * @param int $id
      * @return ClientResource
      */
-    public function show(Client $client): ClientResource
+    public function show(int $id): ClientResource
     {
-        $client->loadMissing('projects', 'billing', 'billing.currency');
-
+        $client = $this->clientRepository->findWith($id, ['projects', 'billing', 'billing.currency']);
         $report = new ClientReport(['clients' => [$client->id]]);
 
         $clientResource = new ClientResource($client);
@@ -97,34 +84,16 @@ class ClientController extends Controller
      * Update the specified resource in storage.
      *
      * @param ClientRequest $request
-     * @param  \App\Models\Client $client
+     * @param int $id
      * @return JsonResponse
      */
-    public function update(ClientRequest $request, Client $client): JsonResponse
+    public function update(ClientRequest $request, int $id): JsonResponse
     {
-        $data = $request->all();
-
         try {
-            DB::beginTransaction();
-            $client->update([
-                'company_name' => $data['company_name'],
-                'street' => $data['street'],
-                'zip' => $data['zip'],
-                'country' => $data['country'],
-                'city' => $data['city'],
-                'vat' => $data['vat'],
-                'fullname' => $data['fullname'],
-                'email' => $data['email']]);
-
-            $client->billing()->update([
-                'rate' => $data['billing_rate'],
-                'type' => $data['billing_type'],
-                'currency_id' => $data['billing_currency']
-            ]);
-            $client->save();
-            DB::commit();
+            $client = DB::transaction(function () use ($id, $request) {
+                return $this->clientRepository->update($id, $request->all());
+            });
         } catch (\Exception $ex) {
-            DB::rollBack();
             report($ex);
             return response()->json(['message' => __('Failed to update client. Please try again')], Response::HTTP_BAD_REQUEST);
         }
@@ -135,20 +104,17 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Client $client
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Client $client): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            if ($client->delete() && ($client->billing && $client->billing->delete())) {
-                DB::commit();
-                return response()->json(null, Response::HTTP_NO_CONTENT);
-            }
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            report($ex);
+        $result = DB::transaction(function() use ($id) {
+            return $this->clientRepository->delete($id);
+        });
+
+        if ($result) {
+            return response()->json(null, Response::HTTP_NO_CONTENT);
         }
 
         return response()->json([
