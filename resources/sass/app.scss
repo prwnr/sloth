@@ -1,12 +1,10 @@
 // Variables
 @import "variables";
-
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 @import "~admin-lte/plugins/font-awesome/css/font-awesome.min.css";
 @import "~admin-lte/build/scss/AdminLTE-raw.scss";
 @import '~vue-awesome-notifications/dist/styles/style.css';
-
 
 body {
   font-family: $font-family-sans-serif;
@@ -107,6 +105,141 @@ footer.sticky-footer {
   .table-card td {
     padding-left: 1.25rem;
   }
+}
+
+/*
+ * Authorization pages
+ */
+.auth-page {
+  background: $login-primary-color;
+  background: -webkit-linear-gradient(to bottom, $login-secondary-color, $login-primary-color);
+  background: linear-gradient(to bottom, $login-secondary-color, $login-primary-color);
+  background-repeat: no-repeat;
+  margin: 0;
+  float: left;
+  width: 100%;
+  height: 100%;
+  padding: 50px 0;
+}
+
+.login-block {
+  margin-top: 5%;
+
+  form {
+    color: $login-text;
+  }
+}
+
+.banner-sec {
+  background-color: #fff;
+  background-size: cover;
+  height: 500px;
+  padding: 0;
+}
+
+.banner-sec:before {
+  content: '';
+  height: 80%;
+  border-left: 1px #169a7c solid;
+  display: inline-block;
+  position: absolute;
+  margin-top: 7%;
+}
+
+.container {
+  background: #fff;
+}
+
+.carousel-placeholder {
+  height: 500px;
+
+  i {
+    font-size: 150px;
+    padding: 15px;
+    text-align: center;
+    color: $login-primary-color;
+    margin-left: 65%;
+    margin-top: 30px;
+  }
+}
+
+.carousel-inner {
+  border-radius: 0 10px 10px 0;
+}
+
+.carousel-caption {
+  text-align: left;
+  left: 5%;
+}
+
+.carousel-indicators li {
+  background-color: $login-primary-color !important;
+}
+
+.carousel-indicators .active {
+  background-color: $login-text !important;
+}
+
+.login-sec {
+  padding: 50px 30px;
+  position: relative;
+
+  .copy-text {
+    position: absolute;
+    width: 80%;
+    bottom: 20px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .copy-text a {
+    color: $login-primary-color;
+  }
+
+  h2 {
+    margin-bottom: 30px;
+    font-weight: 800;
+    font-size: 30px;
+    color: $login-primary-color;
+  }
+
+  h2:after {
+    content: " ";
+    width: 100px;
+    height: 5px;
+    background: $login-primary-color;
+    display: block;
+    margin-top: 20px;
+    border-radius: 3px;
+    margin-left: auto;
+    margin-right: auto
+  }
+}
+
+.banner-text {
+  width: 70%;
+  position: absolute;
+  bottom: 40px;
+  padding-left: 20px;
+}
+
+.banner-text h2 {
+  color: $login-text;
+  font-weight: 600;
+}
+
+.banner-text h2:after {
+  content: " ";
+  width: 100px;
+  height: 5px;
+  background: $login-text;
+  display: block;
+  margin-top: 20px;
+  border-radius: 3px;
+}
+
+.banner-text p, .banner-text ul {
+  color: $login-text;
 }
 
 /*
