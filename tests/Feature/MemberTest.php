@@ -4,13 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Billing;
 use App\Models\Currency;
+use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team\Member;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class MemberTest extends FeatureTestCase
 {
@@ -33,6 +31,22 @@ class MemberTest extends FeatureTestCase
             ]
         ]]);
         $response->assertJsonCount(6, 'data');
+    }
+
+    public function testMemberProjectsAreListedCorrectly(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        /** @var Member $member */
+        $member = factory(Member::class)->create(['team_id' => $this->user->team_id]);
+        $project = factory(Project::class)->create(['team_id' => $member->team_id]);
+        $project->loadMissing('billing', 'client');
+        $member->projects()->sync([$project->id]);
+        $member->save();
+
+        $response = $this->json(Request::METHOD_GET, "/api/members/{$member->id}/projects");
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function testMembersAreCreatedCorrectly(): void
