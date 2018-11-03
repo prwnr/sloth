@@ -12,7 +12,7 @@ use Illuminate\Http\Response;
 class ClientTest extends FeatureTestCase
 {
 
-    public function testClientsAreListedCorrectlyForTeamMember(): void
+    public function testClientsAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
         for ($i = 0; $i < 5; $i++) {
@@ -24,20 +24,17 @@ class ClientTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_GET, '/api/clients');
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonStructure(['data']);
+        $response->assertJsonStructure([
+            'data' => [
+                [
+                    'company_name', 'street', 'zip', 'country', 'city', 'vat', 'fullname', 'email', 'team_id', 'updated_at', 'created_at', 'id', 'billing_id',
+                    'billing' => [
+                        'rate', 'type', 'currency_id', 'updated_at', 'created_at', 'id'
+                    ]
+                ]
+            ]
+        ]);
         $response->assertJsonCount(5, 'data');
-    }
-
-    public function testClientsAreNotListedForDifferentTeamMember(): void
-    {
-        $this->actingAs($this->user, 'api');
-        for ($i = 0; $i < 5; $i++) {
-            factory(Client::class)->create();
-        }
-        $response = $this->json(Request::METHOD_GET, '/api/clients');
-        $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonStructure(['data']);
-        $response->assertJsonCount(0, 'data');
     }
 
     public function testClientsAreCreatedCorrectly(): void
@@ -96,7 +93,7 @@ class ClientTest extends FeatureTestCase
         ]);
     }
 
-    public function testClientsAreUpdatedCorrectly()
+    public function testClientsAreUpdatedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
