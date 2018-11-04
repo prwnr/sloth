@@ -8,6 +8,7 @@ use App\Http\Resources\Team as TeamResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class TeamController
@@ -15,7 +16,6 @@ use App\Http\Controllers\Controller;
  */
 class TeamController extends Controller
 {
-
 
     /**
      * Update the specified resource in storage.
@@ -26,6 +26,10 @@ class TeamController extends Controller
      */
     public function update(TeamRequest $request, Team $team): JsonResponse
     {
+        if (Auth::user()->owns_team !== $team->id) {
+            return response()->json(['message' => 'You are not allowed to edit this team'], Response::HTTP_FORBIDDEN);
+        }
+
         try {
             $team->update([
                 'name' => $request->input('name')

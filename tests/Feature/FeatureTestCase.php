@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 abstract class FeatureTestCase extends TestCase
 {
-    use WithFaker;
+    use WithFaker, RefreshDatabase;
 
     /**
      * @var Member
