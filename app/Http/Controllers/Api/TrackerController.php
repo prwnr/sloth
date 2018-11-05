@@ -78,7 +78,7 @@ class TrackerController extends Controller
             return response()->json(['message' => __('Something went wrong. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new TimeLogResource($time))->response()->setStatusCode(Response::HTTP_CREATED);
+        return (new TimeLogResource($time))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -114,7 +114,7 @@ class TrackerController extends Controller
             return response()->json(['message' => __('Something went wrong stopping time. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new TimeLogResource($time))->response()->setStatusCode(Response::HTTP_CREATED);
+        return (new TimeLogResource($time))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
