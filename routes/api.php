@@ -48,7 +48,6 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
     Route::apiResource('tasks', 'TaskController')->only('index')->middleware('team:project');
 
     Route::get('/users/active', 'UserController@showActive')->name('users.active');
-    Route::post('/users/logout', 'UserController@logout');
     Route::get('/users/{user}/logs', 'UserController@timeLogs');
     Route::put('/users/{user}/password', 'UserController@updatePassword')->middleware('permission:manage_team');
     Route::put('/users/{user}/switch', 'UserController@switchTeam');
