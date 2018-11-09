@@ -32,6 +32,15 @@ class UserTest extends FeatureTestCase
         $response->assertJsonCount(6, 'data');
     }
 
+    public function testTUsersAreNotListedForGUest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/users');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
     public function testUserTimeLogsAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');

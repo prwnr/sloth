@@ -33,6 +33,15 @@ class ProjectTest extends FeatureTestCase
         $response->assertJsonCount(5, 'data');
     }
 
+    public function testProjectsAreNotListedForGUest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/projects');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
     public function testProjectBudgetPeriodsAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');

@@ -50,6 +50,18 @@ class ReportTest extends FeatureTestCase
         $response->assertJsonCount(10, 'items');
     }
 
+    public function testFullReportIsNotShowedForGuest(): void
+    {
+        $filters = [
+            'filters' => []
+        ];
+        $response = $this->json(Request::METHOD_POST, '/api/reports', $filters);
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
     public function testFullReportIsFilteredCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -82,6 +94,18 @@ class ReportTest extends FeatureTestCase
         $response->assertJsonStructure($this->reportItemsStructure);
 
         $response->assertJsonCount(10, 'items');
+    }
+
+    public function testMemberReportIsNotShowedForGuest(): void
+    {
+        $filters = [
+            'filters' => []
+        ];
+        $response = $this->json(Request::METHOD_POST, '/api/reports/1', $filters);
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
     }
 
     public function testMemberReportIsFilteredCorrectly(): void
@@ -134,6 +158,16 @@ class ReportTest extends FeatureTestCase
         ]);
     }
 
+    public function testUserHoursPeriodicReportIsNotShowedForGuest(): void
+    {
+        $period = DateRange::MONTH;
+        $response = $this->json(Request::METHOD_GET, "/api/reports/1/hours/$period");
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
     public function testUserProjectsReportIsShowedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -147,6 +181,16 @@ class ReportTest extends FeatureTestCase
         $response->assertJsonStructure([
             'hours' => [],
             'labels' => []
+        ]);
+    }
+
+    public function testUserProjectsReportIsNotShowedForGuest(): void
+    {
+        $period = DateRange::MONTH;
+        $response = $this->json(Request::METHOD_GET, "/api/reports/1/projects/$period");
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
         ]);
     }
 
@@ -194,6 +238,17 @@ class ReportTest extends FeatureTestCase
                 ]
             ]
         ]);
+    }
+
+    public function testSalesReportIsNotShowedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $period = DateRange::MONTH;
+        $response = $this->json(Request::METHOD_GET, "/api/reports/sales/$period");
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     private function makeLogs(): void

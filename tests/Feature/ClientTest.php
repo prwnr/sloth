@@ -37,6 +37,15 @@ class ClientTest extends FeatureTestCase
         $response->assertJsonCount(5, 'data');
     }
 
+    public function testClientsAreNotListedForGuest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/clients');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
     public function testClientsAreCreatedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -67,6 +76,31 @@ class ClientTest extends FeatureTestCase
         ]);
     }
 
+    public function testClientsAreNotCretedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+
+        $this->actAsRole($role->name);
+
+        $data = [
+            'company_name' => $this->faker->company,
+            'city' => $this->faker->city,
+            'zip' => $this->faker->postcode,
+            'country' => $this->faker->country,
+            'street' => $this->faker->streetAddress,
+            'vat' => (string) $this->faker->numberBetween(1111111, 9999999),
+            'fullname' => $this->faker->name,
+            'email' => $this->faker->email,
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
+        ];
+        $response = $this->json(Request::METHOD_POST, '/api/clients', $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
     public function testClientsAreShowedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -91,6 +125,18 @@ class ClientTest extends FeatureTestCase
                 'billing_id' => $client->billing_id
             ]
         ]);
+    }
+
+    public function testClientsAreNotShowedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $client = factory(Client::class)->create();
+        $response = $this->json(Request::METHOD_GET, "/api/clients/{$client->id}");
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function testClientsAreUpdatedCorrectly(): void
@@ -130,6 +176,31 @@ class ClientTest extends FeatureTestCase
         ]);
     }
 
+    public function testClientsAreNotUpdatedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $client = factory(Client::class)->create();
+        $data = [
+            'company_name' => $this->faker->company,
+            'city' => $this->faker->city,
+            'zip' => $this->faker->postcode,
+            'country' => $this->faker->country,
+            'street' => $this->faker->streetAddress,
+            'vat' => (string) $this->faker->numberBetween(1111111, 9999999),
+            'fullname' => $this->faker->name,
+            'email' => $this->faker->email,
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
+        ];
+        $response = $this->json(Request::METHOD_PUT, "/api/clients/{$client->id}", $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
     public function testClientsAreDeletedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -138,5 +209,17 @@ class ClientTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
+    }
+
+    public function testClientsAreNotDeletedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
+        $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

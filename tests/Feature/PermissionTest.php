@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class PermissionTest extends FeatureTestCase
@@ -9,7 +10,7 @@ class PermissionTest extends FeatureTestCase
     public function testBillingTypesAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-        $response = $this->get('/api/perms');
+        $response = $this->json(Request::METHOD_GET, '/api/perms');
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJson([
@@ -18,4 +19,12 @@ class PermissionTest extends FeatureTestCase
         $response->assertJsonCount(7, 'data');
     }
 
+    public function testMembersAreNotListedForGUest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/perms');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
 }

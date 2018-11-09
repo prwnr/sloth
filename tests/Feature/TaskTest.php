@@ -41,4 +41,13 @@ class TaskTest extends FeatureTestCase
             ],
         ]);
     }
+
+    public function testTasksAreNotListedForGUest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/tasks');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
 }

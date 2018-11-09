@@ -33,6 +33,15 @@ class MemberTest extends FeatureTestCase
         $response->assertJsonCount(6, 'data');
     }
 
+    public function testMembersAreNotListedForGUest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/members');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
     public function testMemberProjectsAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');

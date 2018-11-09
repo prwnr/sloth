@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class BillingTest extends FeatureTestCase
@@ -10,7 +11,7 @@ class BillingTest extends FeatureTestCase
     public function testBillingTypesAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-        $response = $this->get('/api/billings/types');
+        $response = $this->json(Request::METHOD_GET, '/api/billings/types');
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertExactJson([
@@ -21,10 +22,19 @@ class BillingTest extends FeatureTestCase
         ]);
     }
 
+    public function testBillingTypesAreNotListedForGuest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/billings/types');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
     public function testBillingDataIsListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-        $response = $this->get('/api/billings/data');
+        $response = $this->json(Request::METHOD_GET,'/api/billings/data');
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
@@ -37,4 +47,14 @@ class BillingTest extends FeatureTestCase
             ]
         ]);
     }
+
+    public function testBillingDataIsNotListedForGuest(): void
+    {
+        $response = $this->json(Request::METHOD_GET,'/api/billings/data');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
 }

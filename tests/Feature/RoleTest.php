@@ -24,6 +24,15 @@ class RoleTest extends FeatureTestCase
         $response->assertJsonCount(3, 'data');
     }
 
+    public function testRolesAreNotListedForGUest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/roles');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
     public function testRolesAreCreatedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
