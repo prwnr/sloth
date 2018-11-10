@@ -19,7 +19,7 @@ class CurrencyTest extends FeatureTestCase
         $response->assertJsonCount(5, 'data');
     }
 
-    public function testCurrenciesAreNotListedForGUest(): void
+    public function testCurrenciesAreNotListedForGuest(): void
     {
         $response = $this->json(Request::METHOD_GET, '/api/currencies');
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);

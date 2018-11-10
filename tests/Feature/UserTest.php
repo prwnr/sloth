@@ -32,7 +32,7 @@ class UserTest extends FeatureTestCase
         $response->assertJsonCount(6, 'data');
     }
 
-    public function testTUsersAreNotListedForGUest(): void
+    public function testUsersAreNotListedForGuest(): void
     {
         $response = $this->json(Request::METHOD_GET, '/api/users');
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -59,6 +59,19 @@ class UserTest extends FeatureTestCase
             ]
         ]);
         $response->assertJsonCount(5, 'data');
+    }
+
+    public function testUserTimeLogsAreNotListedForGuest(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            factory(TimeLog::class)->create(['member_id' => $this->user->member()->id]);
+        }
+
+        $response = $this->json(Request::METHOD_GET, "/api/users/{$this->user->id}/logs");
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
     }
 
     public function testUserActiveTimeLogsAreListedCorrectly(): void
@@ -234,6 +247,24 @@ class UserTest extends FeatureTestCase
                 'id' => $user->id,
             ]
         ]);
+    }
+    public function testUsersPasswordsAreUpdatedByUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $user = factory(User::class)->create(['team_id' => $this->user->team_id]);
+        factory(Member::class)->create(['team_id' => $user->team_id, 'user_id' => $user->id]);
+
+        $password = $this->faker->password;
+        $data = [
+            'password' => $password,
+            'password_confirmation' => $password
+        ];
+        $response = $this->json(Request::METHOD_PUT, "/api/users/{$user->id}/password", $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function testUserCanSwitchTeamsCorrectly(): void

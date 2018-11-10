@@ -7,7 +7,7 @@ use Illuminate\Http\Response;
 
 class PermissionTest extends FeatureTestCase
 {
-    public function testBillingTypesAreListedCorrectly(): void
+    public function testPermissionsAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
         $response = $this->json(Request::METHOD_GET, '/api/perms');
@@ -19,7 +19,7 @@ class PermissionTest extends FeatureTestCase
         $response->assertJsonCount(7, 'data');
     }
 
-    public function testMembersAreNotListedForGUest(): void
+    public function testPermissionsAreNotListedForGuest(): void
     {
         $response = $this->json(Request::METHOD_GET, '/api/perms');
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);

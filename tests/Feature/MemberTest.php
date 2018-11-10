@@ -33,7 +33,7 @@ class MemberTest extends FeatureTestCase
         $response->assertJsonCount(6, 'data');
     }
 
-    public function testMembersAreNotListedForGUest(): void
+    public function testMembersAreNotListedForGuest(): void
     {
         $response = $this->json(Request::METHOD_GET, '/api/members');
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -50,12 +50,26 @@ class MemberTest extends FeatureTestCase
         /** @var Member $member */
         $member = factory(Member::class)->create(['team_id' => $this->user->team_id]);
         $project = factory(Project::class)->create(['team_id' => $member->team_id]);
-        $project->loadMissing('billing', 'client');
         $member->projects()->sync([$project->id]);
         $member->save();
 
         $response = $this->json(Request::METHOD_GET, "/api/members/{$member->id}/projects");
         $response->assertStatus(Response::HTTP_OK);
+    }
+
+    public function testMemberProjectsAreNotListedForGuest(): void
+    {
+        /** @var Member $member */
+        $member = factory(Member::class)->create(['team_id' => $this->user->team_id]);
+        $project = factory(Project::class)->create(['team_id' => $member->team_id]);
+        $member->projects()->sync([$project->id]);
+        $member->save();
+
+        $response = $this->json(Request::METHOD_GET, "/api/members/{$member->id}/projects");
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
     }
 
     public function testMembersAreCreatedCorrectly(): void
@@ -83,6 +97,27 @@ class MemberTest extends FeatureTestCase
         ]);
     }
 
+    public function testMembersAreNotCreatedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $role = Role::findFromTeam($this->user->team)->where('name', Role::PROGRAMMER)->first();
+        $data = [
+            'firstname' => $this->faker->firstName,
+            'lastname' => $this->faker->lastName,
+            'email' => $this->faker->email,
+            'roles' => [$role->id],
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
+        ];
+        $response = $this->json(Request::METHOD_POST, '/api/members', $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
     public function testMembersAreShowedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -108,6 +143,18 @@ class MemberTest extends FeatureTestCase
         ]);
     }
 
+    public function testMembersAreNotShowedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $member = factory(Member::class)->create();
+        $response = $this->json(Request::METHOD_GET, "/api/members/{$member->id}");
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
     public function testMembersAreUpdatedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -131,6 +178,25 @@ class MemberTest extends FeatureTestCase
         ]);
     }
 
+    public function testMembersAreNotUpdatedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $member = factory(Member::class)->create();
+        $role = Role::findFromTeam($this->user->team)->where('name', Role::PROGRAMMER)->first();
+        $data = [
+            'roles' => [$role->id],
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
+        ];
+        $response = $this->json(Request::METHOD_PUT, "/api/members/{$member->id}", $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
     public function testMembersAreDeletedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -139,5 +205,24 @@ class MemberTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_DELETE, "/api/members/{$member->id}");
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
+    }
+
+    public function testMembersAreNotDeletedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $member = factory(Member::class)->create();
+        $role = Role::findFromTeam($this->user->team)->where('name', Role::PROGRAMMER)->first();
+        $data = [
+            'roles' => [$role->id],
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
+        ];
+        $response = $this->json(Request::METHOD_PUT, "/api/members/{$member->id}", $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

@@ -33,7 +33,7 @@ class ProjectTest extends FeatureTestCase
         $response->assertJsonCount(5, 'data');
     }
 
-    public function testProjectsAreNotListedForGUest(): void
+    public function testProjectsAreNotListedForGuest(): void
     {
         $response = $this->json(Request::METHOD_GET, '/api/projects');
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -55,6 +55,16 @@ class ProjectTest extends FeatureTestCase
             'unlimited' => 'Unlimited'
         ]);
     }
+
+    public function testProjectBudgetPeriodsAreNotListedForGuest(): void
+    {
+        $response = $this->json(Request::METHOD_GET, '/api/projects/budget_periods');
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $response->assertJson([
+            'message' => 'Unauthenticated.'
+        ]);
+    }
+
 
     public function testProjectsAreCreatedCorrectly(): void
     {
@@ -80,6 +90,28 @@ class ProjectTest extends FeatureTestCase
                 'id', 'code', 'name', 'budget', 'budget_period', 'budget_currency_id', 'client_id', 'team_id', 'billing_id', 'created_at', 'updated_at'
             ]
         ]);
+    }
+
+    public function testProjectsAreNotCreatedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $response = $this->json(Request::METHOD_POST, '/api/projects', [
+            'code' => $this->faker->toUpper($this->faker->randomLetter . $this->faker->randomLetter . $this->faker->randomLetter),
+            'name' => $this->faker->company,
+            'budget' => $this->faker->numberBetween(0, 999999),
+            'budget_period' => $this->faker->randomKey(Project::BUDGET_PERIOD),
+            'budget_currency' => Currency::all()->random()->id,
+            'client' => factory(Client::class)->create(['team_id' => $this->user->team_id])->id,
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes()),
+            'tasks' => []
+        ]);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function testProjectsAreCreatedWithTasksCorrectly(): void
@@ -147,7 +179,73 @@ class ProjectTest extends FeatureTestCase
         ]);
     }
 
+    public function testProjectsAreNotShowedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $project = factory(Project::class)->create();
+        $response = $this->json(Request::METHOD_GET, "/api/projects/{$project->id}");
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
     public function testProjectsAreUpdatedCorrectly(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $project = factory(Project::class)->create();
+        $data = [
+            'code' => $this->faker->toUpper($this->faker->randomLetter . $this->faker->randomLetter . $this->faker->randomLetter),
+            'name' => $this->faker->company,
+            'budget' => $this->faker->numberBetween(0, 999999),
+            'budget_period' => $this->faker->randomKey(Project::BUDGET_PERIOD),
+            'budget_currency' => Currency::all()->random()->id,
+            'client' => factory(Client::class)->create(['team_id' => $this->user->team_id])->id,
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes()),
+            'tasks' => []
+        ];
+        $response = $this->json(Request::METHOD_PUT, "/api/projects/{$project->id}", $data);
+
+        $response->assertStatus(Response::HTTP_ACCEPTED);
+        $response->assertJson([
+            'data' => [
+                'id' => $project->id,
+                'code' => $data['code'],
+                'name' => $data['name']
+            ]
+        ]);
+    }
+
+    public function testProjectsAreNotUpdatedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $project = factory(Project::class)->create();
+        $data = [
+            'code' => $this->faker->toUpper($this->faker->randomLetter . $this->faker->randomLetter . $this->faker->randomLetter),
+            'name' => $this->faker->company,
+            'budget' => $this->faker->numberBetween(0, 999999),
+            'budget_period' => $this->faker->randomKey(Project::BUDGET_PERIOD),
+            'budget_currency' => Currency::all()->random()->id,
+            'client' => factory(Client::class)->create(['team_id' => $this->user->team_id])->id,
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes()),
+            'tasks' => []
+        ];
+        $response = $this->json(Request::METHOD_PUT, "/api/projects/{$project->id}", $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testProjectsAreUpdatedWithTasksCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
@@ -190,36 +288,6 @@ class ProjectTest extends FeatureTestCase
         ]);
     }
 
-    public function testProjectsAreUpdatedWithTasksCorrectly(): void
-    {
-        $this->actingAs($this->user, 'api');
-        $this->actAsRole(Role::ADMIN);
-
-        $project = factory(Project::class)->create();
-        $data = [
-            'code' => $this->faker->toUpper($this->faker->randomLetter . $this->faker->randomLetter . $this->faker->randomLetter),
-            'name' => $this->faker->company,
-            'budget' => $this->faker->numberBetween(0, 999999),
-            'budget_period' => $this->faker->randomKey(Project::BUDGET_PERIOD),
-            'budget_currency' => Currency::all()->random()->id,
-            'client' => factory(Client::class)->create(['team_id' => $this->user->team_id])->id,
-            'billing_rate' => $this->faker->numberBetween(0, 50),
-            'billing_currency' => Currency::all()->random()->id,
-            'billing_type' => $this->faker->randomKey(Billing::getRateTypes()),
-            'tasks' => []
-        ];
-        $response = $this->json(Request::METHOD_PUT, "/api/projects/{$project->id}", $data);
-
-        $response->assertStatus(Response::HTTP_ACCEPTED);
-        $response->assertJson([
-            'data' => [
-                'id' => $project->id,
-                'code' => $data['code'],
-                'name' => $data['name']
-            ]
-        ]);
-    }
-
     public function testProjectsAreDeletedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -230,4 +298,15 @@ class ProjectTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
+    public function testProjectsAreNotDeletedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $project = factory(Project::class)->create(['team_id' => $this->user->team_id]);
+        $response = $this->json(Request::METHOD_DELETE, "/api/projects/{$project->id}");
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
 }

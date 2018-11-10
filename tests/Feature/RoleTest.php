@@ -24,7 +24,7 @@ class RoleTest extends FeatureTestCase
         $response->assertJsonCount(3, 'data');
     }
 
-    public function testRolesAreNotListedForGUest(): void
+    public function testRolesAreNotListedForGuest(): void
     {
         $response = $this->json(Request::METHOD_GET, '/api/roles');
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -53,6 +53,23 @@ class RoleTest extends FeatureTestCase
                 'id', 'name', 'display_name', 'description', 'created_at', 'updated_at', 'team_id', 'editable', 'deletable'
             ]
         ]);
+    }
+
+    public function testRolesAreNotCreatedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $data = [
+            'name' => $this->faker->toLower($this->faker->word),
+            'display_name' => $this->faker->word,
+            'description' => $this->faker->sentence,
+            'members' => [],
+            'permissions' => []
+        ];
+        $response = $this->json(Request::METHOD_POST, '/api/roles', $data);
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function testRolesWithAlreadyExistingNameAreNotCreated(): void
@@ -97,6 +114,18 @@ class RoleTest extends FeatureTestCase
         ]);
     }
 
+    public function testRolesAreNotShowedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $role = Role::findFromTeam($this->user->team)->where('name', Role::ADMIN)->first();
+        $response = $this->json(Request::METHOD_GET, "/api/roles/{$role->id}");
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
     public function testRolesAreUpdatedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -120,6 +149,24 @@ class RoleTest extends FeatureTestCase
                 'description' => $data['description']
             ]
         ]);
+    }
+
+    public function testRolesAreNotUpdatedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $role = factory(Role::class)->create();
+        $data = [
+            'name' => $this->faker->toLower($this->faker->word),
+            'display_name' => $this->faker->word,
+            'description' => $this->faker->sentence,
+        ];
+
+        $response = $this->json(Request::METHOD_PUT, "/api/roles/{$role->id}", $data);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function testRolesAreNotUpdatedWhenNotEditable(): void
@@ -170,6 +217,17 @@ class RoleTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_DELETE, "/api/roles/{$role->id}");
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
+    }
+
+    public function testRolesAreNotDeletedForUserWithoutPermissions(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $role = factory(Role::class)->create();
+        $this->actAsRole($role->name);
+
+        $role = factory(Role::class)->create();
+        $response = $this->json(Request::METHOD_DELETE, "/api/roles/{$role->id}");
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function testRolesAreNotDeletedWhenNotDeletable(): void
