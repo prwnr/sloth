@@ -6,6 +6,7 @@ use App\Models\Billing;
 use App\Models\Currency;
 use App\Models\Project;
 use App\Models\Role;
+use App\Models\Team;
 use App\Models\Team\Member;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -123,7 +124,7 @@ class MemberTest extends FeatureTestCase
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
 
-        $member = factory(Member::class)->create();
+        $member = factory(Member::class)->create(['team_id' => $this->user->team_id]);
         $response = $this->json(Request::METHOD_GET, "/api/members/{$member->id}");
 
         $response->assertStatus(Response::HTTP_OK);
@@ -149,10 +150,23 @@ class MemberTest extends FeatureTestCase
         $role = factory(Role::class)->create();
         $this->actAsRole($role->name);
 
-        $member = factory(Member::class)->create();
+        $member = factory(Member::class)->create(['team_id' => $this->user->team_id]);
         $response = $this->json(Request::METHOD_GET, "/api/members/{$member->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testMembersAreNotShowedForUserFromDifferentTeam(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $differentTeam = factory(Team::class)->create()->id;
+        $member = factory(Member::class)->create(['team_id' => $differentTeam]);
+
+        $response = $this->json(Request::METHOD_GET, "/api/members/{$member->id}");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function testMembersAreUpdatedCorrectly(): void
@@ -160,7 +174,7 @@ class MemberTest extends FeatureTestCase
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
 
-        $member = factory(Member::class)->create();
+        $member = factory(Member::class)->create(['team_id' => $this->user->team_id]);
         $role = Role::findFromTeam($this->user->team)->where('name', Role::PROGRAMMER)->first();
         $data = [
             'roles' => [$role->id],
@@ -197,6 +211,25 @@ class MemberTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
+    public function testMembersAreNotUpdatedByUserFromDifferentTeam(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $differentTeam = factory(Team::class)->create()->id;
+        $member = factory(Member::class)->create(['team_id' => $differentTeam]);
+        $role = Role::findFromTeam($this->user->team)->where('name', Role::PROGRAMMER)->first();
+        $data = [
+            'roles' => [$role->id],
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
+        ];
+        $response = $this->json(Request::METHOD_PUT, "/api/members/{$member->id}", $data);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
     public function testMembersAreDeletedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -213,16 +246,21 @@ class MemberTest extends FeatureTestCase
         $role = factory(Role::class)->create();
         $this->actAsRole($role->name);
 
-        $member = factory(Member::class)->create();
-        $role = Role::findFromTeam($this->user->team)->where('name', Role::PROGRAMMER)->first();
-        $data = [
-            'roles' => [$role->id],
-            'billing_rate' => $this->faker->numberBetween(0, 50),
-            'billing_currency' => Currency::all()->random()->id,
-            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
-        ];
-        $response = $this->json(Request::METHOD_PUT, "/api/members/{$member->id}", $data);
+        $member = factory(Member::class)->create(['team_id' => $this->user->team_id]);
+        $response = $this->json(Request::METHOD_DELETE, "/api/members/{$member->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testMembersAreNotDeletedByUserFromDifferentTeam(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $differentTeam = factory(Team::class)->create()->id;
+        $member = factory(Member::class)->create(['team_id' => $differentTeam]);
+        $response = $this->json(Request::METHOD_DELETE, "/api/members/{$member->id}");;
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

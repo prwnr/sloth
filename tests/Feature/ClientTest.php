@@ -6,6 +6,7 @@ use App\Models\Billing;
 use App\Models\Client;
 use App\Models\Currency;
 use App\Models\Role;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -106,7 +107,7 @@ class ClientTest extends FeatureTestCase
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
 
-        $client = factory(Client::class)->create();
+        $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
         $response = $this->json(Request::METHOD_GET, "/api/clients/{$client->id}");
 
         $response->assertStatus(Response::HTTP_OK);
@@ -139,12 +140,24 @@ class ClientTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
+    public function testClientsAreNotShowedForUserFromDifferentTeam(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $differentTeam = factory(Team::class)->create()->id;
+        $client = factory(Client::class)->create(['team_id' => $differentTeam]);
+        $response = $this->json(Request::METHOD_GET, "/api/clients/{$client->id}");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
     public function testClientsAreUpdatedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
 
-        $client = factory(Client::class)->create();
+        $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
         $data = [
             'company_name' => $this->faker->company,
             'city' => $this->faker->city,
@@ -182,7 +195,7 @@ class ClientTest extends FeatureTestCase
         $role = factory(Role::class)->create();
         $this->actAsRole($role->name);
 
-        $client = factory(Client::class)->create();
+        $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
         $data = [
             'company_name' => $this->faker->company,
             'city' => $this->faker->city,
@@ -199,6 +212,31 @@ class ClientTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_PUT, "/api/clients/{$client->id}", $data);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testClientsAreNotUpdatedByUserFromDifferentTeam(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $differentTeam = factory(Team::class)->create()->id;
+        $client = factory(Client::class)->create(['team_id' => $differentTeam]);
+        $data = [
+            'company_name' => $this->faker->company,
+            'city' => $this->faker->city,
+            'zip' => $this->faker->postcode,
+            'country' => $this->faker->country,
+            'street' => $this->faker->streetAddress,
+            'vat' => (string) $this->faker->numberBetween(1111111, 9999999),
+            'fullname' => $this->faker->name,
+            'email' => $this->faker->email,
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
+        ];
+        $response = $this->json(Request::METHOD_PUT, "/api/clients/{$client->id}", $data);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function testClientsAreDeletedCorrectly(): void
@@ -221,5 +259,17 @@ class ClientTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testClientsAreNotDeletedByUserFromDifferentTeam(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $differentTeam = factory(Team::class)->create()->id;
+        $client = factory(Client::class)->create(['team_id' => $differentTeam]);
+        $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

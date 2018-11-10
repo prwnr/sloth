@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Role;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -126,12 +127,23 @@ class RoleTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
-    public function testRolesAreUpdatedCorrectly(): void
+    public function testRolesAreNotShowedForUserFromDifferentTeam(): void
     {
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
 
         $role = factory(Role::class)->create();
+        $response = $this->json(Request::METHOD_GET, "/api/roles/{$role->id}");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testRolesAreUpdatedCorrectly(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
         $data = [
             'name' => $this->faker->toLower($this->faker->word),
             'display_name' => $this->faker->word,
@@ -157,7 +169,7 @@ class RoleTest extends FeatureTestCase
         $role = factory(Role::class)->create();
         $this->actAsRole($role->name);
 
-        $role = factory(Role::class)->create();
+        $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
         $data = [
             'name' => $this->faker->toLower($this->faker->word),
             'display_name' => $this->faker->word,
@@ -167,6 +179,24 @@ class RoleTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_PUT, "/api/roles/{$role->id}", $data);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testRolesAreNotUpdatedByUserFromDifferentTeam(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $differentTeam = factory(Team::class)->create()->id;
+        $role = factory(Role::class)->create(['team_id' => $differentTeam]);
+        $data = [
+            'name' => $this->faker->toLower($this->faker->word),
+            'display_name' => $this->faker->word,
+            'description' => $this->faker->sentence,
+        ];
+
+        $response = $this->json(Request::METHOD_PUT, "/api/roles/{$role->id}", $data);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function testRolesAreNotUpdatedWhenNotEditable(): void
@@ -213,7 +243,7 @@ class RoleTest extends FeatureTestCase
     {
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
-        $role = factory(Role::class)->create();
+        $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
         $response = $this->json(Request::METHOD_DELETE, "/api/roles/{$role->id}");
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
@@ -225,9 +255,21 @@ class RoleTest extends FeatureTestCase
         $role = factory(Role::class)->create();
         $this->actAsRole($role->name);
 
-        $role = factory(Role::class)->create();
+        $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
         $response = $this->json(Request::METHOD_DELETE, "/api/roles/{$role->id}");
         $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testRolesAreNotDeletedByUserFromDifferentTeam(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $differentTeam = factory(Team::class)->create()->id;
+        $role = factory(Role::class)->create(['team_id' => $differentTeam]);
+        $response = $this->json(Request::METHOD_DELETE, "/api/roles/{$role->id}");
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function testRolesAreNotDeletedWhenNotDeletable(): void

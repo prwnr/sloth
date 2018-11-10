@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Client;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team\Member;
@@ -9,10 +10,10 @@ use Closure;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * Class TeamOwner
+ * Class BelongsToTeam
  * @package App\Http\Middleware
  */
-class TeamOwner
+class BelongsToTeam
 {
 
     /**
@@ -22,7 +23,8 @@ class TeamOwner
     private $resourceClasses = [
         Role::class,
         Member::class,
-        Project::class
+        Project::class,
+        Client::class
     ];
 
     /**
