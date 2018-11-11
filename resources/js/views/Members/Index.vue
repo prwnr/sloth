@@ -45,6 +45,7 @@
                     {title: '#', field: 'id', sortable: true, colStyle: 'width: 70px;'},
                     {title: 'Name', field: 'fullname', sortable: true},
                     {title: 'Email', field: 'email', sortable: true},
+                    {title: 'Roles', field: 'role', sortable: true},
                     {title: 'Updated at', field: 'updated_at', sortable: true},
                     {
                         title: 'Actions',
@@ -87,6 +88,9 @@
                     this.items.map(item => {
                         item.fullname = item.user.fullname;
                         item.email = item.user.email;
+                        item.role = item.roles.map(item => {
+                            return item.display_name
+                        }).join(', ');
                         return item;
                     });
                     this.loading = false;

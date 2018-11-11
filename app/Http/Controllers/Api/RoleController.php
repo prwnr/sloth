@@ -85,8 +85,7 @@ class RoleController extends Controller
     public function update(RoleRequest $request, Role $role): JsonResponse
     {
         if (!$role->isEditable()) {
-            Session::flash('alert-danger', 'You can\'t edit this role');
-            return redirect()->back();
+            return response()->json(['message' => __('You cannot edit this role')], Response::HTTP_BAD_REQUEST);
         }
 
         $data = $request->all();

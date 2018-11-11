@@ -63,7 +63,7 @@ class Kernel extends HttpKernel
         'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
         'permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
         'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,
-        'team' => \App\Http\Middleware\TeamOwner::class,
+        'team' => \App\Http\Middleware\BelongsToTeam::class,
         'firstLogin' => \App\Http\Middleware\FirstLogin::class
     ];
 }
