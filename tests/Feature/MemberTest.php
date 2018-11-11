@@ -28,7 +28,7 @@ class MemberTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure(['data' => [
             [
-                'id', 'user_id', 'team_id', 'created_at', 'updated_at', 'billing_id', 'editable', 'deletable', 'user'
+                'id', 'user_id', 'team_id', 'created_at', 'updated_at', 'billing_id', 'editable', 'deletable', 'user', 'roles'
             ]
         ]]);
         $response->assertJsonCount(6, 'data');

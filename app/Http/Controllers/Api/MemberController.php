@@ -28,6 +28,7 @@ class MemberController extends Controller
     public function index(): MemberResource
     {
         $members = Member::findFromTeam(Auth::user()->team)->get();
+        $members->loadMissing('roles');
         return new MemberResource($members);
     }
 
