@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team\Member;
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -21,10 +22,10 @@ class BelongsToTeam
      * @var array
      */
     private $resourceClasses = [
-        Role::class,
-        Member::class,
-        Project::class,
-        Client::class
+        'role' => Role::class,
+        'member' => Member::class,
+        'project' => Project::class,
+        'client' => Client::class
     ];
 
     /**
@@ -38,12 +39,18 @@ class BelongsToTeam
      */
     public function handle($request, Closure $next, string $resource)
     {
+        $class = $this->resourceClasses[$resource] ?? null;
+        if (!$class || !$request->$resource) {
+            return $next($request);
+        }
+
         $user = Auth::user();
         $model = $request->$resource;
-        foreach ($this->resourceClasses as $class) {
-            if ($model instanceof $class && $model->team_id !== $user->team_id) {
-                return abort(404);
-            }
+        if (!$model instanceof Model) {
+            $model = $class::find($model);
+        }
+        if ($model->team_id !== $user->team_id) {
+            return abort(404);
         }
 
         return $next($request);
