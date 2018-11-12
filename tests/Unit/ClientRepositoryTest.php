@@ -34,7 +34,7 @@ class ClientRepositoryTest extends TestCase
         parent::setUp();
     }
 
-    public function testFindsClient(): void
+    public function testFindsModel(): void
     {
         $this->client->shouldReceive('findOrFail')->once()->with(1, ['*'])->andReturn($this->client);
 
@@ -43,7 +43,7 @@ class ClientRepositoryTest extends TestCase
         $this->assertEquals($this->client, $repository->find(1));
     }
 
-    public function testFindsClientWithRelation(): void
+    public function testFindsModelWithRelation(): void
     {
         $this->client->shouldReceive('with->findOrFail')->once()->with(['billing'])->with(1, ['*'])->andReturn($this->client);
 
@@ -76,7 +76,7 @@ class ClientRepositoryTest extends TestCase
         $repository->findWith(1, ['billing']);
     }
 
-    public function testReturnAllClientsCollection(): void
+    public function testReturnCollection(): void
     {
         $this->mockTeamAndUser();
         $this->actingAs($this->user, 'api');
@@ -91,7 +91,7 @@ class ClientRepositoryTest extends TestCase
         $this->assertEquals($this->collection, $repository->all());
     }
 
-    public function testReturnAllClientsWithRelationsCollection(): void
+    public function testReturnCollectionWithRelations(): void
     {
         $this->mockTeamAndUser();
         $this->actingAs($this->user, 'api');
@@ -104,7 +104,7 @@ class ClientRepositoryTest extends TestCase
         $this->assertEquals($this->collection, $repository->allWith(['billing']));
     }
 
-    public function testCreatesClient(): void
+    public function testCreatesModel(): void
     {
         $this->mockTeamAndUser();
         $this->actingAs($this->user, 'api');
@@ -128,7 +128,7 @@ class ClientRepositoryTest extends TestCase
         $this->assertEquals($this->client, $actual);
     }
 
-    public function testFailsToCreateClient(): void
+    public function testFailsToCreateModel(): void
     {
         $this->mockTeamAndUser();
         $this->actingAs($this->user, 'api');
@@ -141,7 +141,7 @@ class ClientRepositoryTest extends TestCase
         $repository->create([]);
     }
 
-    public function testUpdatesClient(): void
+    public function testUpdatesModel(): void
     {
         $clientData = $this->makeClientData();
         $billingData = $this->makeBillingData();
@@ -157,7 +157,7 @@ class ClientRepositoryTest extends TestCase
         $this->assertEquals($this->client, $repository->update(1, $data));
     }
 
-    public function testFailsToUpdateClient(): void
+    public function testFailsToUpdateModel(): void
     {
         $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
 
@@ -167,7 +167,7 @@ class ClientRepositoryTest extends TestCase
         $repository->update(1, []);
     }
 
-    public function testDeletesClient(): void
+    public function testDeletesModel(): void
     {
         $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($this->client);
         $this->client->shouldReceive('delete')->andReturn(true);
@@ -181,7 +181,7 @@ class ClientRepositoryTest extends TestCase
         $this->assertTrue($repository->delete(1));
     }
 
-    public function testDontDeletesClient(): void
+    public function testDontDeletesModel(): void
     {
         $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($this->client);
         $this->client->shouldReceive('delete')->andReturn(false);
@@ -195,7 +195,7 @@ class ClientRepositoryTest extends TestCase
         $this->assertFalse($repository->delete(1));
     }
 
-    public function testFailsToDeleteClient(): void
+    public function testFailsToDeleteModel(): void
     {
         $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
         $repository = new ClientRepository($this->client);
