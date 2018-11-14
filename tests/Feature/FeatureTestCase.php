@@ -28,7 +28,6 @@ abstract class FeatureTestCase extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->artisan('sloth:install');
         $this->member = factory(Member::class)->create();
         $this->user = $this->member->user;
         $this->assertInstanceOf(Member::class, $this->member);

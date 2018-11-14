@@ -18,6 +18,12 @@ abstract class TestCase extends BaseTestCase
     /** @var MockInterface */
     protected $user;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('sloth:install');
+    }
+
     protected function mockTeamAndUser(): void
     {
         $this->team = \Mockery::mock(Team::class);

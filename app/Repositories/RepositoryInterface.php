@@ -19,26 +19,11 @@ interface RepositoryInterface
     public function all(array $columns = ['*']): Collection;
 
     /**
-     * @param array $relations
-     * @param array $columns
-     * @return Collection
-     */
-    public function allWith(array $relations, array $columns = ['*']): Collection;
-
-    /**
      * @param int $id
      * @param array $columns
      * @return Model
      */
     public function find(int $id, array $columns = ['*']): Model;
-
-    /**
-     * @param int $id
-     * @param array $relations
-     * @param array $columns
-     * @return Model
-     */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model;
 
     /**
      * @param array $data
