@@ -93,16 +93,16 @@ class CurrencyRepositoryTest extends TestCase
 
     public function testUpdatesModel(): void
     {
-        $data = $this->makeCurrencyData();
-        $expected = new Currency($data);
+        $expected = new Currency($this->makeCurrencyData());
+        $expected->exists = true;
 
-        $this->currencyMock->shouldReceive('getAttribute')->with('id')->andReturn(1);
         $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
 
         $repository = new CurrencyRepository($this->currencyMock);
-        $actual = $repository->update($this->currencyMock->id, $data);
+        $expected = $this->makeCurrencyData();
+        $actual = $repository->update(1, $expected);
 
-        $this->assertArraySubset($data, $actual->attributesToArray());
+        $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
@@ -117,7 +117,8 @@ class CurrencyRepositoryTest extends TestCase
 
     public function testDeletesModel(): void
     {
-        $expected = factory(Currency::class)->create();
+        $expected = new Currency($this->makeCurrencyData());
+        $expected->exists = true;
 
         $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
 
