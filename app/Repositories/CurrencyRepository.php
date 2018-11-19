@@ -28,8 +28,7 @@ class CurrencyRepository implements RepositoryInterface
     }
 
     /**
-     * @param array $columns
-     * @return Collection
+     * {@inheritdoc}
      */
     public function all(array $columns = ['*']): Collection
     {
@@ -37,9 +36,15 @@ class CurrencyRepository implements RepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @param array $columns
-     * @return Model
+     * {@inheritdoc}
+     */
+    public function allWith(array $relations, array $columns = ['*']): Collection
+    {
+        return $this->currency->with($relations)->get($columns);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function find(int $id, array $columns = ['*']): Model
     {
@@ -47,8 +52,15 @@ class CurrencyRepository implements RepositoryInterface
     }
 
     /**
-     * @param array $data
-     * @return Model
+     * {@inheritdoc}
+     */
+    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    {
+        return $this->currency->with($relations)->findOrFail($id, $columns);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function create(array $data): Model
     {
@@ -56,9 +68,7 @@ class CurrencyRepository implements RepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @param array $data
-     * @return Model
+     * {@inheritdoc}
      */
     public function update(int $id, array $data): Model
     {
@@ -69,9 +79,7 @@ class CurrencyRepository implements RepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @return bool
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function delete(int $id): bool
     {

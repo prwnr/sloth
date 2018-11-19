@@ -21,43 +21,58 @@ class CurrencyRepositoryTest extends TestCase
     /**
      * @var MockInterface
      */
-    private $currencyMock;
+    private $currency;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->repository = new CurrencyRepository(new Currency());
-        $this->currencyMock = \Mockery::mock(Currency::class);
+        $this->currency = \Mockery::mock(Currency::class);
     }
 
     public function testFindsModel(): void
     {
         $expected = new Currency($this->makeCurrencyData());
-        $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
+        $this->currency->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $repository = new CurrencyRepository($this->currency);
         $actual = $repository->find(1);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
-    public function testModelHasNoRelation(): void
+    public function testFindsModelWithNoRelation(): void
     {
         $expected = new Currency($this->makeCurrencyData());
-        $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $this->currency->shouldReceive('with->findOrFail')->once()->with([])->with(1, ['*'])->andReturn($expected);
 
-        $this->assertEmpty($repository->find(1)->getRelations());
+        $repository = new CurrencyRepository($this->currency);
+        $actual = $repository->findWith(1, []);
+
+        $this->assertEquals($expected, $actual);
     }
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
-        $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
+        $this->currency->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
         $this->expectException(ModelNotFoundException::class);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $repository = new CurrencyRepository($this->currency);
         $repository->find(1);
+    }
+
+    public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void
+    {
+        $this->currency->shouldReceive('with->findOrFail')
+            ->once()
+            ->with([])
+            ->with(1, ['*'])
+            ->andThrowExceptions([new ModelNotFoundException()]);
+        $this->expectException(ModelNotFoundException::class);
+
+        $repository = new CurrencyRepository($this->currency);
+        $repository->findWith(1, []);
     }
 
     public function testReturnCollection(): void
@@ -68,13 +83,31 @@ class CurrencyRepositoryTest extends TestCase
             new Currency($this->makeCurrencyData())
         ]);
 
-        $this->currencyMock->shouldReceive('all')->with(['*'])->andReturn($expected);
+        $this->currency->shouldReceive('all')->with(['*'])->andReturn($expected);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $repository = new CurrencyRepository($this->currency);
         $actual = $repository->all();
 
         $this->assertEquals($expected->take(1), $actual->take(1));
         $this->assertEquals(3, $actual->count());
+    }
+
+    public function testReturnCollectionWithNoRelation(): void
+    {
+        $expected = new Collection([
+            new Currency($this->makeCurrencyData()),
+            new Currency($this->makeCurrencyData()),
+            new Currency($this->makeCurrencyData())
+        ]);
+
+        $this->currency->shouldReceive('with->get')->with([])->with(['*'])->andReturn($expected);
+
+        $repository = new CurrencyRepository($this->currency);
+        $actual = $repository->allWith([]);
+
+        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals(3, $actual->count());
+        $this->assertEmpty($actual->getQueueableRelations());
     }
 
     public function testCreatesModel(): void
@@ -93,12 +126,12 @@ class CurrencyRepositoryTest extends TestCase
 
     public function testUpdatesModel(): void
     {
-        $expected = new Currency($this->makeCurrencyData());
-        $expected->exists = true;
+        $model = new Currency($this->makeCurrencyData());
+        $model->exists = true;
 
-        $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
+        $this->currency->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $repository = new CurrencyRepository($this->currency);
         $expected = $this->makeCurrencyData();
         $actual = $repository->update(1, $expected);
 
@@ -107,9 +140,9 @@ class CurrencyRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
+        $this->currency->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $repository = new CurrencyRepository($this->currency);
 
         $this->expectException(ModelNotFoundException::class);
         $repository->update(1, []);
@@ -120,9 +153,9 @@ class CurrencyRepositoryTest extends TestCase
         $expected = new Currency($this->makeCurrencyData());
         $expected->exists = true;
 
-        $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
+        $this->currency->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $repository = new CurrencyRepository($this->currency);
 
         $this->assertTrue($repository->delete(1));
     }
@@ -131,18 +164,18 @@ class CurrencyRepositoryTest extends TestCase
     {
         $expected = new Currency($this->makeCurrencyData());
 
-        $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
+        $this->currency->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $repository = new CurrencyRepository($this->currency);
 
         $this->assertFalse($repository->delete(1));
     }
 
     public function testThrowsModelNotFoundExceptionOnMOdelDeleteWithNotExistingModel(): void
     {
-        $this->currencyMock->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
+        $this->currency->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
 
-        $repository = new CurrencyRepository($this->currencyMock);
+        $repository = new CurrencyRepository($this->currency);
 
         $this->expectException(ModelNotFoundException::class);
         $repository->delete(1);

@@ -22,40 +22,41 @@ class ClientRepositoryTest extends TestCase
      */
     private $client;
 
-    /**
-     * @var MockInterface
-     */
-    private $collection;
-
     public function setUp(): void
     {
         $this->client = \Mockery::mock(Client::class);
-        $this->collection = \Mockery::mock(Collection::class);
         parent::setUp();
     }
 
     public function testFindsModel(): void
     {
-        $this->client->shouldReceive('findOrFail')->once()->with(1, ['*'])->andReturn($this->client);
-
+        $expected = new Client($this->makeClientData());
+        $this->client->shouldReceive('findOrFail')->once()->with(1, ['*'])->andReturn($expected);
         $repository = new ClientRepository($this->client);
 
-        $this->assertEquals($this->client, $repository->find(1));
+        $this->assertEquals($expected, $repository->find(1));
     }
 
     public function testFindsModelWithRelation(): void
     {
-        $this->client->shouldReceive('with->findOrFail')->once()->with(['billing'])->with(1, ['*'])->andReturn($this->client);
+        $expected = new Client($this->makeClientData());
+        $expected->setRelation('billing', new Billing($this->makeBillingData()));
+
+        $this->client->shouldReceive('with->findOrFail')
+            ->once()
+            ->with(['billing'])
+            ->with(1, ['*'])->andReturn($expected);
 
         $repository = new ClientRepository($this->client);
+        $actual = $repository->findWith(1, ['billing']);
 
-        $this->assertEquals($this->client, $repository->findWith(1, ['billing']));
+        $this->assertEquals($expected, $actual);
+        $this->assertTrue($actual->relationLoaded('billing'));
     }
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
         $this->client->shouldReceive('findOrFail')->once()->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
-
         $repository = new ClientRepository($this->client);
 
         $this->expectException(ModelNotFoundException::class);
@@ -78,59 +79,76 @@ class ClientRepositoryTest extends TestCase
 
     public function testReturnCollection(): void
     {
-        $this->mockTeamAndUser();
         $this->actingAs($this->user, 'api');
+
+        $expected = new Collection([
+            new Client($this->makeClientData()),
+            new Client($this->makeClientData()),
+            new Client($this->makeClientData())
+        ]);
+
         $this->client->shouldReceive('where->get')
-            ->once()
             ->with('team_id', $this->user->team_id)
             ->with(['*'])
-            ->andReturn($this->collection);
+            ->andReturn($expected);
 
         $repository = new ClientRepository($this->client);
+        $actual = $repository->all();
 
-        $this->assertEquals($this->collection, $repository->all());
+        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals(3, $actual->count());
     }
 
     public function testReturnCollectionWithRelations(): void
     {
-        $this->mockTeamAndUser();
         $this->actingAs($this->user, 'api');
+
+        $expected = new Collection([
+            (new Client($this->makeClientData()))->setRelation('billing', new Billing($this->makeBillingData())),
+            (new Client($this->makeClientData()))->setRelation('billing', new Billing($this->makeBillingData())),
+            (new Client($this->makeClientData()))->setRelation('billing', new Billing($this->makeBillingData()))
+        ]);
+
         $this->client->shouldReceive('where->with->get')
-            ->once()
-            ->with('team_id', $this->user->team_id)->with('billing')->with(['*'])->andReturn($this->collection);
+            ->with('team_id', $this->user->team_id)
+            ->with(['billing'])
+            ->with(['*'])
+            ->andReturn($expected);
 
         $repository = new ClientRepository($this->client);
+        $actual = $repository->allWith(['billing']);
 
-        $this->assertEquals($this->collection, $repository->allWith(['billing']));
+        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals(3, $actual->count());
+        $this->assertEquals(['billing'], $actual->getQueueableRelations());
     }
 
     public function testCreatesModel(): void
     {
-        $this->mockTeamAndUser();
-        $this->actingAs($this->user, 'api');
+        $user = \Mockery::mock(User::class);
+        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
+        $this->actingAs($user, 'api');
 
-        $clientData = $this->makeClientData();
         $billingData = $this->makeBillingData();
-        $data = array_merge($clientData, $billingData);
+        $clientData = $this->makeClientData();
+        $data = array_merge($clientData, [
+            'billing_rate' => $billingData['rate'],
+            'billing_currency' => $billingData['currency_id'],
+            'billing_type' => $billingData['type']
+        ]);
+        $expected = new Client($data);
+        $expected->setRelation('billing', new Billing($billingData));
 
-        $billing = \Mockery::mock(Billing::class);
-        $belongsTo = \Mockery::mock(BelongsTo::class);
-        $this->client->shouldReceive('billing')->withNoArgs()->andReturn($belongsTo);
-
-        $this->team->shouldReceive('clients->create')->with($data)->andReturn($this->client);
-        $belongsTo->shouldReceive('create')->andReturn($billing);
-        $belongsTo->shouldReceive('associate')->with($billing)->andReturn($this->client);
-        $this->client->shouldReceive('save')->withNoArgs()->andReturn(true);
-
-        $repository = new ClientRepository($this->client);
-
+        $repository = new ClientRepository(new Client());
         $actual = $repository->create($data);
-        $this->assertEquals($this->client, $actual);
+
+        $this->assertArraySubset($clientData, $actual->attributesToArray());
+        $this->assertTrue($actual->relationLoaded('billing'));
+        $this->assertArraySubset($billingData, $actual->billing->attributesToArray());
     }
 
     public function testFailsToCreateModel(): void
     {
-        $this->mockTeamAndUser();
         $this->actingAs($this->user, 'api');
 
         $this->team->shouldReceive('clients->create')->with([])->andThrowExceptions([new QueryException()]);
@@ -143,21 +161,25 @@ class ClientRepositoryTest extends TestCase
 
     public function testUpdatesModel(): void
     {
-        $clientData = $this->makeClientData();
-        $billingData = $this->makeBillingData();
-        $data = array_merge($clientData, $billingData);
-
-        $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($this->client);
-        $this->client->shouldReceive('update')->with($clientData)->andReturn(true);
-        $this->client->shouldReceive('billing->update')->andReturn(true);
-        $this->client->shouldReceive('save')->andReturn(true);
+        $model = factory(Client::class)->create();
+        $this->client->shouldReceive('getAttribute')->with('id')->andReturn(1);
+        $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
 
         $repository = new ClientRepository($this->client);
 
-        $this->assertEquals($this->client, $repository->update(1, $data));
+        $billingData = $this->makeBillingData();
+        $clientData = $this->makeClientData();
+        $expected = array_merge($clientData, [
+            'billing_rate' => $billingData['rate'],
+            'billing_currency' => $billingData['currency_id'],
+            'billing_type' => $billingData['type']
+        ]);
+        $actual = $repository->update($this->client->id, $expected);
+
+        $this->assertArraySubset($clientData, $actual->attributesToArray());
     }
 
-    public function testFailsToUpdateModel(): void
+    public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
         $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
 
@@ -169,26 +191,24 @@ class ClientRepositoryTest extends TestCase
 
     public function testDeletesModel(): void
     {
-        $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($this->client);
-        $this->client->shouldReceive('delete')->andReturn(true);
+        $billing = new Billing($this->makeBillingData());
+        $client = new Client($this->makeClientData());
+        $client->setRelation('billing', $billing);
+        $billing->exists = true;
+        $client->exists = true;
 
-        $billing = \Mockery::mock(Billing::class);
-        $this->client->shouldReceive('getAttribute')->with('billing')->andReturn($billing);
-        $billing->shouldReceive('delete')->andReturn(true);
+        $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($client);
 
         $repository = new ClientRepository($this->client);
 
         $this->assertTrue($repository->delete(1));
     }
 
-    public function testDontDeletesModel(): void
+    public function testDoesNotDeleteModel(): void
     {
-        $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($this->client);
-        $this->client->shouldReceive('delete')->andReturn(false);
+        $model = new Client($this->makeClientData());
 
-        $billing = \Mockery::mock(Billing::class);
-        $this->client->shouldReceive('getAttribute')->with('billing')->andReturn($billing);
-        $billing->shouldReceive('delete')->andReturn(false);
+        $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
 
         $repository = new ClientRepository($this->client);
 
@@ -201,6 +221,7 @@ class ClientRepositoryTest extends TestCase
         $repository = new ClientRepository($this->client);
 
         $this->expectException(ModelNotFoundException::class);
+
         $this->assertTrue($repository->delete(1));
     }
 
@@ -221,9 +242,9 @@ class ClientRepositoryTest extends TestCase
     private function makeBillingData(): array
     {
         return [
-            'billing_rate' => $this->faker->numberBetween(1, 500),
-            'billing_currency' => Currency::all()->random()->id,
-            'billing_type' => $this->faker->randomElement(Billing::getRateTypes())
+            'rate' => $this->faker->numberBetween(1, 500),
+            'currency_id' => Currency::all()->random()->id,
+            'type' => $this->faker->randomElement(Billing::getRateTypes())
         ];
     }
 }

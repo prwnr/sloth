@@ -30,8 +30,7 @@ class ClientRepository implements RepositoryInterface
     }
 
     /**
-     * @param array $columns
-     * @return Collection
+     * {@inheritdoc}
      */
     public function all(array $columns = ['*']): Collection
     {
@@ -39,9 +38,7 @@ class ClientRepository implements RepositoryInterface
     }
 
     /**
-     * @param array $relations
-     * @param array $columns
-     * @return Collection
+     * {@inheritdoc}
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
@@ -49,9 +46,7 @@ class ClientRepository implements RepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @param array $columns
-     * @return Model
+     * {@inheritdoc}
      */
     public function find(int $id, array $columns = ['*']): Model
     {
@@ -59,10 +54,7 @@ class ClientRepository implements RepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @param array $relations
-     * @param array $columns
-     * @return Model
+     * {@inheritdoc}
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Model
     {
@@ -70,8 +62,7 @@ class ClientRepository implements RepositoryInterface
     }
 
     /**
-     * @param array $data
-     * @return Model
+     * {@inheritdoc}
      */
     public function create(array $data): Model
     {
@@ -91,9 +82,7 @@ class ClientRepository implements RepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @param array $data
-     * @return Model
+     * {@inheritdoc}
      */
     public function update(int $id, array $data): Model
     {
@@ -120,9 +109,7 @@ class ClientRepository implements RepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @return bool
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function delete(int $id): bool
     {

@@ -13,12 +13,22 @@ interface RepositoryInterface
 {
 
     /**
+     * Get all models with given columns as Collection
      * @param array $columns
      * @return Collection
      */
     public function all(array $columns = ['*']): Collection;
 
     /**
+     * Get all models with given columns and loaded relations as Collection
+     * @param array $relations
+     * @param array $columns
+     * @return Collection
+     */
+    public function allWith(array $relations, array $columns = ['*']): Collection;
+
+    /**
+     * Get model by ID
      * @param int $id
      * @param array $columns
      * @return Model
@@ -26,12 +36,23 @@ interface RepositoryInterface
     public function find(int $id, array $columns = ['*']): Model;
 
     /**
+     * Get model by ID and return it with relations loaded
+     * @param int $id
+     * @param array $relations
+     * @param array $columns
+     * @return Model
+     */
+    public function findWith(int $id, array $relations, array $columns = ['*']): Model;
+
+    /**
+     * Create new model
      * @param array $data
      * @return Model
      */
     public function create(array $data): Model;
 
     /**
+     * Updated existing model by ID
      * @param int $id
      * @param array $data
      * @return Model
@@ -39,6 +60,7 @@ interface RepositoryInterface
     public function update(int $id, array $data): Model;
 
     /**
+     * Delete model by ID
      * @param int $id
      * @return bool
      */

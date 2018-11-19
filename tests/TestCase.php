@@ -22,12 +22,10 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         $this->artisan('sloth:install');
-    }
 
-    protected function mockTeamAndUser(): void
-    {
         $this->team = \Mockery::mock(Team::class);
         $this->team->shouldReceive('getAttribute')->with('id')->andReturn(1);
+
         $this->user = \Mockery::mock(User::class);
         $this->user->shouldReceive('getAttribute')->with('team')->andReturn($this->team);
         $this->user->shouldReceive('getAttribute')->with('team_id')->andReturn($this->team->id);
