@@ -136,8 +136,6 @@ class ClientRepositoryTest extends TestCase
             'billing_currency' => $billingData['currency_id'],
             'billing_type' => $billingData['type']
         ]);
-        $expected = new Client($data);
-        $expected->setRelation('billing', new Billing($billingData));
 
         $repository = new ClientRepository(new Client());
         $actual = $repository->create($data);
