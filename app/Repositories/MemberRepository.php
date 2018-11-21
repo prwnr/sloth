@@ -84,12 +84,11 @@ class MemberRepository implements RepositoryInterface
         $team = Auth::user()->team;
         $user = User::where('email', $data['email'])->first();
         if (!$user) {
-            $password = str_random(10);
             $user = $team->users()->create([
                 'firstname' => $data['firstname'],
                 'lastname' => $data['lastname'],
                 'email' => $data['email'],
-                'password' => Hash::make($password)
+                'password' => $data['password']
             ]);
         }
 
