@@ -93,7 +93,7 @@ class MemberRepository implements RepositoryInterface
             ]);
         }
 
-        $member = new Member();
+        $member = $this->member->make();
         $member->user()->associate($user);
         $member->team()->associate($team);
         $billing = $member->billing()->create([
