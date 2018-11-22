@@ -6,7 +6,7 @@ use App\Models\{Currency, Permission, Role, Team, User};
 use App\Repositories\MemberRepository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\{Facades\DB, Facades\Hash, Facades\Storage};
+use Illuminate\Support\{Facades\DB, Facades\Storage};
 
 /**
  * Class Creator
@@ -105,7 +105,7 @@ class Creator
             'firstname' => $this->data['firstname'],
             'lastname' => $this->data['lastname'],
             'email' => $this->data['email'],
-            'password' => Hash::make($this->data['password']),
+            'password' => $this->data['password'],
             'first_login' => false,
             'billing_rate' => 0,
             'billing_type' => '',

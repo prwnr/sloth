@@ -89,7 +89,7 @@ class MemberRepository implements RepositoryInterface
                 'firstname' => $data['firstname'],
                 'lastname' => $data['lastname'],
                 'email' => $data['email'],
-                'password' => $data['password']
+                'password' => Hash::make($data['password'])
             ]);
         }
 
@@ -113,6 +113,7 @@ class MemberRepository implements RepositoryInterface
     public function  createTeamOwner(array $data, Team $team): Model
     {
         $data['owns_team'] = $team->id;
+        $data['password'] = Hash::make($data['password']);
         $user = $team->users()->create($data);
 
         $member = $this->member->make();
