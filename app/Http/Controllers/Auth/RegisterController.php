@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\{Team\Creator, User};
 use App\Http\Controllers\Controller;
+use App\Repositories\MemberRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -32,19 +33,18 @@ class RegisterController extends Controller
     protected $redirectTo = '/';
 
     /**
-     * @var Request
+     * @var MemberRepository
      */
-    private $request;
+    public $memberRepository;
 
     /**
      * Create a new controller instance.
-     *
-     * @param Request $request
+     * @param MemberRepository $memberRepository
      */
-    public function __construct(Request $request)
+    public function __construct(MemberRepository $memberRepository)
     {
-        $this->request = $request;
         $this->middleware('guest');
+        $this->memberRepository = $memberRepository;
     }
 
     /**
@@ -72,7 +72,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data):? User
     {
-        $teamCreator = new Creator($data);
+        $teamCreator = new Creator($this->memberRepository, $data);
         try {
             $teamCreator->make();
         } catch (\Exception $ex) {

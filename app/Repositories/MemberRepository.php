@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Team;
 use App\Models\Team\Member;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -105,6 +106,30 @@ class MemberRepository implements RepositoryInterface
 
         $member->attachRoles($data['roles']);
         $member->projects()->sync($data['projects'] ?? []);
+
+        return $member;
+    }
+
+    /**
+     * @param array $data
+     * @param Team $team
+     * @return Model
+     */
+    public function  createTeamOwner(array $data, Team $team): Model
+    {
+        $data['owns_team'] = $team->id;
+        $user = $team->users()->create($data);
+
+        $member = $this->member->make();
+        $member->user()->associate($user);
+        $member->team()->associate($team);
+        $billing = $member->billing()->create([
+            'rate' => $data['billing_rate'],
+            'type' => $data['billing_type'],
+            'currency_id' => $data['billing_currency']
+        ]);
+        $member->billing()->associate($billing);
+        $member->save();
 
         return $member;
     }

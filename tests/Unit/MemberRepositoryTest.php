@@ -168,6 +168,27 @@ class MemberRepositoryTest extends TestCase
         $repository->create([]);
     }
 
+    public function testCreatesTeamOwnerModel(): void
+    {
+        $team = factory(Team::class)->create();
+        $expected = $this->makeMemberData();
+
+        $repository = new MemberRepository(new Member());
+        $actual = $repository->createTeamOwner($expected, $team);
+
+        $this->assertEquals($expected['firstname'], $actual->user->firstname);
+        $this->assertEquals($expected['lastname'], $actual->user->lastname);
+        $this->assertEquals(['user', 'team', 'billing'], $actual->getQueueableRelations());
+    }
+
+    public function testFailsToCreateTeamOwnerModel(): void
+    {
+        $repository = new MemberRepository($this->member);
+
+        $this->expectException(QueryException::class);
+        $repository->createTeamOwner([], factory(Team::class)->create());
+    }
+
     public function testUpdatesModel(): void
     {
         $user = \Mockery::mock(User::class);
