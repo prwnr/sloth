@@ -96,12 +96,7 @@ class MemberRepository implements RepositoryInterface
         $member = $this->member->make();
         $member->user()->associate($user);
         $member->team()->associate($team);
-        $billing = $member->billing()->create([
-            'rate' => $data['billing_rate'],
-            'type' => $data['billing_type'],
-            'currency_id' => $data['billing_currency']
-        ]);
-        $member->billing()->associate($billing);
+        $this->associateWithBilling($data, $member);
         $member->save();
 
         $member->attachRoles($data['roles']);
@@ -123,12 +118,7 @@ class MemberRepository implements RepositoryInterface
         $member = $this->member->make();
         $member->user()->associate($user);
         $member->team()->associate($team);
-        $billing = $member->billing()->create([
-            'rate' => $data['billing_rate'],
-            'type' => $data['billing_type'],
-            'currency_id' => $data['billing_currency']
-        ]);
-        $member->billing()->associate($billing);
+        $this->associateWithBilling($data, $member);
         $member->save();
 
         return $member;
@@ -170,5 +160,19 @@ class MemberRepository implements RepositoryInterface
         }
 
         return false;
+    }
+
+    /**
+     * @param array $data
+     * @param Member $member
+     */
+    private function associateWithBilling(array $data, Member $member): void
+    {
+        $billing = $member->billing()->create([
+            'rate' => $data['billing_rate'],
+            'type' => $data['billing_type'],
+            'currency_id' => $data['billing_currency']
+        ]);
+        $member->billing()->associate($billing);
     }
 }
