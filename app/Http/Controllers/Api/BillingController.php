@@ -7,6 +7,7 @@ use App\Models\Billing;
 use App\Http\Resources\Billing as BillingResource;
 use App\Models\Currency;
 use App\Models\Project;
+use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -16,6 +17,20 @@ use App\Http\Controllers\Controller;
  */
 class BillingController extends Controller
 {
+    /**
+     * @var CurrencyRepository
+     */
+    private $currencyRepository;
+
+    /**
+     * BillingController constructor.
+     * @param CurrencyRepository $currencyRepository
+     */
+    public function __construct(CurrencyRepository $currencyRepository)
+    {
+        $this->currencyRepository = $currencyRepository;
+    }
+
     /**
      * Display types of the resource.
      *
@@ -34,7 +49,7 @@ class BillingController extends Controller
     {
         return [
             'billing_types' => (new BillingResource(Billing::getRateTypes()))->toArray($request),
-            'currencies' => (new CurrencyResource(Currency::all()))->toArray($request),
+            'currencies' => (new CurrencyResource($this->currencyRepository->all()))->toArray($request),
             'budget_periods' => Project::BUDGET_PERIOD
         ];
     }

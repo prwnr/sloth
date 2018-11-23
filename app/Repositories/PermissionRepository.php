@@ -52,6 +52,16 @@ class PermissionRepository implements RepositoryInterface
     }
 
     /**
+     * @param string $name
+     * @param array $columns
+     * @return mixed
+     */
+    public function findByName(string $name, array $columns = ['*']): Model
+    {
+        return $this->permission->whereName($name)->firstOrFail($columns);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Model

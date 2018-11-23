@@ -110,7 +110,7 @@ class MemberRepository implements RepositoryInterface
      * @param Team $team
      * @return Model
      */
-    public function  createTeamOwner(array $data, Team $team): Model
+    public function createTeamOwner(array $data, Team $team): Model
     {
         $data['owns_team'] = $team->id;
         $data['password'] = Hash::make($data['password']);

@@ -33,18 +33,11 @@ class RegisterController extends Controller
     protected $redirectTo = '/';
 
     /**
-     * @var MemberRepository
-     */
-    public $memberRepository;
-
-    /**
      * Create a new controller instance.
-     * @param MemberRepository $memberRepository
      */
-    public function __construct(MemberRepository $memberRepository)
+    public function __construct()
     {
         $this->middleware('guest');
-        $this->memberRepository = $memberRepository;
     }
 
     /**
@@ -72,7 +65,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data):? User
     {
-        $teamCreator = new Creator($this->memberRepository, $data);
+        $teamCreator = new Creator($data);
         try {
             $teamCreator->make();
         } catch (\Exception $ex) {

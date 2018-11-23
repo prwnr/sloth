@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Repositories\PermissionRepository;
 use Illuminate\Console\Command;
 use App\Models\{Permission, Role, Currency};
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -28,6 +30,21 @@ class InstallationCommand extends Command
     protected $description = 'Installs application permissions (updates existing roles) and currencies';
 
     /**
+     * @var PermissionRepository
+     */
+    private $permissionRepository;
+
+    /**
+     * InstallationCommand constructor.
+     * @param PermissionRepository $permissionRepository
+     */
+    public function __construct(PermissionRepository $permissionRepository)
+    {
+        parent::__construct();
+        $this->permissionRepository = $permissionRepository;
+    }
+
+    /**
      * Execute the console command.
      */
     public function handle(): void
@@ -48,14 +65,7 @@ class InstallationCommand extends Command
 
         foreach ((array)$permissions as $perm) {
             try {
-                $model = Permission::where('name', $perm['name'])->first();
-                if ($model) {
-                    $model->update($perm);
-                    continue;
-                }
-
-                $model = Permission::create($perm);
-                $this->assignNewPermission($model);
+                $this->createOrUpdatePermission($perm);
             } catch (\Exception $ex) {
                 $this->error("Failed installation of permission named '{$perm['name']}'. Reason: {$ex->getMessage()}");
             }
@@ -82,6 +92,23 @@ class InstallationCommand extends Command
         }
 
         $this->info('- application currencies installed');
+    }
+
+    /**
+     * @param array $perm
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    private function createOrUpdatePermission(array $perm): void
+    {
+        try {
+            $model = $this->permissionRepository->findByName($perm['name']);
+        } catch (ModelNotFoundException $ex) {
+            $model = $this->permissionRepository->create($perm);
+            $this->assignNewPermission($model);
+            return;
+        }
+
+        $model->update($perm);
     }
 
     /**

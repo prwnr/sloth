@@ -4,6 +4,7 @@ namespace App\Models\Team;
 
 use App\Models\{Currency, Permission, Role, Team, User};
 use App\Repositories\MemberRepository;
+use App\Repositories\PermissionRepository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\{Facades\DB, Facades\Storage};
@@ -46,6 +47,11 @@ class Creator
     private $memberRepository;
 
     /**
+     * @var PermissionRepository
+     */
+    private $permissionRepository;
+
+    /**
      * @return User
      */
     public function getUser(): User
@@ -55,12 +61,12 @@ class Creator
 
     /**
      * Creator constructor.
-     * @param MemberRepository $memberRepository
      * @param array $data
      */
-    public function __construct(MemberRepository $memberRepository, array $data)
+    public function __construct(array $data)
     {
-        $this->memberRepository = $memberRepository;
+        $this->memberRepository = app()->make(MemberRepository::class);
+        $this->permissionRepository = app()->make(PermissionRepository::class);
         $this->data = $data;
     }
 
@@ -168,8 +174,7 @@ class Creator
     {
         $assignPermissions = [];
         foreach ((array) $this->files['permissions'] as $permissionRaw) {
-            $permission = Permission::where('name', $permissionRaw['name'])->firstOrFail();
-            $assignPermissions[] = $permission->id;
+            $assignPermissions[] = $this->permissionRepository->findByName($permissionRaw['name'])->id;
         }
 
         $role->perms()->sync($assignPermissions);
@@ -183,8 +188,7 @@ class Creator
     {
         $assignPermissions = [];
         foreach ($permissions as $name) {
-            $permission = Permission::where('name', $name)->firstOrFail();
-            $assignPermissions[] = $permission->id;
+            $assignPermissions[] = $this->permissionRepository->findByName($name)->id;
         }
 
         $role->perms()->sync($assignPermissions);
