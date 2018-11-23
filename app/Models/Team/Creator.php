@@ -2,9 +2,8 @@
 
 namespace App\Models\Team;
 
-use App\Models\{Currency, Permission, Role, Team, User};
-use App\Repositories\MemberRepository;
-use App\Repositories\PermissionRepository;
+use App\Models\{Role, Team, User};
+use App\Repositories\{CurrencyRepository, MemberRepository, PermissionRepository};
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\{Facades\DB, Facades\Storage};
@@ -52,6 +51,11 @@ class Creator
     private $permissionRepository;
 
     /**
+     * @var CurrencyRepository
+     */
+    private $currencyRepository;
+
+    /**
      * @return User
      */
     public function getUser(): User
@@ -67,6 +71,7 @@ class Creator
     {
         $this->memberRepository = app()->make(MemberRepository::class);
         $this->permissionRepository = app()->make(PermissionRepository::class);
+        $this->currencyRepository = app()->make(CurrencyRepository::class);
         $this->data = $data;
     }
 
@@ -115,7 +120,7 @@ class Creator
             'first_login' => false,
             'billing_rate' => 0,
             'billing_type' => '',
-            'billing_currency' => Currency::first()->id
+            'billing_currency' => $this->currencyRepository->first()->id
         ];
 
         $this->member = $this->memberRepository->createTeamOwner($data, $this->team);

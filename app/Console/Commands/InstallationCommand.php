@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Repositories\CurrencyRepository;
 use App\Repositories\PermissionRepository;
 use Illuminate\Console\Command;
 use App\Models\{Permission, Role, Currency};
@@ -35,13 +36,19 @@ class InstallationCommand extends Command
     private $permissionRepository;
 
     /**
+     * @var CurrencyRepository
+     */
+    private $currencyRepository;
+
+    /**
      * InstallationCommand constructor.
      * @param PermissionRepository $permissionRepository
      */
-    public function __construct(PermissionRepository $permissionRepository)
+    public function __construct(PermissionRepository $permissionRepository, CurrencyRepository $currencyRepository)
     {
         parent::__construct();
         $this->permissionRepository = $permissionRepository;
+        $this->currencyRepository = $currencyRepository;
     }
 
     /**
@@ -85,7 +92,7 @@ class InstallationCommand extends Command
 
         foreach ((array)$currencies as $currency) {
             try {
-                Currency::where('name', $currency['name'])->updateOrCreate($currency);
+                $this->createOrUpdateCurrency($currency);
             } catch (\Exception $ex) {
                 $this->error("Failed installation of currency named '{$currency['name']}'. Reason: {$ex->getMessage()}");
             }
@@ -109,6 +116,21 @@ class InstallationCommand extends Command
         }
 
         $model->update($perm);
+    }
+
+    /**
+     * @param array $data
+     */
+    private function createOrUpdateCurrency(array $data): void
+    {
+        try {
+            $currency = $this->currencyRepository->findByName($data['name']);
+        } catch (ModelNotFoundException $ex) {
+            $this->currencyRepository->create($data);
+            return;
+        }
+
+        $this->currencyRepository->update($currency->id, $data);
     }
 
     /**

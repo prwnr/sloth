@@ -32,6 +32,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
+        $this->currency->query()->first();
         return $this->currency->all($columns);
     }
 
@@ -44,11 +45,30 @@ class CurrencyRepository implements RepositoryInterface
     }
 
     /**
+     * @param array $columns
+     * @return mixed
+     */
+    public function first(array $columns = ['*'])
+    {
+        return $this->currency->first($columns);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function find(int $id, array $columns = ['*']): Model
     {
         return $this->currency->findOrFail($id, $columns);
+    }
+
+    /**
+     * @param string $name
+     * @param array $columns
+     * @return Model
+     */
+    public function findByName(string $name, array $columns = ['*']): Model
+    {
+        return $this->currency->whereName($name)->firstOrFail($columns);
     }
 
     /**
