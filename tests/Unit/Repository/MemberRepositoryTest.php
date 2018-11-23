@@ -186,7 +186,7 @@ class MemberRepositoryTest extends TestCase
         $repository = new MemberRepository($this->member);
 
         $this->expectException(QueryException::class);
-        $repository->createTeamOwner([], factory(Team::class)->create());
+        $repository->createTeamOwner(['password' => 'secret'], factory(Team::class)->create());
     }
 
     public function testUpdatesModel(): void
