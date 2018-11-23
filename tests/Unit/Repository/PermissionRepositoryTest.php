@@ -41,23 +41,21 @@ class PermissionRepositoryTest extends TestCase
             ->andReturn($expected);
         $repository = new PermissionRepository($this->permission);
 
-        $this->assertEquals($expected, $repository->findByName(1));
+        $this->assertEquals($expected, $repository->findByName($expected->name));
     }
 
     public function testThrowsModelNotFoundExceptionOnFindModelByName(): void
     {
-        $expected = new Permission($this->makePermissionData());
         $this->permission->shouldReceive('whereName->firstOrFail')
-            ->with($expected->name)
+            ->with('foo')
             ->with(['*'])
             ->andThrow(ModelNotFoundException::class);
 
         $this->expectException(ModelNotFoundException::class);
 
         $repository = new PermissionRepository($this->permission);
-        $repository->findByName(1);
+        $repository->findByName('foo');
     }
-
 
     public function testFindsModelWithNoRelation(): void
     {
