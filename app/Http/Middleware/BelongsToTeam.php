@@ -47,7 +47,7 @@ class BelongsToTeam
         $user = Auth::user();
         $model = $request->$resource;
         if (!$model instanceof Model) {
-            $model = $class::find($model);
+            $model = $class::findOrFail($model);
         }
         if ($model->team_id !== $user->team_id) {
             return abort(404);
