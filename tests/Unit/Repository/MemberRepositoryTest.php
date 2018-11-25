@@ -33,54 +33,45 @@ class MemberRepositoryTest extends TestCase
 
     public function testFindsModel(): void
     {
-        $expected = new Member();
-        $this->member->shouldReceive('findOrFail')->once()->with(1, ['*'])->andReturn($expected);
-        $repository = new MemberRepository($this->member);
+        $this->actingAs($this->user, 'api');
+        $expected = factory(Member::class)->create();
+        $repository = new MemberRepository(new Member());
 
-        $this->assertEquals($expected, $repository->find(1));
+        $actual = $repository->find($expected->id);
+
+        $this->assertInstanceOf(Member::class, $actual);
+        $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
     public function testFindsModelWithRelation(): void
     {
-        $expected = new Member();
-        $expected->setRelation('billing', factory(Billing::class)->create());
-        $expected->setRelation('user', factory(User::class)->create());
-        $expected->setRelation('team', factory(Team::class)->create());
+        $this->actingAs($this->user, 'api');
+        $expected = factory(Member::class)->create();
 
-        $expectedRelation = ['billing', 'user', 'team'];
-        $this->member->shouldReceive('with->findOrFail')
-            ->once()
-            ->with($expectedRelation)
-            ->with(1, ['*'])->andReturn($expected);
+        $expectedRelation = ['user', 'billing', 'team'];
 
-        $repository = new MemberRepository($this->member);
-        $actual = $repository->findWith(1, $expectedRelation);
+        $repository = new MemberRepository(new Member());
+        $actual = $repository->findWith($expected->id, $expectedRelation);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertInstanceOf(Member::class, $actual);
+        $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertEquals($expectedRelation, $actual->getQueueableRelations());
     }
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
-        $this->member->shouldReceive('findOrFail')->once()->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
-        $repository = new MemberRepository($this->member);
+        $repository = new MemberRepository(new Member());
 
         $this->expectException(ModelNotFoundException::class);
-        $repository->find(1);
+        $repository->find(0);
     }
 
     public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void
     {
-        $this->member->shouldReceive('with->findOrFail')
-            ->once()
-            ->with(['billing', 'user', 'team'])
-            ->with(1, ['*'])
-            ->andThrowExceptions([new ModelNotFoundException()]);
-
-        $repository = new MemberRepository($this->member);
+        $repository = new MemberRepository(new Member());
 
         $this->expectException(ModelNotFoundException::class);
-        $repository->findWith(1, ['billing', 'user', 'team']);
+        $repository->findWith(0, ['billing', 'user', 'team']);
     }
 
     public function testReturnCollection(): void
@@ -151,6 +142,7 @@ class MemberRepositoryTest extends TestCase
         $repository = new MemberRepository(new Member());
         $actual = $repository->create($expected);
 
+        $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected['firstname'], $actual->user->firstname);
         $this->assertEquals($expected['lastname'], $actual->user->lastname);
         $this->assertEquals(['user', 'team', 'billing'], $actual->getQueueableRelations());
@@ -162,7 +154,7 @@ class MemberRepositoryTest extends TestCase
         $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
         $this->actingAs($user, 'api');
 
-        $repository = new MemberRepository($this->member);
+        $repository = new MemberRepository(new Member());
 
         $this->expectException(\ErrorException::class);
         $repository->create([]);
@@ -176,6 +168,7 @@ class MemberRepositoryTest extends TestCase
         $repository = new MemberRepository(new Member());
         $actual = $repository->createTeamOwner($expected, $team);
 
+        $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected['firstname'], $actual->user->firstname);
         $this->assertEquals($expected['lastname'], $actual->user->lastname);
         $this->assertEquals(['user', 'team', 'billing'], $actual->getQueueableRelations());
@@ -191,20 +184,13 @@ class MemberRepositoryTest extends TestCase
 
     public function testUpdatesModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('id')->andReturn(1);
-        $user->shouldReceive('getAttribute')->with('team_id')->andReturn(1);
-        $this->actingAs($user, 'api');
-
         $model = factory(Member::class)->create();
-        $this->member->shouldReceive('getAttribute')->with('id')->andReturn(1);
-        $this->member->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
-
-        $repository = new MemberRepository($this->member);
+        $repository = new MemberRepository(new Member());
 
         $expected = $this->makeMemberData();
-        $actual = $repository->update($this->member->id, $expected);
+        $actual = $repository->update($model->id, $expected);
 
+        $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected['projects'], $actual->projects()->pluck('id')->toArray());
         $this->assertEquals($expected['roles'], $actual->roles()->pluck('id')->toArray());
         $this->assertEquals($expected['billing_rate'], $actual->billing->rate);
@@ -212,35 +198,24 @@ class MemberRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $this->member->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
-
-        $repository = new MemberRepository($this->member);
+        $repository = new MemberRepository(new Member());
 
         $this->expectException(ModelNotFoundException::class);
-        $repository->update(1, []);
+        $repository->update(0, []);
     }
 
     public function testDeletesModel(): void
     {
-        $billing = new Billing($this->makeMemberData());
-        $member = new Member();
-        $member->setRelation('billing', $billing);
-        $billing->exists = true;
-        $member->exists = true;
+        $model = factory(Member::class)->create();
+        $repository = new MemberRepository(new Member());
 
-        $this->member->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($member);
-
-        $repository = new MemberRepository($this->member);
-
-        $this->assertTrue($repository->delete(1));
+        $this->assertTrue($repository->delete($model->id));
     }
 
     public function testDoesNotDeleteModel(): void
     {
         $member = new Member();
-
         $this->member->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($member);
-
         $repository = new MemberRepository($this->member);
 
         $this->assertFalse($repository->delete(1));
@@ -248,12 +223,10 @@ class MemberRepositoryTest extends TestCase
 
     public function testFailsToDeleteModel(): void
     {
-        $this->member->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
-        $repository = new MemberRepository($this->member);
-
+        $repository = new MemberRepository(new Member());
         $this->expectException(ModelNotFoundException::class);
 
-        $this->assertTrue($repository->delete(1));
+        $this->assertTrue($repository->delete(0));
     }
 
     private function makeMemberData(): array

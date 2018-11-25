@@ -32,7 +32,6 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        $this->currency->query()->first();
         return $this->currency->all($columns);
     }
 

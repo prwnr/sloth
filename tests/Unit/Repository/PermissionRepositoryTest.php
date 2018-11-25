@@ -25,70 +25,60 @@ class PermissionRepositoryTest extends TestCase
 
     public function testFindsModel(): void
     {
-        $expected = new Permission($this->makePermissionData());
-        $this->permission->shouldReceive('findOrFail')->once()->with(1, ['*'])->andReturn($expected);
-        $repository = new PermissionRepository($this->permission);
+        $expected = factory(Permission::class)->create();
+        $repository = new PermissionRepository(new Permission());
 
-        $this->assertEquals($expected, $repository->find(1));
+        $actual = $repository->find($expected->id);
+
+        $this->assertInstanceOf(Permission::class, $actual);
+        $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
     public function testFindsModelByName(): void
     {
-        $expected = new Permission($this->makePermissionData());
-        $this->permission->shouldReceive('whereName->firstOrFail')
-            ->with($expected->name)
-            ->with(['*'])
-            ->andReturn($expected);
-        $repository = new PermissionRepository($this->permission);
+        $expected = factory(Permission::class)->create();
+        $repository = new PermissionRepository(new Permission());
 
-        $this->assertEquals($expected, $repository->findByName($expected->name));
+        $actual = $repository->findByName($expected->name);
+
+        $this->assertInstanceOf(Permission::class, $actual);
+        $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
     public function testThrowsModelNotFoundExceptionOnFindModelByName(): void
     {
-        $this->permission->shouldReceive('whereName->firstOrFail')
-            ->with('foo')
-            ->with(['*'])
-            ->andThrow(ModelNotFoundException::class);
-
         $this->expectException(ModelNotFoundException::class);
 
-        $repository = new PermissionRepository($this->permission);
+        $repository = new PermissionRepository(new Permission());
         $repository->findByName('foo');
     }
 
     public function testFindsModelWithNoRelation(): void
     {
-        $expected = new Permission($this->makePermissionData());
+        $expected = factory(Permission::class)->create();
+        $repository = new PermissionRepository(new Permission());
 
-        $this->permission->shouldReceive('with->findOrFail')->once()->with([])->with(1, ['*'])->andReturn($expected);
+        $actual = $repository->findWith($expected->id, []);
 
-        $repository = new PermissionRepository($this->permission);
-        $actual = $repository->findWith(1, []);
-
-        $this->assertEquals($expected, $actual);
+        $this->assertInstanceOf(Permission::class, $actual);
+        $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
+        $this->assertEmpty($actual->getQueueableRelations());
     }
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
-        $this->permission->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
         $this->expectException(ModelNotFoundException::class);
 
-        $repository = new PermissionRepository($this->permission);
-        $repository->find(1);
+        $repository = new PermissionRepository(new Permission());
+        $repository->find(0);
     }
 
     public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void
     {
-        $this->permission->shouldReceive('with->findOrFail')
-            ->once()
-            ->with([])
-            ->with(1, ['*'])
-            ->andThrowExceptions([new ModelNotFoundException()]);
         $this->expectException(ModelNotFoundException::class);
+        $repository = new PermissionRepository(new Permission());
 
-        $repository = new PermissionRepository($this->permission);
-        $repository->findWith(1, []);
+         $repository->findWith(0, []);
     }
 
     public function testReturnCollection(): void
@@ -133,6 +123,7 @@ class PermissionRepositoryTest extends TestCase
         $repository = new PermissionRepository(new Permission());
         $actual = $repository->create($expected);
 
+        $this->assertInstanceOf(Permission::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 
@@ -145,46 +136,36 @@ class PermissionRepositoryTest extends TestCase
 
     public function testUpdatesModel(): void
     {
-        $model = new Permission($this->makePermissionData());
-        $model->exists = true;
+        $model = factory(Permission::class)->create();
 
-        $this->permission->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
-
-        $repository = new PermissionRepository($this->permission);
+        $repository = new PermissionRepository(new Permission());
         $expected = $this->makePermissionData();
-        $actual = $repository->update(1, $expected);
+        $actual = $repository->update($model->id, $expected);
 
+        $this->assertInstanceOf(Permission::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $this->permission->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
-
-        $repository = new PermissionRepository($this->permission);
+        $repository = new PermissionRepository(new Permission());
 
         $this->expectException(ModelNotFoundException::class);
-        $repository->update(1, []);
+        $repository->update(0, []);
     }
 
     public function testDeletesModel(): void
     {
-        $expected = new Permission($this->makePermissionData());
-        $expected->exists = true;
+        $model = factory(Permission::class)->create();
+        $repository = new PermissionRepository(new Permission());
 
-        $this->permission->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
-
-        $repository = new PermissionRepository($this->permission);
-
-        $this->assertTrue($repository->delete(1));
+        $this->assertTrue($repository->delete($model->id));
     }
 
     public function testDoesNotDeleteModel(): void
     {
         $expected = new Permission($this->makePermissionData());
-
         $this->permission->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
-
         $repository = new PermissionRepository($this->permission);
 
         $this->assertFalse($repository->delete(1));
@@ -192,14 +173,11 @@ class PermissionRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnMOdelDeleteWithNotExistingModel(): void
     {
-        $this->permission->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
-
-        $repository = new PermissionRepository($this->permission);
+        $repository = new PermissionRepository(new Permission());
 
         $this->expectException(ModelNotFoundException::class);
-        $repository->delete(1);
+        $repository->delete(0);
     }
-
 
     private function makePermissionData(): array
     {

@@ -27,6 +27,7 @@ abstract class TestCase extends BaseTestCase
         $this->team->shouldReceive('getAttribute')->with('id')->andReturn(1);
 
         $this->user = \Mockery::mock(User::class);
+        $this->user->shouldReceive('getAttribute')->with('id')->andReturn(1);
         $this->user->shouldReceive('getAttribute')->with('team')->andReturn($this->team);
         $this->user->shouldReceive('getAttribute')->with('team_id')->andReturn($this->team->id);
     }
