@@ -208,9 +208,14 @@ class ProjectRepositoryTest extends TestCase
     public function testDeletesModel(): void
     {
         $model = factory(Project::class)->create();
+        $member = factory(Team\Member::class)->create();
+        $member->projects()->attach($model);
         $repository = new ProjectRepository(new Project());
 
         $this->assertTrue($repository->delete($model->id));
+        $this->assertCount(0, Team\Member::query()->whereHas('projects', function ($query) use ($model) {
+            $query->where('project_id', $model->id);
+        })->get());
     }
 
     public function testDoesNotDeleteModel(): void

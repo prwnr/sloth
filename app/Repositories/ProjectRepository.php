@@ -129,6 +129,7 @@ class ProjectRepository implements RepositoryInterface
     public function delete(int $id): bool
     {
         $project = $this->find($id);
+        $project->members()->sync([]);
         if ($project->delete()) {
             return true;
         }

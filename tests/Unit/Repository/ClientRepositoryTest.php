@@ -187,7 +187,7 @@ class ClientRepositoryTest extends TestCase
         $model = new Client($this->makeClientData());
         $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
 
-        $repository = new ClientRepository(new Client());
+        $repository = new ClientRepository($this->client);
 
         $this->assertFalse($repository->delete(1));
     }
