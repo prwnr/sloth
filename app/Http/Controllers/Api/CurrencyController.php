@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Currency;
 use App\Http\Resources\Currency as CurrencyResource;
 use App\Http\Controllers\Controller;
 use App\Repositories\CurrencyRepository;

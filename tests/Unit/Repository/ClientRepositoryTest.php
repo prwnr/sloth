@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Repository;
 
 use App\Models\Billing;
 use App\Models\Client;
@@ -187,14 +187,14 @@ class ClientRepositoryTest extends TestCase
         $model = new Client($this->makeClientData());
         $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
 
-        $repository = new ClientRepository($this->client);
+        $repository = new ClientRepository(new Client());
 
         $this->assertFalse($repository->delete(1));
     }
 
     public function testFailsToDeleteModel(): void
     {
-        $repository = new CurrencyRepository(new Currency());
+        $repository = new ClientRepository(new Client());
 
         $this->expectException(ModelNotFoundException::class);
         $repository->delete(0);

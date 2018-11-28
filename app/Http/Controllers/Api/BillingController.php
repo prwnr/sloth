@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Resources\Currency as CurrencyResource;
 use App\Models\Billing;
 use App\Http\Resources\Billing as BillingResource;
-use App\Models\Currency;
 use App\Models\Project;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Request;

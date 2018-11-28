@@ -32,9 +32,7 @@ class MemberRepository implements RepositoryInterface
     }
 
     /**
-     * Get all models with given columns as Collection
-     * @param array $columns
-     * @return Collection
+     * {@inheritdoc}
      */
     public function all(array $columns = ['*']): Collection
     {
@@ -42,10 +40,7 @@ class MemberRepository implements RepositoryInterface
     }
 
     /**
-     * Get all models with given columns and loaded relations as Collection
-     * @param array $relations
-     * @param array $columns
-     * @return Collection
+     * {@inheritdoc}
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
@@ -53,10 +48,7 @@ class MemberRepository implements RepositoryInterface
     }
 
     /**
-     * Get model by ID
-     * @param int $id
-     * @param array $columns
-     * @return Model
+     * {@inheritdoc}
      */
     public function find(int $id, array $columns = ['*']): Model
     {
@@ -64,11 +56,7 @@ class MemberRepository implements RepositoryInterface
     }
 
     /**
-     * Get model by ID and return it with relations loaded
-     * @param int $id
-     * @param array $relations
-     * @param array $columns
-     * @return Model
+     * {@inheritdoc}
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Model
     {
@@ -76,9 +64,7 @@ class MemberRepository implements RepositoryInterface
     }
 
     /**
-     * Create new model
-     * @param array $data
-     * @return Model
+     * {@inheritdoc}
      */
     public function create(array $data): Model
     {
@@ -126,10 +112,7 @@ class MemberRepository implements RepositoryInterface
     }
 
     /**
-     * Updated existing model by ID
-     * @param int $id
-     * @param array $data
-     * @return Model
+     * {@inheritdoc}
      */
     public function update(int $id, array $data): Model
     {
@@ -148,10 +131,7 @@ class MemberRepository implements RepositoryInterface
     }
 
     /**
-     * Delete model by ID
-     * @param int $id
-     * @return bool
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function delete(int $id): bool
     {

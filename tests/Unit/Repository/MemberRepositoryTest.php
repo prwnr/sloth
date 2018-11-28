@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Repository;
 
 use App\Models\Billing;
 use App\Models\Currency;
