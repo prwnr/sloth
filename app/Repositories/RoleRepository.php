@@ -52,6 +52,18 @@ class RoleRepository implements RepositoryInterface
     }
 
     /**
+     * @param string $name
+     * @return Model
+     */
+    public function findByName(string $name): ?Model
+    {
+        return $this->role->where([
+            'name' => $name,
+            'team_id' => Auth::user()->team_id
+        ])->first();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Model
