@@ -62,7 +62,7 @@
                         </div>
                     </div>
 
-                    <div v-if="member.projects" class="card" :class="{ 'border-bottom-0': member.projects.length > 0}">
+                    <div v-if="member.projects" class="card mb-foot" :class="{ 'border-bottom-0': member.projects.length > 0}">
                         <card-header>Projects</card-header>
                         <div class="card-body" :class="{ 'p-0': member.projects.length > 0}">
                             <ul v-if="member.projects.length > 0" class="list-group">

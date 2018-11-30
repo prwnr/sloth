@@ -13,8 +13,8 @@
                 </div>
             </div>
         </section>
-        <section class="content">
-            <div class="card mb-3">
+        <section class="content pb-5">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h3 class="d-inline">Logs from: {{ currentDayText }}</h3>
                     <div class="card-tools">
@@ -40,20 +40,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-3" v-if="timeLogs.length == 0">You haven't worked this day. Slothfully</div>
-                <div class="list-group list-group-flush">
-                    <time-log
-                            v-for="time in timeLogs"
-                            :key="time.id"
-                            :time="time"
-                            :projects="projects"
-                            @logDeleted="deleteLog"
-                            @workedTimeChanged="addToTotalTime"
-                            @minuteTick="totalTime++"
-                            @editTime="handleEditDialog"></time-log>
-                </div>
-                <div v-if="timeLogs.length != 0" class="text-right p-2">
-                    <span class="pr-4">This day you worked for {{ totalTimeWorked }}</span>
+                <div>
+                    <div class="p-3" v-if="timeLogs.length == 0">You haven't worked this day. Slothfully</div>
+                    <div class="list-group list-group-flush">
+                        <time-log
+                                v-for="time in timeLogs"
+                                :key="time.id"
+                                :time="time"
+                                :projects="projects"
+                                @logDeleted="deleteLog"
+                                @workedTimeChanged="addToTotalTime"
+                                @minuteTick="totalTime++"
+                                @editTime="handleEditDialog"></time-log>
+                    </div>
+                    <div v-if="timeLogs.length != 0" class="text-right p-2 d-block">
+                        <span class="pr-4">This day you worked for {{ totalTimeWorked }}</span>
+                    </div>
                 </div>
             </div>
 
