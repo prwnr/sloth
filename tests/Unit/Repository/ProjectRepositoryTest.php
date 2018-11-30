@@ -193,6 +193,13 @@ class ProjectRepositoryTest extends TestCase
         $actual = $repository->update($model->id, $data);
 
         $this->assertInstanceOf(Project::class, $actual);
+        $this->assertEquals($expectedProject['name'], $actual->name);
+        $this->assertEquals($expectedProject['code'], $actual->code);
+        $this->assertArraySubset($expectedBilling, $actual->billing->attributesToArray());
+        $this->assertEquals($data['client'], $actual->client->id);
+        $this->assertEquals($expectedTasks[0]['type'], $actual->tasks->first()->type);
+        $this->assertEquals($expectedTasks[0]['name'], $actual->tasks->first()->name);
+        $this->assertEquals($expectedTasks[0]['currency'], $actual->tasks->first()->currency->id);
     }
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
