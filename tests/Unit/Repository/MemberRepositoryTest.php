@@ -48,14 +48,16 @@ class MemberRepositoryTest extends TestCase
         $this->actingAs($this->user, 'api');
         $expected = factory(Member::class)->create();
 
-        $expectedRelation = ['user', 'billing', 'team'];
+        $expectedRelations = ['user', 'billing', 'team'];
 
         $repository = new MemberRepository(new Member());
-        $actual = $repository->findWith($expected->id, $expectedRelation);
+        $actual = $repository->findWith($expected->id, $expectedRelations);
 
         $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
-        $this->assertEquals($expectedRelation, $actual->getQueueableRelations());
+        foreach ($expectedRelations as $expectedRelation) {
+            $this->assertTrue($actual->relationLoaded($expectedRelation));
+        }
     }
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
@@ -113,7 +115,7 @@ class MemberRepositoryTest extends TestCase
             ])
         ]);
 
-        $expectedRelations = ['billing', 'user', 'team'];
+        $expectedRelations = ['billing', 'user'];
         $this->member->shouldReceive('where->with->get')
             ->with('team_id', $this->user->team_id)
             ->with($expectedRelations)
@@ -125,7 +127,9 @@ class MemberRepositoryTest extends TestCase
 
         $this->assertEquals($expected->take(1), $actual->take(1));
         $this->assertEquals(2, $actual->count());
-        $this->assertEquals($expectedRelations, $actual->getQueueableRelations());
+        foreach ($expectedRelations as $expectedRelation) {
+            $this->assertTrue($actual->first()->relationLoaded($expectedRelation));
+        }
     }
 
     public function testCreatesModel(): void

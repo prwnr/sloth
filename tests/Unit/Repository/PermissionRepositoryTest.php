@@ -62,7 +62,7 @@ class PermissionRepositoryTest extends TestCase
 
         $this->assertInstanceOf(Permission::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
-        $this->assertEmpty($actual->getQueueableRelations());
+        $this->assertEmpty($actual->relationsToArray());
     }
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
@@ -113,7 +113,7 @@ class PermissionRepositoryTest extends TestCase
 
         $this->assertEquals($expected->take(1), $actual->take(1));
         $this->assertEquals(3, $actual->count());
-        $this->assertEmpty($actual->getQueueableRelations());
+        $this->assertEmpty($actual->first()->relationsToArray());
     }
 
     public function testCreatesModel(): void

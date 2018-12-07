@@ -106,7 +106,7 @@ class RoleRepositoryTest extends TestCase
 
         $this->assertEquals($expected->take(1), $actual->take(1));
         $this->assertEquals(3, $actual->count());
-        $this->assertEquals(['team'], $actual->getQueueableRelations());
+        $this->assertTrue($actual->first()->relationLoaded('team'));
     }
 
     public function testCreatesModel(): void

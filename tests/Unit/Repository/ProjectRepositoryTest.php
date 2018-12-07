@@ -108,7 +108,7 @@ class ProjectRepositoryTest extends TestCase
 
         $this->assertEquals($expected->take(1), $actual->take(1));
         $this->assertEquals(3, $actual->count());
-        $this->assertEquals(['client'], $actual->getQueueableRelations());
+        $this->assertTrue($actual->first()->relationLoaded('client'));
     }
 
     public function testCreatesModel(): void
@@ -181,7 +181,9 @@ class ProjectRepositoryTest extends TestCase
         $repository = new ProjectRepository(new Project());
 
         $expectedProject = $this->makeProjectData();
-        $expectedTasks[] = $this->makeTaskData();
+        $task = $this->makeTaskData();
+        $task['billable'] = true;
+        $expectedTasks[] = $task;
         $expectedBilling = $this->makeBillingData();
         $data = $expectedProject;
         $data['client'] = factory(Client::class)->create()->id;
@@ -200,6 +202,35 @@ class ProjectRepositoryTest extends TestCase
         $this->assertEquals($expectedTasks[0]['type'], $actual->tasks->first()->type);
         $this->assertEquals($expectedTasks[0]['name'], $actual->tasks->first()->name);
         $this->assertEquals($expectedTasks[0]['currency'], $actual->tasks->first()->currency->id);
+    }
+
+    public function testUpdatesModelWithNonBillableTask(): void
+    {
+        $model = factory(Project::class)->create();
+        $repository = new ProjectRepository(new Project());
+
+        $expectedProject = $this->makeProjectData();
+        $task = $this->makeTaskData();
+        $task['billable'] = false;
+        $expectedTasks[] = $task;
+        $expectedBilling = $this->makeBillingData();
+        $data = $expectedProject;
+        $data['client'] = factory(Client::class)->create()->id;
+        $data['tasks'] = $expectedTasks;
+        $data['billing_rate'] = $expectedBilling['rate'];
+        $data['billing_type'] = $expectedBilling['type'];
+        $data['billing_currency'] = $expectedBilling['currency_id'];
+
+        $actual = $repository->update($model->id, $data);
+
+        $this->assertInstanceOf(Project::class, $actual);
+        $this->assertEquals($expectedProject['name'], $actual->name);
+        $this->assertEquals($expectedProject['code'], $actual->code);
+        $this->assertArraySubset($expectedBilling, $actual->billing->attributesToArray());
+        $this->assertEquals($data['client'], $actual->client->id);
+        $this->assertEquals($expectedTasks[0]['type'], $actual->tasks->first()->type);
+        $this->assertEquals($expectedTasks[0]['name'], $actual->tasks->first()->name);
+        $this->assertNull($actual->tasks->first()->currency);
     }
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void

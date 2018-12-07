@@ -131,7 +131,7 @@ class CurrencyRepositoryTest extends TestCase
 
         $this->assertEquals($expected->take(1), $actual->take(1));
         $this->assertEquals(3, $actual->count());
-        $this->assertEmpty($actual->getQueueableRelations());
+        $this->assertEmpty($actual->first()->relationsToArray());
     }
 
     public function testCreatesModel(): void

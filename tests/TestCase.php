@@ -4,13 +4,14 @@ namespace Tests;
 
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery\MockInterface;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication, WithFaker;
+    use CreatesApplication, WithFaker, RefreshDatabase;
 
     /** @var MockInterface */
     protected $team;

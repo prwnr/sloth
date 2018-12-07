@@ -108,7 +108,7 @@ class ClientRepositoryTest extends TestCase
 
         $this->assertEquals($expected->take(1), $actual->take(1));
         $this->assertEquals(3, $actual->count());
-        $this->assertEquals(['billing'], $actual->getQueueableRelations());
+        $this->assertTrue($actual->first()->relationLoaded('billing'));
     }
 
     public function testCreatesModel(): void
