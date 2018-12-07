@@ -15,10 +15,7 @@ class UserTest extends FeatureTestCase
     public function testUsersAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-
-        for ($i = 0; $i < 5; $i++) {
-            factory(User::class)->create(['team_id' => $this->user->team_id]);
-        }
+        factory(User::class, 5)->create(['team_id' => $this->user->team_id]);
 
         $response = $this->json(Request::METHOD_GET, '/api/users');
         $response->assertStatus(Response::HTTP_OK);
@@ -44,10 +41,7 @@ class UserTest extends FeatureTestCase
     public function testUserTimeLogsAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-
-        for ($i = 0; $i < 5; $i++) {
-            factory(TimeLog::class)->create(['member_id' => $this->user->member()->id]);
-        }
+        factory(TimeLog::class, 5)->create(['member_id' => $this->user->member()->id]);
 
         $response = $this->json(Request::METHOD_GET, "/api/users/{$this->user->id}/logs");
         $response->assertStatus(Response::HTTP_OK);
@@ -63,9 +57,7 @@ class UserTest extends FeatureTestCase
 
     public function testUserTimeLogsAreNotListedForGuest(): void
     {
-        for ($i = 0; $i < 5; $i++) {
-            factory(TimeLog::class)->create(['member_id' => $this->user->member()->id]);
-        }
+        factory(TimeLog::class, 5)->create(['member_id' => $this->user->member()->id]);
 
         $response = $this->json(Request::METHOD_GET, "/api/users/{$this->user->id}/logs");
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -102,10 +94,8 @@ class UserTest extends FeatureTestCase
     public function testUserTimeLogsFromGivenDateAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
+        factory(TimeLog::class, 5)->create(['member_id' => $this->user->member()->id]);
 
-        for ($i = 0; $i < 5; $i++) {
-            factory(TimeLog::class)->create(['member_id' => $this->user->member()->id]);
-        }
         $date = $this->faker->date();
         factory(TimeLog::class)->create([
             'member_id' => $this->user->member()->id,

@@ -132,9 +132,7 @@ class RoleRepositoryTest extends TestCase
 
         $expected = $this->makeRoleData();
         $data = $expected;
-        for ($i = 0; $i < 3; $i++) {
-            $data['members'][] = factory(Team\Member::class)->create(['team_id' => $user->team->id])->id;
-        }
+        $data['members'] = factory(Team\Member::class, 3)->create(['team_id' => $user->team->id])->pluck('id')->toArray();
         $data['permissions'] = Permission::all()->pluck('id')->toArray();
 
         $repository = new RoleRepository(new Role());
@@ -176,9 +174,7 @@ class RoleRepositoryTest extends TestCase
         $model = factory(Role::class)->create();
         $expected = $this->makeRoleData();
         $data = $expected;
-        for ($i = 0; $i < 3; $i++) {
-            $data['members'][] = factory(Team\Member::class)->create()->id;
-        }
+        $data['members'] = factory(Team\Member::class, 3)->create()->pluck('id')->toArray();
         $data['permissions'] = Permission::all()->pluck('id')->toArray();
 
         $repository = new RoleRepository(new Role());
