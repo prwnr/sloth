@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Tracker\{CreateLogRequest, UpdateLogRequest, UpdateTimeRequest};
 use App\Models\TimeLog;
 use App\Http\Resources\TimeLog as TimeLogResource;
+use App\Repositories\TimeLogRepository;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +20,20 @@ class TrackerController extends Controller
 {
 
     /**
+     * @var TimeLogRepository
+     */
+    private $timeLogRepository;
+
+    /**
+     * TrackerController constructor.
+     * @param TimeLogRepository $timeLogRepository
+     */
+    public function __construct(TimeLogRepository $timeLogRepository)
+    {
+        $this->timeLogRepository = $timeLogRepository;
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param CreateLogRequest $request
@@ -26,25 +41,11 @@ class TrackerController extends Controller
      */
     public function store(CreateLogRequest $request): JsonResponse
     {
-        $data = $request->all();
-        $hasDuration = $data['duration'] ?? false;
-
         try {
-            DB::beginTransaction();
-            /** @var TimeLog $timeLog */
-            $timeLog = TimeLog::create([
-                'member_id' => $data['member'],
-                'project_id' => $data['project'],
-                'task_id' => $data['task'] ?? null,
-                'description' => $data['description'],
-                'start' => $hasDuration ? null : Carbon::now(),
-                'duration' => $hasDuration ? $data['duration'] : 0,
-                'created_at' => $data['created_at']
-            ]);
-
-            DB::commit();
+            $timeLog = DB::transaction(function () use ($request) {
+                return $this->timeLogRepository->create($request->all());
+            });
         } catch (\Exception $ex) {
-            DB::rollBack();
             report($ex);
             return response()->json(['message' => __('Something went wrong when creating new time log. Please try again')], Response::HTTP_BAD_REQUEST);
         }
@@ -57,28 +58,21 @@ class TrackerController extends Controller
      * Update the specified resource in storage.
      *
      * @param UpdateLogRequest $request
-     * @param  \App\Models\TimeLog $time
+     * @param int $id
      * @return JsonResponse
      */
-    public function update(UpdateLogRequest $request, TimeLog $time): JsonResponse
+    public function update(UpdateLogRequest $request, int $id): JsonResponse
     {
-        $data = $request->all();
         try {
-            DB::beginTransaction();
-            $time->update([
-                'project_id' => $data['project'],
-                'task_id' => $data['task'] ?? null,
-                'description' => $data['description'],
-                'created_at' => $data['created_at']
-            ]);
-            DB::commit();
+            $timeLog = DB::transaction(function () use ($id, $request) {
+                return $this->timeLogRepository->update($id, $request->all());
+            });
         } catch (\Exception $ex) {
-            DB::rollBack();
             report($ex);
             return response()->json(['message' => __('Something went wrong. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new TimeLogResource($time))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        return (new TimeLogResource($timeLog))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -86,53 +80,40 @@ class TrackerController extends Controller
      * Updates only time for a log
      *
      * @param UpdateTimeRequest $request
-     * @param  \App\Models\TimeLog $time
+     * @param int $id
      * @return JsonResponse
      */
-    public function updateTime(UpdateTimeRequest $request, TimeLog $time): JsonResponse
+    public function updateTime(UpdateTimeRequest $request, int $id): JsonResponse
     {
-        $data = $request->all();
-        if (isset($data['time'])) {
-            if ($data['time'] === TimeLog::STOP) {
-                $data['start'] = null;
-            }
-
-            if ($data['time'] === TimeLog::START) {
-                $data['start'] = Carbon::now();
-            }
-
-            unset($data['time']);
-        }
-
         try {
-            DB::beginTransaction();
-            $time->update($data);
-            DB::commit();
+            $timeLog = DB::transaction(function () use ($id, $request) {
+                return $this->timeLogRepository->updateTime($id, $request->all());
+            });
         } catch (\Exception $ex) {
-            DB::rollBack();
             report($ex);
             return response()->json(['message' => __('Something went wrong stopping time. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new TimeLogResource($time))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        return (new TimeLogResource($timeLog))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\TimeLog $time
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(TimeLog $time): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         try {
-            DB::beginTransaction();
-            if ($time->delete()) {
-                DB::commit();
+            $success = DB::transaction(function () use ($id) {
+                return $this->timeLogRepository->delete($id);
+            });
+
+            if ($success) {
                 return response()->json(null, Response::HTTP_NO_CONTENT);
             }
         } catch (\Exception $ex) {
-            DB::rollBack();
             return response()->json([
                 'message' => $ex->getMessage()
             ], Response::HTTP_BAD_REQUEST);

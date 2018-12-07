@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\Team\Member;
 use App\Models\TimeLog;
 use App\Repositories\TimeLogRepository;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\TestCase;
 
@@ -134,26 +135,48 @@ class TimeLogRepositoryTest extends TestCase
     public function testStartsTimeLog(): void
     {
         $model = factory(TimeLog::class)->create();
-        $expectedDuration = $this->faker->numberBetween(0, 99999);
+        $expected = [
+            'time' => TimeLog::START,
+            'duration' => $this->faker->numberBetween(0, 99999),
+        ];
 
         $repository = new TimeLogRepository(new TimeLog());
-        $actual = $repository->startTime($model->id, $expectedDuration);
+        $actual = $repository->updateTime($model->id, $expected);
 
         $this->assertInstanceOf(TimeLog::class, $actual);
-        $this->assertEquals($expectedDuration, $actual->duration);
+        $this->assertEquals($expected['duration'], $actual->duration);
         $this->assertNotNull($actual->start);
     }
 
     public function testStopsTimeLog(): void
     {
         $model = factory(TimeLog::class)->create();
-        $expectedDuration = $this->faker->numberBetween(0, 99999);
+        $expected = [
+            'time' => TimeLog::STOP,
+            'duration' => $this->faker->numberBetween(0, 99999),
+        ];
+
         $repository = new TimeLogRepository(new TimeLog());
-        $actual = $repository->stopTime($model->id, $expectedDuration);
+        $actual = $repository->updateTime($model->id, $expected);
 
         $this->assertInstanceOf(TimeLog::class, $actual);
-        $this->assertEquals($expectedDuration, $actual->duration);
+        $this->assertEquals($expected['duration'], $actual->duration);
         $this->assertNull($actual->start);
+    }
+
+    public function testUpdatesDurationOfTimeLog(): void
+    {
+        $model = factory(TimeLog::class)->create();
+        $expected = [
+            'duration' => $this->faker->numberBetween(0, 99999),
+        ];
+
+        $repository = new TimeLogRepository(new TimeLog());
+        $actual = $repository->updateTime($model->id, $expected);
+
+        $this->assertInstanceOf(TimeLog::class, $actual);
+        $this->assertEquals($expected['duration'], $actual->duration);
+        $this->assertEquals($model->start, $actual->start);
     }
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void

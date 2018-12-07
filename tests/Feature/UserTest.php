@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\Team\Member;
 use App\Models\TimeLog;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -74,7 +75,7 @@ class UserTest extends FeatureTestCase
             $data = [];
             $data['member_id'] = $this->user->member()->id;
             if ($i % 2 === 0) {
-                $data['start'] = null;
+                $data['start'] = Carbon::now();
             }
             factory(TimeLog::class)->create($data);
         }
@@ -88,7 +89,7 @@ class UserTest extends FeatureTestCase
                 ]
             ]
         ]);
-        $response->assertJsonCount(2, 'data');
+        $response->assertJsonCount(3, 'data');
     }
 
     public function testUserTimeLogsFromGivenDateAreListedCorrectly(): void

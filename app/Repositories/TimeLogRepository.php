@@ -91,33 +91,25 @@ class TimeLogRepository implements RepositoryInterface
 
     /**
      * @param int $id
-     * @param int $duration
+     * @param array $data
      * @return Model
      */
-    public function startTime(int $id, int $duration): Model
+    public function updateTime(int $id, array $data): Model
     {
         $timeLog = $this->find($id);
+        if (isset($data['time'])) {
+            if ($data['time'] === TimeLog::STOP) {
+                $data['start'] = null;
+            }
 
-        $timeLog->update([
-            'start' => Carbon::now(),
-            'duration' => $duration
-        ]);
-        return $timeLog;
-    }
+            if ($data['time'] === TimeLog::START) {
+                $data['start'] = Carbon::now();
+            }
 
-    /**
-     * @param int $id
-     * @param int $duration
-     * @return Model
-     */
-    public function stopTime(int $id, int $duration): Model
-    {
-        $timeLog = $this->find($id);
+            unset($data['time']);
+        }
 
-        $timeLog->update([
-            'start' => null,
-            'duration' => $duration
-        ]);
+        $timeLog->update($data);
         return $timeLog;
     }
 
