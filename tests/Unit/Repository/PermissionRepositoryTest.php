@@ -86,7 +86,10 @@ class PermissionRepositoryTest extends TestCase
             new Permission($this->makePermissionData())
         ]);
 
-        $this->permission->shouldReceive('all')->with(['*'])->andReturn($expected);
+        $this->permission->shouldReceive('query->get')
+            ->withNoArgs()
+            ->with(['*'])
+            ->andReturn($expected);
 
         $repository = new PermissionRepository($this->permission);
         $actual = $repository->all();
@@ -103,7 +106,11 @@ class PermissionRepositoryTest extends TestCase
             new Permission($this->makePermissionData())
         ]);
 
-        $this->permission->shouldReceive('with->get')->with([])->with(['*'])->andReturn($expected);
+        $this->permission->shouldReceive('query->with->get')
+            ->withNoArgs()
+            ->with([])
+            ->with(['*'])
+            ->andReturn($expected);
 
         $repository = new PermissionRepository($this->permission);
         $actual = $repository->allWith([]);
@@ -160,7 +167,10 @@ class PermissionRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $expected = new Permission($this->makePermissionData());
-        $this->permission->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
+        $this->permission->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andReturn($expected);
         $repository = new PermissionRepository($this->permission);
 
         $this->assertFalse($repository->delete(1));

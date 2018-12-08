@@ -12,6 +12,7 @@ use App\Repositories\ProjectRepository;
 use ErrorException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class ProjectRepositoryTest extends TestCase
@@ -72,7 +73,8 @@ class ProjectRepositoryTest extends TestCase
             new Project()
         ]);
 
-        $this->project->shouldReceive('where->get')
+        $this->project->shouldReceive('query->where->get')
+            ->withNoArgs()
             ->with('team_id', $this->user->team_id)
             ->with(['*'])
             ->andReturn($expected);
@@ -94,7 +96,8 @@ class ProjectRepositoryTest extends TestCase
             (new Project())->setRelation('client', factory(Client::class)->create())
         ]);
 
-        $this->project->shouldReceive('where->with->get')
+        $this->project->shouldReceive('query->where->with->get')
+            ->withNoArgs()
             ->with('team_id', $this->user->team_id)
             ->with(['client'])
             ->with(['*'])
@@ -228,7 +231,10 @@ class ProjectRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $this->project->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
+        $this->project->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andThrowExceptions([new ModelNotFoundException()]);
 
         $repository = new ProjectRepository($this->project);
 
@@ -252,7 +258,10 @@ class ProjectRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $model = new Project($this->makeClientData());
-        $this->project->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
+        $this->project->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andReturn($model);
 
         $repository = new ProjectRepository($this->project);
 

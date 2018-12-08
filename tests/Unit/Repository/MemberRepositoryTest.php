@@ -86,7 +86,8 @@ class MemberRepositoryTest extends TestCase
             new Member()
         ]);
 
-        $this->member->shouldReceive('where->get')
+        $this->member->shouldReceive('query->where->get')
+            ->withNoArgs()
             ->with('team_id', $this->user->team_id)
             ->with(['*'])
             ->andReturn($expected);
@@ -116,7 +117,8 @@ class MemberRepositoryTest extends TestCase
         ]);
 
         $expectedRelations = ['billing', 'user'];
-        $this->member->shouldReceive('where->with->get')
+        $this->member->shouldReceive('query->where->with->get')
+            ->withNoArgs()
             ->with('team_id', $this->user->team_id)
             ->with($expectedRelations)
             ->with(['*'])
@@ -226,7 +228,7 @@ class MemberRepositoryTest extends TestCase
 
     public function testFailsToCreateTeamOwnerModel(): void
     {
-        $repository = new MemberRepository($this->member);
+        $repository = new MemberRepository(new Member());
 
         $this->expectException(QueryException::class);
         $repository->createTeamOwner(['password' => 'secret'], factory(Team::class)->create());
@@ -264,7 +266,11 @@ class MemberRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $member = new Member();
-        $this->member->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($member);
+        $this->member->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andReturn($member);
+
         $repository = new MemberRepository($this->member);
 
         $this->assertFalse($repository->delete(1));

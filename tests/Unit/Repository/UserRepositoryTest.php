@@ -128,7 +128,10 @@ class UserRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $expected = new User($this->makeUserData());
-        $this->user->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
+        $this->user->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andReturn($expected);
 
         $repository = new UserRepository($this->user);
         $this->assertFalse($repository->delete(1));

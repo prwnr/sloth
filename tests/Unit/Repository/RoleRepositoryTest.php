@@ -71,7 +71,8 @@ class RoleRepositoryTest extends TestCase
             new Role()
         ]);
 
-        $this->role->shouldReceive('where->get')
+        $this->role->shouldReceive('query->where->get')
+            ->withNoArgs()
             ->with('team_id', $this->user->team_id)
             ->with(['*'])
             ->andReturn($expected);
@@ -93,7 +94,8 @@ class RoleRepositoryTest extends TestCase
             (new Role())->setRelation('team', factory(Team::class)->create())
         ]);
 
-        $this->role->shouldReceive('where->with->get')
+        $this->role->shouldReceive('query->where->with->get')
+            ->withNoArgs()
             ->with('team_id', $this->user->team_id)
             ->with(['team'])
             ->with(['*'])
@@ -182,7 +184,10 @@ class RoleRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $this->role->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
+        $this->role->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andThrowExceptions([new ModelNotFoundException()]);
 
         $repository = new RoleRepository($this->role);
 
@@ -201,7 +206,10 @@ class RoleRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $model = new Role($this->makeRoleData());
-        $this->role->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
+        $this->role->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andReturn($model);
 
         $repository = new RoleRepository($this->role);
 

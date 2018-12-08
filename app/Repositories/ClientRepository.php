@@ -33,7 +33,7 @@ class ClientRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->client->where('team_id', Auth::user()->team_id)->get($columns);
+        return $this->client->query()->where('team_id', Auth::user()->team_id)->get($columns);
     }
 
     /**
@@ -41,7 +41,7 @@ class ClientRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->client->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
+        return $this->client->query()->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
     }
 
     /**
@@ -50,7 +50,7 @@ class ClientRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): Client
     {
-        return $this->client->findOrFail($id, $columns);
+        return $this->client->query()->findOrFail($id, $columns);
     }
 
     /**
@@ -59,7 +59,7 @@ class ClientRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Client
     {
-        return $this->client->with($relations)->findOrFail($id, $columns);
+        return $this->client->query()->with($relations)->findOrFail($id, $columns);
     }
 
     /**
@@ -70,6 +70,7 @@ class ClientRepository implements RepositoryInterface
     {
         /** @var Team $team */
         $team = Auth::user()->team;
+        /** @var Client $client */
         $client = $team->clients()->create($data);
 
         $billing = $client->billing()->create([

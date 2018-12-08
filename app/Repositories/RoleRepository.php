@@ -31,7 +31,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->role->where('team_id', Auth::user()->team_id)->get($columns);
+        return $this->role->query()->where('team_id', Auth::user()->team_id)->get($columns);
     }
 
     /**
@@ -39,7 +39,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->role->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
+        return $this->role->query()->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
     }
 
     /**
@@ -48,7 +48,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): Role
     {
-        return $this->role->findOrFail($id, $columns);
+        return $this->role->query()->findOrFail($id, $columns);
     }
 
     /**
@@ -57,7 +57,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function findByName(string $name): ?Role
     {
-        return $this->role->where([
+        return $this->role->query()->where([
             'name' => $name,
             'team_id' => Auth::user()->team_id
         ])->first();
@@ -69,7 +69,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Role
     {
-        return $this->role->with($relations)->findOrFail($id, $columns);
+        return $this->role->query()->with($relations)->findOrFail($id, $columns);
     }
 
     /**

@@ -62,7 +62,10 @@ class CurrencyRepositoryTest extends TestCase
     public function testFindsFirstModel(): void
     {
         $expected = new Currency($this->makeCurrencyData());
-        $this->currency->shouldReceive('first')->with(['*'])->andReturn($expected);
+        $this->currency->shouldReceive('query->first')
+            ->withNoArgs()
+            ->with(['*'])
+            ->andReturn($expected);
 
         $repository = new CurrencyRepository($this->currency);
         $actual = $repository->first();
@@ -73,7 +76,10 @@ class CurrencyRepositoryTest extends TestCase
 
     public function testReturnsNullOnFindFirstModel(): void
     {
-        $this->currency->shouldReceive('first')->with(['*'])->andReturn(null);
+        $this->currency->shouldReceive('query->first')
+            ->withNoArgs()
+            ->with(['*'])
+            ->andReturn(null);
 
         $repository = new CurrencyRepository($this->currency);
         $this->assertNull($repository->first());
@@ -104,7 +110,10 @@ class CurrencyRepositoryTest extends TestCase
             new Currency($this->makeCurrencyData())
         ]);
 
-        $this->currency->shouldReceive('all')->with(['*'])->andReturn($expected);
+        $this->currency->shouldReceive('query->get')
+            ->withNoArgs()
+            ->with(['*'])
+            ->andReturn($expected);
 
         $repository = new CurrencyRepository($this->currency);
         $actual = $repository->all();
@@ -121,7 +130,11 @@ class CurrencyRepositoryTest extends TestCase
             new Currency($this->makeCurrencyData())
         ]);
 
-        $this->currency->shouldReceive('with->get')->with([])->with(['*'])->andReturn($expected);
+        $this->currency->shouldReceive('query->with->get')
+            ->withNoArgs()
+            ->with([])
+            ->with(['*'])
+            ->andReturn($expected);
 
         $repository = new CurrencyRepository($this->currency);
         $actual = $repository->allWith([]);
@@ -176,7 +189,10 @@ class CurrencyRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $expected = new Currency($this->makeCurrencyData());
-        $this->currency->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
+        $this->currency->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andReturn($expected);
 
         $repository = new CurrencyRepository($this->currency);
         $this->assertFalse($repository->delete(1));

@@ -33,7 +33,7 @@ class UserRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->user->where('team_id', Auth::user()->team_id)->get($columns);
+        return $this->user->query()->where('team_id', Auth::user()->team_id)->get($columns);
     }
 
     /**
@@ -41,7 +41,7 @@ class UserRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->user->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
+        return $this->user->query()->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
     }
 
     /**
@@ -50,7 +50,7 @@ class UserRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): User
     {
-        return $this->user->findOrFail($id, $columns);
+        return $this->user->query()->findOrFail($id, $columns);
     }
 
     /**
@@ -59,7 +59,7 @@ class UserRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): User
     {
-        return $this->user->with($relations)->findOrFail($id, $columns);
+        return $this->user->query()->with($relations)->findOrFail($id, $columns);
     }
 
     /**
@@ -72,7 +72,7 @@ class UserRepository implements RepositoryInterface
             $data['password'] = Hash::make($data['password']);
         }
 
-        return $this->user->create($data);
+        return $this->user->query()->create($data);
     }
 
     /**

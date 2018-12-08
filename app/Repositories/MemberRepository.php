@@ -36,7 +36,7 @@ class MemberRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->member->where('team_id', Auth::user()->team_id)->get($columns);
+        return $this->member->query()->where('team_id', Auth::user()->team_id)->get($columns);
     }
 
     /**
@@ -67,7 +67,7 @@ class MemberRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->member->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
+        return $this->member->query()->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
     }
 
     /**
@@ -76,7 +76,7 @@ class MemberRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): Member
     {
-        return $this->member->findOrFail($id, $columns);
+        return $this->member->query()->findOrFail($id, $columns);
     }
 
     /**
@@ -85,7 +85,7 @@ class MemberRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Member
     {
-        return $this->member->with($relations)->findOrFail($id, $columns);
+        return $this->member->query()->with($relations)->findOrFail($id, $columns);
     }
 
     /**

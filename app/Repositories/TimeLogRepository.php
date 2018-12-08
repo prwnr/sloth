@@ -32,7 +32,7 @@ class TimeLogRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->timeLog->all($columns);
+        return $this->timeLog->query()->get($columns);
     }
 
     /**
@@ -40,7 +40,7 @@ class TimeLogRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->timeLog->with($relations)->get();
+        return $this->timeLog->query()->with($relations)->get();
     }
 
     /**
@@ -49,7 +49,7 @@ class TimeLogRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): TimeLog
     {
-        return $this->timeLog->findOrFail($id, $columns);
+        return $this->timeLog->query()->findOrFail($id, $columns);
     }
 
     /**
@@ -58,7 +58,7 @@ class TimeLogRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): TimeLog
     {
-        return $this->timeLog->with($relations)->findOrFail($id, $columns);
+        return $this->timeLog->query()->with($relations)->findOrFail($id, $columns);
     }
 
     /**

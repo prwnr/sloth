@@ -72,7 +72,8 @@ class ClientRepositoryTest extends TestCase
             new Client($this->makeClientData())
         ]);
 
-        $this->client->shouldReceive('where->get')
+        $this->client->shouldReceive('query->where->get')
+            ->withNoArgs()
             ->with('team_id', $this->user->team_id)
             ->with(['*'])
             ->andReturn($expected);
@@ -94,7 +95,8 @@ class ClientRepositoryTest extends TestCase
             (new Client($this->makeClientData()))->setRelation('billing', new Billing($this->makeBillingData()))
         ]);
 
-        $this->client->shouldReceive('where->with->get')
+        $this->client->shouldReceive('query->where->with->get')
+            ->withNoArgs()
             ->with('team_id', $this->user->team_id)
             ->with(['billing'])
             ->with(['*'])
@@ -161,7 +163,10 @@ class ClientRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andThrowExceptions([new ModelNotFoundException()]);
+        $this->client->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andThrowExceptions([new ModelNotFoundException()]);
 
         $repository = new ClientRepository($this->client);
 
@@ -180,7 +185,10 @@ class ClientRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $model = new Client($this->makeClientData());
-        $this->client->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($model);
+        $this->client->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andReturn($model);
 
         $repository = new ClientRepository($this->client);
 

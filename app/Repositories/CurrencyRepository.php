@@ -31,7 +31,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->currency->all($columns);
+        return $this->currency->query()->get($columns);
     }
 
     /**
@@ -39,7 +39,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->currency->with($relations)->get($columns);
+        return $this->currency->query()->with($relations)->get($columns);
     }
 
     /**
@@ -48,7 +48,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function first(array $columns = ['*']): ?Currency
     {
-        return $this->currency->first($columns);
+        return $this->currency->query()->first($columns);
     }
 
     /**
@@ -57,7 +57,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): Currency
     {
-        return $this->currency->findOrFail($id, $columns);
+        return $this->currency->query()->findOrFail($id, $columns);
     }
 
     /**
@@ -67,7 +67,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function findByName(string $name, array $columns = ['*']): Currency
     {
-        return $this->currency->whereName($name)->firstOrFail($columns);
+        return $this->currency->query()->whereName($name)->firstOrFail($columns);
     }
 
     /**
@@ -76,7 +76,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Currency
     {
-        return $this->currency->with($relations)->findOrFail($id, $columns);
+        return $this->currency->query()->with($relations)->findOrFail($id, $columns);
     }
 
     /**
@@ -85,7 +85,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function create(array $data): Currency
     {
-        return $this->currency->create($data);
+        return $this->currency->query()->create($data);
     }
 
     /**

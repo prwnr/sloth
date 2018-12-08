@@ -8,6 +8,7 @@ use App\Models\Team\Member;
 use App\Models\TimeLog;
 use App\Repositories\TimeLogRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class TimeLogRepositoryTest extends TestCase
@@ -190,7 +191,10 @@ class TimeLogRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $expected = new TimeLog($this->makeTimeLogData());
-        $this->timeLog->shouldReceive('findOrFail')->with(1, ['*'])->andReturn($expected);
+        $this->timeLog->shouldReceive('query->findOrFail')
+            ->withNoArgs()
+            ->with(1, ['*'])
+            ->andReturn($expected);
 
         $repository = new TimeLogRepository($this->timeLog);
         $this->assertFalse($repository->delete(1));
