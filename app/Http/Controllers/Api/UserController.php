@@ -7,8 +7,10 @@ use App\Http\Resources\{TimeLog as TimeLogResource, User as UserResource, Users 
 use App\Models\Team;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Repositories\MemberRepository;
+use App\Repositories\UserRepository;
 use Carbon\Carbon;
-use Illuminate\Support\{Facades\Auth, Facades\Hash};
+use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Hash};
 use Illuminate\Http\{JsonResponse, Request, Response};
 
 /**
@@ -17,6 +19,28 @@ use Illuminate\Http\{JsonResponse, Request, Response};
  */
 class UserController extends Controller
 {
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
+     * @var MemberRepository
+     */
+    private $memberRepository;
+
+    /**
+     * UserController constructor.
+     * @param UserRepository $userRepository
+     * @param MemberRepository $memberRepository
+     */
+    public function __construct(UserRepository $userRepository, MemberRepository $memberRepository)
+    {
+        $this->userRepository = $userRepository;
+        $this->memberRepository = $memberRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,47 +48,35 @@ class UserController extends Controller
      */
     public function index(): UsersCollectionResource
     {
-        $users = User::findFromTeam(Auth::user()->team)->get();
-        return new UsersCollectionResource($users);
+        return new UsersCollectionResource($this->userRepository->all());
     }
 
     /**
      * @param Request $request
-     * @param User $user
-     * @return TimeLogResource
+     * @param int $id
+     * @return JsonResponse
      */
-    public function timeLogs(Request $request, User $user): TimeLogResource
+    public function timeLogs(Request $request, int $id): JsonResponse
     {
-        $logs = $user->member()->logs();
-
         try {
-            $date = $request->get('date');
-            if ($date) {
-                $dateFilter = $this->getDateFilter($date);
-                $logs->whereDate('created_at', $dateFilter);
-            }
+            $user = $this->userRepository->find($id);
+            $logs = $this->memberRepository->timeLogs($user->member()->id, $request->all());
         } catch (\Exception $ex) {
             return response()->json(['error' => 'Date format is invalid'], Response::HTTP_BAD_REQUEST);
         }
 
-        $active = $request->get('active');
-        if ($active) {
-            $logs->whereNotNull('start');
-        }
-
-        $logs = $logs->get();
-        $logs->loadMissing('project', 'task');
-        return new TimeLogResource($logs);
+        return (new TimeLogResource($logs))->response()->setStatusCode(Response::HTTP_OK);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param User $user
+     * @param int $id
      * @return UserResource
      */
-    public function show(User $user): UserResource
+    public function show(int $id): UserResource
     {
+        $user = $this->userRepository->findWith($id, ['members']);
         $teams = [];
         foreach ($user->members as $member) {
             $teams[] = [
@@ -77,6 +89,7 @@ class UserController extends Controller
         $resource->additional([
             'teams' => $teams
         ]);
+
         return $resource;
     }
 
@@ -87,31 +100,27 @@ class UserController extends Controller
      */
     public function showActive(): UserResource
     {
-        $user = Auth::user();
-        return new UserResource($user);
+        return new UserResource(Auth::user());
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param UserRequest $request
-     * @param User $user
+     * @param int $id
      * @return JsonResponse
      */
-    public function update(UserRequest $request, User $user): JsonResponse
+    public function update(UserRequest $request, int $id): JsonResponse
     {
-        $data = $request->all();
-
         try {
-            if (isset($data['password'])) {
-                $data['password'] = Hash::make($data['password']);
-            }
-            $user->update($data);
-
-            return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+            $user = DB::transaction(function () use ($id, $request) {
+                return $this->userRepository->update($id, $request->all());
+            });
         } catch (\Exception $ex) {
             return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
+        return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -134,37 +143,21 @@ class UserController extends Controller
 
     /**
      * @param UserPasswordRequest $request
-     * @param User $user
+     * @param int $id
      * @return JsonResponse
      */
-    public function updatePassword(UserPasswordRequest $request, User $user): JsonResponse
+    public function updatePassword(UserPasswordRequest $request, int $id): JsonResponse
     {
         try {
-            $user->update([
-                'password' => Hash::make($request->input('password'))
-            ]);
-            return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+            $user = DB::transaction(function () use ($id, $request) {
+                return $this->userRepository->update($id, [
+                    'password' => $request->input('password')
+                ]);
+            });
         } catch (\Exception $ex) {
             return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
 
-    /**
-     * @param null|string $date
-     * @return string
-     */
-    private function getDateFilter(?string $date): string
-    {
-        if (!$date) {
-            $date = Carbon::today();
-        }
-
-        if (\is_string($date)) {
-            $date = trim($date, '\"');
-            [$year, $month, $day] = explode('-', $date);
-            $date = Carbon::createFromDate($year, $month, $day);
-        }
-
-        return $date->format('Y-m-d');
+        return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 }
