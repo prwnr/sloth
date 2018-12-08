@@ -34,10 +34,10 @@
                         </div>
 
                         <div class="card">
-                            <card-header>Assigned users</card-header>
+                            <card-header>Assigned members</card-header>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <Select2 v-model="form.users" :options="usersSelectOptions" :settings="{ multiple: true }"></Select2>
+                                    <Select2 v-model="form.users" :options="membersSelectOptions" :settings="{ multiple: true }"></Select2>
                                 </div>
                             </div>
                         </div>

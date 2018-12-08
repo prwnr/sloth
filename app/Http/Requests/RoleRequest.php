@@ -21,8 +21,21 @@ class RoleRequest extends FormRequest
     }
 
     /**
-     * @param null $keys
-     * @return array
+     * {@inheritdoc}
+     */
+    public function input($key = null, $default = null)
+    {
+        if ($key === 'name') {
+            return str_slug(data_get(
+                $this->getInputSource()->all() + $this->query->all(), 'display_name', $default
+            ), '_');
+        }
+
+        return parent::input($key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function all($keys = null): array
     {
