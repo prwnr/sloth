@@ -18,7 +18,6 @@ class UserRepositoryTest extends TestCase
         $repository = new UserRepository(new User());
 
         $actual = $repository->find($expected->id);
-        $this->assertInstanceOf(User::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -29,7 +28,6 @@ class UserRepositoryTest extends TestCase
 
         $actual = $repository->findWith($expected->id, ['team']);
 
-        $this->assertInstanceOf(User::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('team'));
     }
@@ -88,7 +86,6 @@ class UserRepositoryTest extends TestCase
         unset($expected['password']);
         $expected['fullname'] = $expected['firstname'] . ' ' . $expected['lastname'];
 
-        $this->assertInstanceOf(User::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 
@@ -109,7 +106,6 @@ class UserRepositoryTest extends TestCase
         unset($expected['password']);
         $expected['fullname'] = $expected['firstname'] . ' ' . $expected['lastname'];
 
-        $this->assertInstanceOf(User::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 

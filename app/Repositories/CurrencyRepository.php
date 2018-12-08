@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Currency;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class CurrencyRepository
@@ -45,17 +44,18 @@ class CurrencyRepository implements RepositoryInterface
 
     /**
      * @param array $columns
-     * @return mixed
+     * @return Currency|null
      */
-    public function first(array $columns = ['*'])
+    public function first(array $columns = ['*']): ?Currency
     {
         return $this->currency->first($columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Currency
      */
-    public function find(int $id, array $columns = ['*']): Model
+    public function find(int $id, array $columns = ['*']): Currency
     {
         return $this->currency->findOrFail($id, $columns);
     }
@@ -63,33 +63,36 @@ class CurrencyRepository implements RepositoryInterface
     /**
      * @param string $name
      * @param array $columns
-     * @return Model
+     * @return Currency
      */
-    public function findByName(string $name, array $columns = ['*']): Model
+    public function findByName(string $name, array $columns = ['*']): Currency
     {
         return $this->currency->whereName($name)->firstOrFail($columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Currency
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    public function findWith(int $id, array $relations, array $columns = ['*']): Currency
     {
         return $this->currency->with($relations)->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Currency
      */
-    public function create(array $data): Model
+    public function create(array $data): Currency
     {
         return $this->currency->create($data);
     }
 
     /**
      * {@inheritdoc}
+     * @return Currency
      */
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Currency
     {
         $currency = $this->find($id);
         $currency->update($data);

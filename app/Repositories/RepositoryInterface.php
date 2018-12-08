@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Interface RepositoryInterface
@@ -33,7 +32,7 @@ interface RepositoryInterface
      * @param array $columns
      * @return Model
      */
-    public function find(int $id, array $columns = ['*']): Model;
+    public function find(int $id, array $columns = ['*']);
 
     /**
      * Get model by ID and return it with relations loaded
@@ -42,14 +41,14 @@ interface RepositoryInterface
      * @param array $columns
      * @return Model
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model;
+    public function findWith(int $id, array $relations, array $columns = ['*']);
 
     /**
      * Create new model
      * @param array $data
      * @return Model
      */
-    public function create(array $data): Model;
+    public function create(array $data);
 
     /**
      * Updated existing model by ID
@@ -57,7 +56,7 @@ interface RepositoryInterface
      * @param array $data
      * @return Model
      */
-    public function update(int $id, array $data): Model;
+    public function update(int $id, array $data);
 
     /**
      * Delete model by ID

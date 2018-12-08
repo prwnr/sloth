@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Client;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -47,24 +46,27 @@ class ClientRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Client
      */
-    public function find(int $id, array $columns = ['*']): Model
+    public function find(int $id, array $columns = ['*']): Client
     {
         return $this->client->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Client
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    public function findWith(int $id, array $relations, array $columns = ['*']): Client
     {
         return $this->client->with($relations)->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Client
      */
-    public function create(array $data): Model
+    public function create(array $data): Client
     {
         /** @var Team $team */
         $team = Auth::user()->team;
@@ -83,8 +85,9 @@ class ClientRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Client
      */
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Client
     {
         $client = $this->find($id);
         $client->update([

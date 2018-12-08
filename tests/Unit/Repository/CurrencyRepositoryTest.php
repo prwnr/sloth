@@ -29,7 +29,6 @@ class CurrencyRepositoryTest extends TestCase
         $repository = new CurrencyRepository(new Currency());
 
         $actual = $repository->find($expected->id);
-        $this->assertInstanceOf(Currency::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -40,7 +39,6 @@ class CurrencyRepositoryTest extends TestCase
 
         $actual = $repository->findWith($expected->id, []);
 
-        $this->assertInstanceOf(Currency::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertEmpty($actual->relationsToArray());
     }
@@ -87,7 +85,6 @@ class CurrencyRepositoryTest extends TestCase
         $repository = new CurrencyRepository(new Currency());
 
         $actual = $repository->findByName($expected->name);
-        $this->assertInstanceOf(Currency::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -157,7 +154,6 @@ class CurrencyRepositoryTest extends TestCase
         $expected = $this->makeCurrencyData();
         $actual = $repository->update($model->id, $expected);
 
-        $this->assertInstanceOf(Currency::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 

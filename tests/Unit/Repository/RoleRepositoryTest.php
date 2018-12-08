@@ -32,7 +32,6 @@ class RoleRepositoryTest extends TestCase
         $repository = new RoleRepository(new Role());
 
         $actual = $repository->find($expected->id);
-        $this->assertInstanceOf(Role::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -42,7 +41,6 @@ class RoleRepositoryTest extends TestCase
         $repository = new RoleRepository(new Role());
         $actual = $repository->findWith($expected->id, ['team']);
 
-        $this->assertInstanceOf(Role::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('team'));
     }
@@ -119,7 +117,6 @@ class RoleRepositoryTest extends TestCase
         $repository = new RoleRepository(new Role());
         $actual = $repository->create($expected);
 
-        $this->assertInstanceOf(Role::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
         $this->assertEquals($user->team->id, $actual->team_id);
     }
@@ -138,7 +135,6 @@ class RoleRepositoryTest extends TestCase
         $repository = new RoleRepository(new Role());
         $actual = $repository->create($data);
 
-        $this->assertInstanceOf(Role::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
         $this->assertEquals($user->team->id, $actual->team_id);
         $this->assertCount(3, $actual->members);
@@ -165,7 +161,6 @@ class RoleRepositoryTest extends TestCase
 
         $actual = $repository->update($model->id, $expected);
 
-        $this->assertInstanceOf(Role::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 
@@ -180,7 +175,6 @@ class RoleRepositoryTest extends TestCase
         $repository = new RoleRepository(new Role());
         $actual = $repository->update($model->id, $data);
 
-        $this->assertInstanceOf(Role::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
         $this->assertCount(3, $actual->members);
         $this->assertCount(\count($data['permissions']), $actual->perms);

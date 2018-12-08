@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -47,24 +46,27 @@ class ProjectRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Project
      */
-    public function find(int $id, array $columns = ['*']): Model
+    public function find(int $id, array $columns = ['*']): Project
     {
         return $this->project->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Project
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    public function findWith(int $id, array $relations, array $columns = ['*']): Project
     {
         return $this->project->with($relations)->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Project
      */
-    public function create(array $data): Model
+    public function create(array $data): Project
     {
         $team = Auth::user()->team;
         /** @var Project $project */
@@ -96,8 +98,9 @@ class ProjectRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Project
      */
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Project
     {
         $project = $this->find($id);
         $project->update([

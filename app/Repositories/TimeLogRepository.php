@@ -5,8 +5,11 @@ namespace App\Repositories;
 use App\Models\TimeLog;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class TimeLogRepository
+ * @package App\Repositories
+ */
 class TimeLogRepository implements RepositoryInterface
 {
 
@@ -42,24 +45,27 @@ class TimeLogRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return TimeLog
      */
-    public function find(int $id, array $columns = ['*']): Model
+    public function find(int $id, array $columns = ['*']): TimeLog
     {
         return $this->timeLog->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return TimeLog
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    public function findWith(int $id, array $relations, array $columns = ['*']): TimeLog
     {
         return $this->timeLog->with($relations)->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return TimeLog
      */
-    public function create(array $data): Model
+    public function create(array $data): TimeLog
     {
         $hasDuration = $data['duration'] ?? false;
         return $this->timeLog->create([
@@ -75,8 +81,9 @@ class TimeLogRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return TimeLog
      */
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): TimeLog
     {
         $timeLog = $this->find($id);
         $timeLog->update([
@@ -92,9 +99,9 @@ class TimeLogRepository implements RepositoryInterface
     /**
      * @param int $id
      * @param array $data
-     * @return Model
+     * @return TimeLog
      */
-    public function updateTime(int $id, array $data): Model
+    public function updateTime(int $id, array $data): TimeLog
     {
         $timeLog = $this->find($id);
         if (isset($data['time'])) {

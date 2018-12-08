@@ -8,7 +8,6 @@ use App\Models\Currency;
 use App\Models\Team;
 use App\Models\User;
 use App\Repositories\ClientRepository;
-use App\Repositories\CurrencyRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Mockery\MockInterface;
@@ -34,7 +33,6 @@ class ClientRepositoryTest extends TestCase
         $repository = new ClientRepository(new Client());
 
         $actual = $repository->find($expected->id);
-        $this->assertInstanceOf(Client::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -44,7 +42,6 @@ class ClientRepositoryTest extends TestCase
         $repository = new ClientRepository(new Client());
         $actual = $repository->findWith($expected->id, ['billing']);
 
-        $this->assertInstanceOf(Client::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('billing'));
     }
@@ -128,7 +125,6 @@ class ClientRepositoryTest extends TestCase
         $repository = new ClientRepository(new Client());
         $actual = $repository->create($data);
 
-        $this->assertInstanceOf(Client::class, $actual);
         $this->assertArraySubset($clientData, $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('billing'));
         $this->assertArraySubset($billingData, $actual->billing->attributesToArray());
@@ -160,7 +156,6 @@ class ClientRepositoryTest extends TestCase
         ]);
         $actual = $repository->update($model->id, $expected);
 
-        $this->assertInstanceOf(Client::class, $actual);
         $this->assertArraySubset($clientData, $actual->attributesToArray());
     }
 

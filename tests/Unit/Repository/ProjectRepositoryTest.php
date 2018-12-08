@@ -12,7 +12,6 @@ use App\Repositories\ProjectRepository;
 use ErrorException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\QueryException;
 use Tests\TestCase;
 
 class ProjectRepositoryTest extends TestCase
@@ -34,7 +33,6 @@ class ProjectRepositoryTest extends TestCase
         $repository = new ProjectRepository(new Project());
 
         $actual = $repository->find($expected->id);
-        $this->assertInstanceOf(Project::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -44,7 +42,6 @@ class ProjectRepositoryTest extends TestCase
         $repository = new ProjectRepository(new Project());
         $actual = $repository->findWith($expected->id, ['billing']);
 
-        $this->assertInstanceOf(Project::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('billing'));
     }
@@ -130,7 +127,6 @@ class ProjectRepositoryTest extends TestCase
         $repository = new ProjectRepository(new Project());
         $actual = $repository->create($data);
 
-        $this->assertInstanceOf(Project::class, $actual);
         $this->assertEquals($expectedProject['name'], $actual->name);
         $this->assertEquals($expectedProject['code'], $actual->code);
         $this->assertArraySubset(['billing', 'client'], $actual->getQueueableRelations());
@@ -156,7 +152,6 @@ class ProjectRepositoryTest extends TestCase
         $repository = new ProjectRepository(new Project());
         $actual = $repository->create($data);
 
-        $this->assertInstanceOf(Project::class, $actual);
         $this->assertEquals($expectedProject['name'], $actual->name);
         $this->assertEquals($expectedProject['code'], $actual->code);
         $this->assertArraySubset(['billing', 'client'], $actual->getQueueableRelations());
@@ -194,7 +189,6 @@ class ProjectRepositoryTest extends TestCase
 
         $actual = $repository->update($model->id, $data);
 
-        $this->assertInstanceOf(Project::class, $actual);
         $this->assertEquals($expectedProject['name'], $actual->name);
         $this->assertEquals($expectedProject['code'], $actual->code);
         $this->assertArraySubset($expectedBilling, $actual->billing->attributesToArray());
@@ -223,7 +217,6 @@ class ProjectRepositoryTest extends TestCase
 
         $actual = $repository->update($model->id, $data);
 
-        $this->assertInstanceOf(Project::class, $actual);
         $this->assertEquals($expectedProject['name'], $actual->name);
         $this->assertEquals($expectedProject['code'], $actual->code);
         $this->assertArraySubset($expectedBilling, $actual->billing->attributesToArray());

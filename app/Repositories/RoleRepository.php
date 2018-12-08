@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -45,17 +44,18 @@ class RoleRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Role
      */
-    public function find(int $id, array $columns = ['*']): Model
+    public function find(int $id, array $columns = ['*']): Role
     {
         return $this->role->findOrFail($id, $columns);
     }
 
     /**
      * @param string $name
-     * @return Model
+     * @return Role
      */
-    public function findByName(string $name): ?Model
+    public function findByName(string $name): ?Role
     {
         return $this->role->where([
             'name' => $name,
@@ -65,16 +65,18 @@ class RoleRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Role
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    public function findWith(int $id, array $relations, array $columns = ['*']): Role
     {
         return $this->role->with($relations)->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Role
      */
-    public function create(array $data): Model
+    public function create(array $data): Role
     {
         $user = Auth::user();
         $role = $user->team->roles()->create([
@@ -91,8 +93,9 @@ class RoleRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Role
      */
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Role
     {
         $role = $this->find($id);
         $role->update([

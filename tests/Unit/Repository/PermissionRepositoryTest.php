@@ -30,7 +30,6 @@ class PermissionRepositoryTest extends TestCase
 
         $actual = $repository->find($expected->id);
 
-        $this->assertInstanceOf(Permission::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -41,7 +40,6 @@ class PermissionRepositoryTest extends TestCase
 
         $actual = $repository->findByName($expected->name);
 
-        $this->assertInstanceOf(Permission::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -60,7 +58,6 @@ class PermissionRepositoryTest extends TestCase
 
         $actual = $repository->findWith($expected->id, []);
 
-        $this->assertInstanceOf(Permission::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertEmpty($actual->relationsToArray());
     }
@@ -123,7 +120,6 @@ class PermissionRepositoryTest extends TestCase
         $repository = new PermissionRepository(new Permission());
         $actual = $repository->create($expected);
 
-        $this->assertInstanceOf(Permission::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 
@@ -142,7 +138,6 @@ class PermissionRepositoryTest extends TestCase
         $expected = $this->makePermissionData();
         $actual = $repository->update($model->id, $expected);
 
-        $this->assertInstanceOf(Permission::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 

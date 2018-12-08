@@ -7,7 +7,6 @@ use App\Models\Team\Member;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -73,24 +72,27 @@ class MemberRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Member
      */
-    public function find(int $id, array $columns = ['*']): Model
+    public function find(int $id, array $columns = ['*']): Member
     {
         return $this->member->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Member
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    public function findWith(int $id, array $relations, array $columns = ['*']): Member
     {
         return $this->member->with($relations)->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Member
      */
-    public function create(array $data): Model
+    public function create(array $data): Member
     {
         $team = Auth::user()->team;
         $user = User::where('email', $data['email'])->first();
@@ -118,9 +120,9 @@ class MemberRepository implements RepositoryInterface
     /**
      * @param array $data
      * @param Team $team
-     * @return Model
+     * @return Member
      */
-    public function createTeamOwner(array $data, Team $team): Model
+    public function createTeamOwner(array $data, Team $team): Member
     {
         $data['owns_team'] = $team->id;
         $data['password'] = Hash::make($data['password']);
@@ -137,8 +139,9 @@ class MemberRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Member
      */
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Member
     {
         $member = $this->find($id);
         $member->roles()->sync($data['roles'] ?? []);

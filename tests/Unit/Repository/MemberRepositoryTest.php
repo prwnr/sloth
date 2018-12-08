@@ -41,7 +41,6 @@ class MemberRepositoryTest extends TestCase
 
         $actual = $repository->find($expected->id);
 
-        $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -55,7 +54,6 @@ class MemberRepositoryTest extends TestCase
         $repository = new MemberRepository(new Member());
         $actual = $repository->findWith($expected->id, $expectedRelations);
 
-        $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         foreach ($expectedRelations as $expectedRelation) {
             $this->assertTrue($actual->relationLoaded($expectedRelation));
@@ -196,7 +194,6 @@ class MemberRepositoryTest extends TestCase
         $repository = new MemberRepository(new Member());
         $actual = $repository->create($expected);
 
-        $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected['firstname'], $actual->user->firstname);
         $this->assertEquals($expected['lastname'], $actual->user->lastname);
         $this->assertEquals(['user', 'team', 'billing'], $actual->getQueueableRelations());
@@ -222,7 +219,6 @@ class MemberRepositoryTest extends TestCase
         $repository = new MemberRepository(new Member());
         $actual = $repository->createTeamOwner($expected, $team);
 
-        $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected['firstname'], $actual->user->firstname);
         $this->assertEquals($expected['lastname'], $actual->user->lastname);
         $this->assertEquals(['user', 'team', 'billing'], $actual->getQueueableRelations());
@@ -244,7 +240,6 @@ class MemberRepositoryTest extends TestCase
         $expected = $this->makeMemberData();
         $actual = $repository->update($model->id, $expected);
 
-        $this->assertInstanceOf(Member::class, $actual);
         $this->assertEquals($expected['projects'], $actual->projects()->pluck('id')->toArray());
         $this->assertEquals($expected['roles'], $actual->roles()->pluck('id')->toArray());
         $this->assertEquals($expected['billing_rate'], $actual->billing->rate);

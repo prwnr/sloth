@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -47,24 +46,27 @@ class UserRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return User
      */
-    public function find(int $id, array $columns = ['*']): Model
+    public function find(int $id, array $columns = ['*']): User
     {
         return $this->user->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return User
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    public function findWith(int $id, array $relations, array $columns = ['*']): User
     {
         return $this->user->with($relations)->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return User
      */
-    public function create(array $data): Model
+    public function create(array $data): User
     {
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
@@ -75,8 +77,9 @@ class UserRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return User
      */
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): User
     {
         $user = $this->find($id);
         if (isset($data['password'])) {

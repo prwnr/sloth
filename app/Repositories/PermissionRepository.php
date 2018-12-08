@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Permission;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class PermissionRepository
@@ -45,8 +44,9 @@ class PermissionRepository implements RepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @return Permission
      */
-    public function find(int $id, array $columns = ['*']): Model
+    public function find(int $id, array $columns = ['*']): Permission
     {
         return $this->permission->findOrFail($id, $columns);
     }
@@ -54,33 +54,36 @@ class PermissionRepository implements RepositoryInterface
     /**
      * @param string $name
      * @param array $columns
-     * @return mixed
+     * @return Permission
      */
-    public function findByName(string $name, array $columns = ['*']): Model
+    public function findByName(string $name, array $columns = ['*']): Permission
     {
         return $this->permission->whereName($name)->firstOrFail($columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Permission
      */
-    public function findWith(int $id, array $relations, array $columns = ['*']): Model
+    public function findWith(int $id, array $relations, array $columns = ['*']): Permission
     {
         return $this->permission->with($relations)->findOrFail($id, $columns);
     }
 
     /**
      * {@inheritdoc}
+     * @return Permission
      */
-    public function create(array $data): Model
+    public function create(array $data): Permission
     {
         return $this->permission->create($data);
     }
 
     /**
      * {@inheritdoc}
+     * @return Permission
      */
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Permission
     {
         $permission = $this->find($id);
         $permission->update($data);

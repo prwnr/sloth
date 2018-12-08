@@ -7,7 +7,6 @@ use App\Models\Task;
 use App\Models\Team\Member;
 use App\Models\TimeLog;
 use App\Repositories\TimeLogRepository;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\TestCase;
 
@@ -31,7 +30,6 @@ class TimeLogRepositoryTest extends TestCase
         $repository = new TimeLogRepository(new TimeLog());
 
         $actual = $repository->find($expected->id);
-        $this->assertInstanceOf(TimeLog::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -44,7 +42,6 @@ class TimeLogRepositoryTest extends TestCase
         $expectedRelations = ['project', 'member'];
         $actual = $repository->findWith($expected->id, $expectedRelations);
 
-        $this->assertInstanceOf(TimeLog::class, $actual);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         foreach ($expectedRelations as $expectedRelation) {
             $this->assertTrue($actual->relationLoaded($expectedRelation));
@@ -105,7 +102,6 @@ class TimeLogRepositoryTest extends TestCase
         $expected['member_id'] = $expected['member'];
         unset($expected['project'], $expected['task'], $expected['member']);
 
-        $this->assertInstanceOf(TimeLog::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 
@@ -128,7 +124,6 @@ class TimeLogRepositoryTest extends TestCase
         $expected['task_id'] = $expected['task'];
         unset($expected['project'], $expected['task']);
 
-        $this->assertInstanceOf(TimeLog::class, $actual);
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
 
@@ -143,7 +138,6 @@ class TimeLogRepositoryTest extends TestCase
         $repository = new TimeLogRepository(new TimeLog());
         $actual = $repository->updateTime($model->id, $expected);
 
-        $this->assertInstanceOf(TimeLog::class, $actual);
         $this->assertEquals($expected['duration'], $actual->duration);
         $this->assertNotNull($actual->start);
     }
@@ -159,7 +153,6 @@ class TimeLogRepositoryTest extends TestCase
         $repository = new TimeLogRepository(new TimeLog());
         $actual = $repository->updateTime($model->id, $expected);
 
-        $this->assertInstanceOf(TimeLog::class, $actual);
         $this->assertEquals($expected['duration'], $actual->duration);
         $this->assertNull($actual->start);
     }
@@ -174,7 +167,6 @@ class TimeLogRepositoryTest extends TestCase
         $repository = new TimeLogRepository(new TimeLog());
         $actual = $repository->updateTime($model->id, $expected);
 
-        $this->assertInstanceOf(TimeLog::class, $actual);
         $this->assertEquals($expected['duration'], $actual->duration);
         $this->assertEquals($model->start, $actual->start);
     }
