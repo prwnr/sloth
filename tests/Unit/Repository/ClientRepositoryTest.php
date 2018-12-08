@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Mockery\MockInterface;
 use Tests\TestCase;
-use Illuminate\Database\Eloquent\Collection;
 
 class ClientRepositoryTest extends TestCase
 {
@@ -21,26 +20,30 @@ class ClientRepositoryTest extends TestCase
      */
     private $client;
 
+    /**
+     * @var ClientRepository
+     */
+    private $repository;
+
     public function setUp(): void
     {
         $this->client = \Mockery::mock(Client::class);
+        $this->repository = new ClientRepository(new Client());
         parent::setUp();
     }
 
     public function testFindsModel(): void
     {
         $expected = factory(Client::class)->create();
-        $repository = new ClientRepository(new Client());
 
-        $actual = $repository->find($expected->id);
+        $actual = $this->repository->find($expected->id);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
     public function testFindsModelWithRelation(): void
     {
         $expected = factory(Client::class)->create();
-        $repository = new ClientRepository(new Client());
-        $actual = $repository->findWith($expected->id, ['billing']);
+        $actual = $this->repository->findWith($expected->id, ['billing']);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('billing'));
@@ -48,73 +51,42 @@ class ClientRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
-        $repository = new ClientRepository(new Client());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->find(0);
+        $this->repository->find(0);
     }
 
     public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void
     {
-        $repository = new ClientRepository(new Client());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->findWith(0, ['billing']);
+        $this->repository->findWith(0, ['billing']);
     }
 
-    public function testReturnCollection(): void
+    public function testReturnsCollection(): void
     {
         $this->actingAs($this->user, 'api');
+        $expected = factory(Client::class, 3)->create(['team_id' => $this->user->team_id]);
 
-        $expected = new Collection([
-            new Client($this->makeClientData()),
-            new Client($this->makeClientData()),
-            new Client($this->makeClientData())
-        ]);
+        $actual = $this->repository->all();
 
-        $this->client->shouldReceive('query->where->get')
-            ->withNoArgs()
-            ->with('team_id', $this->user->team_id)
-            ->with(['*'])
-            ->andReturn($expected);
-
-        $repository = new ClientRepository($this->client);
-        $actual = $repository->all();
-
-        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
         $this->assertEquals(3, $actual->count());
     }
 
-    public function testReturnCollectionWithRelations(): void
+    public function testReturnsCollectionWithRelations(): void
     {
         $this->actingAs($this->user, 'api');
+        $expected = factory(Client::class, 3)->create(['team_id' => $this->user->team_id]);
 
-        $expected = new Collection([
-            (new Client($this->makeClientData()))->setRelation('billing', new Billing($this->makeBillingData())),
-            (new Client($this->makeClientData()))->setRelation('billing', new Billing($this->makeBillingData())),
-            (new Client($this->makeClientData()))->setRelation('billing', new Billing($this->makeBillingData()))
-        ]);
+        $actual = $this->repository->allWith(['billing']);
 
-        $this->client->shouldReceive('query->where->with->get')
-            ->withNoArgs()
-            ->with('team_id', $this->user->team_id)
-            ->with(['billing'])
-            ->with(['*'])
-            ->andReturn($expected);
-
-        $repository = new ClientRepository($this->client);
-        $actual = $repository->allWith(['billing']);
-
-        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
         $this->assertEquals(3, $actual->count());
         $this->assertTrue($actual->first()->relationLoaded('billing'));
     }
 
     public function testCreatesModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
+        $this->actingAs($this->user, 'api');
 
         $billingData = $this->makeBillingData();
         $clientData = $this->makeClientData();
@@ -124,8 +96,7 @@ class ClientRepositoryTest extends TestCase
             'billing_type' => $billingData['type']
         ]);
 
-        $repository = new ClientRepository(new Client());
-        $actual = $repository->create($data);
+        $actual = $this->repository->create($data);
 
         $this->assertArraySubset($clientData, $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('billing'));
@@ -134,20 +105,15 @@ class ClientRepositoryTest extends TestCase
 
     public function testFailsToCreateModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
-
-        $repository = new ClientRepository(new Client());
+        $this->actingAs($this->user, 'api');
 
         $this->expectException(QueryException::class);
-        $repository->create([]);
+        $this->repository->create([]);
     }
 
     public function testUpdatesModel(): void
     {
         $model = factory(Client::class)->create();
-        $repository = new ClientRepository(new Client());
 
         $billingData = $this->makeBillingData();
         $clientData = $this->makeClientData();
@@ -156,7 +122,7 @@ class ClientRepositoryTest extends TestCase
             'billing_currency' => $billingData['currency_id'],
             'billing_type' => $billingData['type']
         ]);
-        $actual = $repository->update($model->id, $expected);
+        $actual = $this->repository->update($model->id, $expected);
 
         $this->assertArraySubset($clientData, $actual->attributesToArray());
     }
@@ -166,12 +132,10 @@ class ClientRepositoryTest extends TestCase
         $this->client->shouldReceive('query->findOrFail')
             ->withNoArgs()
             ->with(1, ['*'])
-            ->andThrowExceptions([new ModelNotFoundException()]);
-
-        $repository = new ClientRepository($this->client);
+            ->andThrows(new ModelNotFoundException());
 
         $this->expectException(ModelNotFoundException::class);
-        $repository->update(1, []);
+        $this->repository->update(1, []);
     }
 
     public function testDeletesModel(): void
@@ -191,16 +155,13 @@ class ClientRepositoryTest extends TestCase
             ->andReturn($model);
 
         $repository = new ClientRepository($this->client);
-
         $this->assertFalse($repository->delete(1));
     }
 
     public function testFailsToDeleteModel(): void
     {
-        $repository = new ClientRepository(new Client());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->delete(0);
+        $this->repository->delete(0);
     }
 
     private function makeClientData(): array

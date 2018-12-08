@@ -8,29 +8,28 @@ use App\Models\Team\Member;
 use App\Models\TimeLog;
 use App\Repositories\TimeLogRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 class TimeLogRepositoryTest extends TestCase
 {
+
     /**
-     * @var MockInterface
+     * @var TimeLogRepository
      */
-    private $timeLog;
+    private $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->timeLog = \Mockery::mock(TimeLog::class);
+        $this->repository = new TimeLogRepository(new TimeLog());
     }
 
     public function testFindsModel(): void
     {
         $expected = factory(TimeLog::class)->create();
         $expected->start = $expected->fromDateTime($expected->start);
-        $repository = new TimeLogRepository(new TimeLog());
 
-        $actual = $repository->find($expected->id);
+        $actual = $this->repository->find($expected->id);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
@@ -38,10 +37,9 @@ class TimeLogRepositoryTest extends TestCase
     {
         $expected = factory(TimeLog::class)->create();
         $expected->start = $expected->fromDateTime($expected->start);
-        $repository = new TimeLogRepository(new TimeLog());
 
         $expectedRelations = ['project', 'member'];
-        $actual = $repository->findWith($expected->id, $expectedRelations);
+        $actual = $this->repository->findWith($expected->id, $expectedRelations);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         foreach ($expectedRelations as $expectedRelation) {
@@ -52,25 +50,19 @@ class TimeLogRepositoryTest extends TestCase
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
         $this->expectException(ModelNotFoundException::class);
-
-        $repository = new TimeLogRepository(new TimeLog());
-        $repository->find(0);
+        $this->repository->find(0);
     }
 
     public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void
     {
         $this->expectException(ModelNotFoundException::class);
-
-        $repository = new TimeLogRepository(new TimeLog());
-        $repository->findWith(0, []);
+        $this->repository->findWith(0, []);
     }
 
-    public function testReturnCollection(): void
+    public function testReturnsCollection(): void
     {
         $expected = factory(TimeLog::class, 3)->create();
-
-        $repository = new TimeLogRepository(new TimeLog());
-        $actual = $repository->all();
+        $actual = $this->repository->all();
 
         $expectedFirst = $expected->first();
         $expectedFirst->start = $expectedFirst->fromDateTime($expectedFirst->start);
@@ -78,12 +70,10 @@ class TimeLogRepositoryTest extends TestCase
         $this->assertEquals(3, $actual->count());
     }
 
-    public function testReturnCollectionWithNoRelation(): void
+    public function testReturnsCollectionWithNoRelation(): void
     {
         $expected = factory(TimeLog::class, 3)->create();
-
-        $repository = new TimeLogRepository(new TimeLog());
-        $actual = $repository->allWith([]);
+        $actual = $this->repository->allWith([]);
 
         $expectedFirst = $expected->first();
         $expectedFirst->start = $expectedFirst->fromDateTime($expectedFirst->start);
@@ -95,9 +85,8 @@ class TimeLogRepositoryTest extends TestCase
     public function testCreatesModel(): void
     {
         $expected = $this->makeTimeLogData();
-        $repository = new TimeLogRepository(new TimeLog());
+        $actual = $this->repository->create($expected);
 
-        $actual = $repository->create($expected);
         $expected['project_id'] = $expected['project'];
         $expected['task_id'] = $expected['task'];
         $expected['member_id'] = $expected['member'];
@@ -109,18 +98,16 @@ class TimeLogRepositoryTest extends TestCase
     public function testThrowsQueryExceptionOnModelCreationWithMissingFields(): void
     {
         $this->expectException(\ErrorException::class);
-        $repository = new TimeLogRepository(new TimeLog());
-        $repository->create(['foo' => 'bar']);
+        $this->repository->create(['foo' => 'bar']);
     }
 
     public function testUpdatesModel(): void
     {
         $model = factory(TimeLog::class)->create();
-        $repository = new TimeLogRepository(new TimeLog());
         $expected = $this->makeTimeLogData();
         unset($expected['member'], $expected['duration']);
 
-        $actual = $repository->update($model->id, $expected);
+        $actual = $this->repository->update($model->id, $expected);
         $expected['project_id'] = $expected['project'];
         $expected['task_id'] = $expected['task'];
         unset($expected['project'], $expected['task']);
@@ -136,8 +123,7 @@ class TimeLogRepositoryTest extends TestCase
             'duration' => $this->faker->numberBetween(0, 99999),
         ];
 
-        $repository = new TimeLogRepository(new TimeLog());
-        $actual = $repository->updateTime($model->id, $expected);
+        $actual = $this->repository->updateTime($model->id, $expected);
 
         $this->assertEquals($expected['duration'], $actual->duration);
         $this->assertNotNull($actual->start);
@@ -151,8 +137,7 @@ class TimeLogRepositoryTest extends TestCase
             'duration' => $this->faker->numberBetween(0, 99999),
         ];
 
-        $repository = new TimeLogRepository(new TimeLog());
-        $actual = $repository->updateTime($model->id, $expected);
+        $actual = $this->repository->updateTime($model->id, $expected);
 
         $this->assertEquals($expected['duration'], $actual->duration);
         $this->assertNull($actual->start);
@@ -165,8 +150,7 @@ class TimeLogRepositoryTest extends TestCase
             'duration' => $this->faker->numberBetween(0, 99999),
         ];
 
-        $repository = new TimeLogRepository(new TimeLog());
-        $actual = $repository->updateTime($model->id, $expected);
+        $actual = $this->repository->updateTime($model->id, $expected);
 
         $this->assertEquals($expected['duration'], $actual->duration);
         $this->assertEquals($model->start, $actual->start);
@@ -174,38 +158,19 @@ class TimeLogRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $repository = new TimeLogRepository(new TimeLog());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->update(0, []);
+        $this->repository->update(0, []);
     }
 
     public function testDeletesModel(): void
     {
         $model = factory(TimeLog::class)->create();
-        $repository = new TimeLogRepository(new TimeLog());
-
-        $this->assertTrue($repository->delete($model->id));
+        $this->assertTrue($this->repository->delete($model->id));
     }
 
     public function testDoesNotDeleteModel(): void
     {
-        $expected = new TimeLog($this->makeTimeLogData());
-        $this->timeLog->shouldReceive('query->findOrFail')
-            ->withNoArgs()
-            ->with(1, ['*'])
-            ->andReturn($expected);
-
-        $repository = new TimeLogRepository($this->timeLog);
-        $this->assertFalse($repository->delete(1));
-    }
-
-    public function testThrowsModelNotFoundExceptionOnMOdelDeleteWithNotExistingModel(): void
-    {
-        $repository = new TimeLogRepository(new TimeLog());
-
-        $this->expectException(ModelNotFoundException::class);
-        $repository->delete(0);
+        $this->assertFalse($this->repository->delete(1));
     }
 
     private function makeTimeLogData(): array

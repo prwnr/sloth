@@ -105,8 +105,6 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function delete(int $id): bool
     {
-        $currency = $this->find($id);
-
-        return (bool) $currency->delete();
+        return (bool) $this->currency->query()->where('id', $id)->delete();
     }
 }

@@ -115,11 +115,6 @@ class RoleRepository implements RepositoryInterface
      */
     public function delete(int $id): bool
     {
-        $role = $this->find($id);
-        if ($role->delete()) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->role->query()->where('id', $id)->delete();
     }
 }

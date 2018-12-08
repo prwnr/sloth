@@ -125,11 +125,6 @@ class TimeLogRepository implements RepositoryInterface
      */
     public function delete(int $id): bool
     {
-        $timeLog = $this->find($id);
-        if ($timeLog->delete()) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->timeLog->query()->where('id', $id)->delete();
     }
 }

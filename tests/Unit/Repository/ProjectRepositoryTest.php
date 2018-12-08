@@ -10,7 +10,6 @@ use App\Models\Team;
 use App\Models\User;
 use App\Repositories\ProjectRepository;
 use ErrorException;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -22,26 +21,29 @@ class ProjectRepositoryTest extends TestCase
      */
     private $project;
 
+    /**
+     * @var ProjectRepository
+     */
+    private $repository;
+
     public function setUp(): void
     {
         $this->project = \Mockery::mock(Project::class);
+        $this->repository = new ProjectRepository(new Project());
         parent::setUp();
     }
 
     public function testFindsModel(): void
     {
         $expected = factory(Project::class)->create();
-        $repository = new ProjectRepository(new Project());
-
-        $actual = $repository->find($expected->id);
+        $actual = $this->repository->find($expected->id);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
     public function testFindsModelWithRelation(): void
     {
         $expected = factory(Project::class)->create();
-        $repository = new ProjectRepository(new Project());
-        $actual = $repository->findWith($expected->id, ['billing']);
+        $actual = $this->repository->findWith($expected->id, ['billing']);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('billing'));
@@ -49,86 +51,54 @@ class ProjectRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
-        $repository = new ProjectRepository(new Project());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->find(0);
+        $this->repository->find(0);
     }
 
     public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void
     {
-        $repository = new ProjectRepository(new Project());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->findWith(0, ['billing']);
+        $this->repository->findWith(0, ['billing']);
     }
 
-    public function testReturnCollection(): void
+    public function testReturnsCollection(): void
     {
         $this->actingAs($this->user, 'api');
+        $expected = factory(Project::class, 3)->create(['team_id' => $this->user->team_id]);
 
-        $expected = new Collection([
-            new Project(),
-            new Project(),
-            new Project()
-        ]);
+        $actual = $this->repository->all();
 
-        $this->project->shouldReceive('query->where->get')
-            ->withNoArgs()
-            ->with('team_id', $this->user->team_id)
-            ->with(['*'])
-            ->andReturn($expected);
-
-        $repository = new ProjectRepository($this->project);
-        $actual = $repository->all();
-
-        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
         $this->assertEquals(3, $actual->count());
     }
 
-    public function testReturnCollectionWithRelations(): void
+    public function testReturnsCollectionWithRelations(): void
     {
         $this->actingAs($this->user, 'api');
+        $expected = factory(Project::class, 3)->create(['team_id' => $this->user->team_id]);
 
-        $expected = new Collection([
-            (new Project())->setRelation('client', factory(Client::class)->create()),
-            (new Project())->setRelation('client', factory(Client::class)->create()),
-            (new Project())->setRelation('client', factory(Client::class)->create())
-        ]);
+        $actual = $this->repository->allWith(['client']);
 
-        $this->project->shouldReceive('query->where->with->get')
-            ->withNoArgs()
-            ->with('team_id', $this->user->team_id)
-            ->with(['client'])
-            ->with(['*'])
-            ->andReturn($expected);
-
-        $repository = new ProjectRepository($this->project);
-        $actual = $repository->allWith(['client']);
-
-        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
         $this->assertEquals(3, $actual->count());
         $this->assertTrue($actual->first()->relationLoaded('client'));
     }
 
     public function testCreatesModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
+        $this->actingAs($this->user, 'api');
 
         $expectedProject = $this->makeProjectData();
         $expectedTasks[] = $this->makeTaskData();
         $expectedBilling = $this->makeBillingData();
         $data = $expectedProject;
-        $data['client'] = factory(Client::class)->create(['team_id' => $user->team->id])->id;
+        $data['client'] = factory(Client::class)->create(['team_id' => $this->user->team->id])->id;
         $data['tasks'] = $expectedTasks;
         $data['billing_rate'] = $expectedBilling['rate'];
         $data['billing_type'] = $expectedBilling['type'];
         $data['billing_currency'] = $expectedBilling['currency_id'];
 
-        $repository = new ProjectRepository(new Project());
-        $actual = $repository->create($data);
+        $actual = $this->repository->create($data);
 
         $this->assertEquals($expectedProject['name'], $actual->name);
         $this->assertEquals($expectedProject['code'], $actual->code);
@@ -139,21 +109,18 @@ class ProjectRepositoryTest extends TestCase
 
     public function testCreatesModelWithoutTasks(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
+        $this->actingAs($this->user, 'api');
 
-        $expectedProject = $this->makeProjectData($user);
+        $expectedProject = $this->makeProjectData($this->user);
         $expectedBilling = $this->makeBillingData();
         $data = $expectedProject;
         $data['tasks'] = [];
-        $data['client'] = factory(Client::class)->create(['team_id' => $user->team->id])->id;
+        $data['client'] = factory(Client::class)->create(['team_id' => $this->user->team->id])->id;
         $data['billing_rate'] = $expectedBilling['rate'];
         $data['billing_type'] = $expectedBilling['type'];
         $data['billing_currency'] = $expectedBilling['currency_id'];
 
-        $repository = new ProjectRepository(new Project());
-        $actual = $repository->create($data);
+        $actual = $this->repository->create($data);
 
         $this->assertEquals($expectedProject['name'], $actual->name);
         $this->assertEquals($expectedProject['code'], $actual->code);
@@ -163,20 +130,15 @@ class ProjectRepositoryTest extends TestCase
 
     public function testFailsToCreateModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
-
-        $repository = new ProjectRepository(new Project());
+        $this->actingAs($this->user, 'api');
 
         $this->expectException(ErrorException::class);
-        $repository->create([]);
+        $this->repository->create([]);
     }
 
     public function testUpdatesModel(): void
     {
         $model = factory(Project::class)->create();
-        $repository = new ProjectRepository(new Project());
 
         $expectedProject = $this->makeProjectData();
         $task = $this->makeTaskData();
@@ -190,7 +152,7 @@ class ProjectRepositoryTest extends TestCase
         $data['billing_type'] = $expectedBilling['type'];
         $data['billing_currency'] = $expectedBilling['currency_id'];
 
-        $actual = $repository->update($model->id, $data);
+        $actual = $this->repository->update($model->id, $data);
 
         $this->assertEquals($expectedProject['name'], $actual->name);
         $this->assertEquals($expectedProject['code'], $actual->code);
@@ -204,7 +166,6 @@ class ProjectRepositoryTest extends TestCase
     public function testUpdatesModelWithNonBillableTask(): void
     {
         $model = factory(Project::class)->create();
-        $repository = new ProjectRepository(new Project());
 
         $expectedProject = $this->makeProjectData();
         $task = $this->makeTaskData();
@@ -218,7 +179,7 @@ class ProjectRepositoryTest extends TestCase
         $data['billing_type'] = $expectedBilling['type'];
         $data['billing_currency'] = $expectedBilling['currency_id'];
 
-        $actual = $repository->update($model->id, $data);
+        $actual = $this->repository->update($model->id, $data);
 
         $this->assertEquals($expectedProject['name'], $actual->name);
         $this->assertEquals($expectedProject['code'], $actual->code);
@@ -231,15 +192,8 @@ class ProjectRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $this->project->shouldReceive('query->findOrFail')
-            ->withNoArgs()
-            ->with(1, ['*'])
-            ->andThrowExceptions([new ModelNotFoundException()]);
-
-        $repository = new ProjectRepository($this->project);
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->update(1, []);
+        $this->repository->update(0, []);
     }
 
     public function testDeletesModel(): void
@@ -247,9 +201,8 @@ class ProjectRepositoryTest extends TestCase
         $model = factory(Project::class)->create();
         $member = factory(Team\Member::class)->create();
         $member->projects()->attach($model);
-        $repository = new ProjectRepository(new Project());
 
-        $this->assertTrue($repository->delete($model->id));
+        $this->assertTrue($this->repository->delete($model->id));
         $this->assertCount(0, Team\Member::query()->whereHas('projects', function ($query) use ($model) {
             $query->where('project_id', $model->id);
         })->get());
@@ -264,16 +217,13 @@ class ProjectRepositoryTest extends TestCase
             ->andReturn($model);
 
         $repository = new ProjectRepository($this->project);
-
         $this->assertFalse($repository->delete(1));
     }
 
     public function testFailsToDeleteModel(): void
     {
-        $repository = new ProjectRepository(new project());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->delete(0);
+        $this->repository->delete(0);
     }
 
     private function makeClientData(): array

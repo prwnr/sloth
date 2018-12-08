@@ -5,41 +5,36 @@ namespace Tests\Unit\Repository;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Team;
-use App\Models\User;
 use App\Repositories\RoleRepository;
 use ErrorException;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 class RoleRepositoryTest extends TestCase
 {
+
     /**
-     * @var MockInterface
+     * @var RoleRepository
      */
-    private $role;
+    private $repository;
 
     public function setUp(): void
     {
-        $this->role = \Mockery::mock(Role::class);
         parent::setUp();
+        $this->repository = new RoleRepository(new Role());
     }
 
     public function testFindsModel(): void
     {
         $expected = factory(Role::class)->create();
-        $repository = new RoleRepository(new Role());
-
-        $actual = $repository->find($expected->id);
+        $actual = $this->repository->find($expected->id);
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
     public function testFindsModelWithRelation(): void
     {
         $expected = factory(Role::class)->create();
-        $repository = new RoleRepository(new Role());
-        $actual = $repository->findWith($expected->id, ['team']);
+        $actual = $this->repository->findWith($expected->id, ['team']);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         $this->assertTrue($actual->relationLoaded('team'));
@@ -47,121 +42,81 @@ class RoleRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
-        $repository = new RoleRepository(new Role());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->find(0);
+        $this->repository->find(0);
     }
 
     public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void
     {
-        $repository = new RoleRepository(new Role());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->findWith(0, ['team']);
+        $this->repository->findWith(0, ['team']);
     }
 
-    public function testReturnCollection(): void
+    public function testReturnsCollection(): void
     {
         $this->actingAs($this->user, 'api');
+        $expected = factory(Role::class, 3)->create(['team_id' => $this->user->team_id]);
 
-        $expected = new Collection([
-            new Role(),
-            new Role(),
-            new Role()
-        ]);
+        $actual = $this->repository->all();
 
-        $this->role->shouldReceive('query->where->get')
-            ->withNoArgs()
-            ->with('team_id', $this->user->team_id)
-            ->with(['*'])
-            ->andReturn($expected);
-
-        $repository = new RoleRepository($this->role);
-        $actual = $repository->all();
-
-        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
         $this->assertEquals(3, $actual->count());
     }
 
-    public function testReturnCollectionWithRelations(): void
+    public function testReturnsCollectionWithRelations(): void
     {
         $this->actingAs($this->user, 'api');
+        $expected = factory(Role::class, 3)->create(['team_id' => $this->user->team_id]);
 
-        $expected = new Collection([
-            (new Role())->setRelation('team', factory(Team::class)->create()),
-            (new Role())->setRelation('team', factory(Team::class)->create()),
-            (new Role())->setRelation('team', factory(Team::class)->create())
-        ]);
+        $actual = $this->repository->allWith(['team']);
 
-        $this->role->shouldReceive('query->where->with->get')
-            ->withNoArgs()
-            ->with('team_id', $this->user->team_id)
-            ->with(['team'])
-            ->with(['*'])
-            ->andReturn($expected);
-
-        $repository = new RoleRepository($this->role);
-        $actual = $repository->allWith(['team']);
-
-        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
         $this->assertEquals(3, $actual->count());
         $this->assertTrue($actual->first()->relationLoaded('team'));
     }
 
     public function testCreatesModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
+        $this->actingAs($this->user, 'api');
 
         $expected = $this->makeRoleData();
-        $repository = new RoleRepository(new Role());
-        $actual = $repository->create($expected);
+        $actual = $this->repository->create($expected);
 
         $this->assertArraySubset($expected, $actual->attributesToArray());
-        $this->assertEquals($user->team->id, $actual->team_id);
+        $this->assertEquals($this->user->team->id, $actual->team_id);
     }
 
     public function testCreatesModelWithMembersAndPermissions(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
+        $this->actingAs($this->user, 'api');
 
         $expected = $this->makeRoleData();
         $data = $expected;
-        $data['members'] = factory(Team\Member::class, 3)->create(['team_id' => $user->team->id])->pluck('id')->toArray();
+        $data['members'] = factory(Team\Member::class, 3)->create(['team_id' => $this->user->team->id])->pluck('id')->toArray();
         $data['permissions'] = Permission::all()->pluck('id')->toArray();
 
-        $repository = new RoleRepository(new Role());
-        $actual = $repository->create($data);
+        $actual = $this->repository->create($data);
 
         $this->assertArraySubset($expected, $actual->attributesToArray());
-        $this->assertEquals($user->team->id, $actual->team_id);
+        $this->assertEquals($this->user->team->id, $actual->team_id);
         $this->assertCount(3, $actual->members);
         $this->assertCount(\count($data['permissions']), $actual->perms);
     }
 
     public function testFailsToCreateModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
-
-        $repository = new RoleRepository(new Role());
+        $this->actingAs($this->user, 'api');
 
         $this->expectException(ErrorException::class);
-        $repository->create([]);
+        $this->repository->create([]);
     }
 
     public function testUpdatesModel(): void
     {
         $model = factory(Role::class)->create();
         $expected = $this->makeRoleData();
-        $repository = new RoleRepository(new Role());
 
-        $actual = $repository->update($model->id, $expected);
+        $actual = $this->repository->update($model->id, $expected);
 
         $this->assertArraySubset($expected, $actual->attributesToArray());
     }
@@ -174,8 +129,7 @@ class RoleRepositoryTest extends TestCase
         $data['members'] = factory(Team\Member::class, 3)->create()->pluck('id')->toArray();
         $data['permissions'] = Permission::all()->pluck('id')->toArray();
 
-        $repository = new RoleRepository(new Role());
-        $actual = $repository->update($model->id, $data);
+        $actual = $this->repository->update($model->id, $data);
 
         $this->assertArraySubset($expected, $actual->attributesToArray());
         $this->assertCount(3, $actual->members);
@@ -184,44 +138,19 @@ class RoleRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $this->role->shouldReceive('query->findOrFail')
-            ->withNoArgs()
-            ->with(1, ['*'])
-            ->andThrowExceptions([new ModelNotFoundException()]);
-
-        $repository = new RoleRepository($this->role);
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->update(1, []);
+        $this->repository->update(0, []);
     }
 
     public function testDeletesModel(): void
     {
         $model = factory(Role::class)->create();
-        $repository = new RoleRepository(new Role());
-
-        $this->assertTrue($repository->delete($model->id));
+        $this->assertTrue($this->repository->delete($model->id));
     }
 
     public function testDoesNotDeleteModel(): void
     {
-        $model = new Role($this->makeRoleData());
-        $this->role->shouldReceive('query->findOrFail')
-            ->withNoArgs()
-            ->with(1, ['*'])
-            ->andReturn($model);
-
-        $repository = new RoleRepository($this->role);
-
-        $this->assertFalse($repository->delete(1));
-    }
-
-    public function testFailsToDeleteModel(): void
-    {
-        $repository = new RoleRepository(new Role());
-
-        $this->expectException(ModelNotFoundException::class);
-        $repository->delete(0);
+        $this->assertFalse($this->repository->delete(0));
     }
 
     private function makeRoleData(): array

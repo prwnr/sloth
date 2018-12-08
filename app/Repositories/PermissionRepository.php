@@ -96,12 +96,6 @@ class PermissionRepository implements RepositoryInterface
      */
     public function delete(int $id): bool
     {
-        $permission = $this->find($id);
-
-        if ($permission->delete()) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->permission->query()->where('id', $id)->delete();
     }
 }

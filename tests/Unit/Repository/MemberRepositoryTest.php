@@ -12,7 +12,6 @@ use App\Models\TimeLog;
 use App\Models\User;
 use App\Repositories\MemberRepository;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Mockery\MockInterface;
@@ -27,9 +26,15 @@ class MemberRepositoryTest extends TestCase
      */
     private $member;
 
+    /**
+     * @var MemberRepository
+     */
+    private $repository;
+
     public function setUp(): void
     {
         $this->member = \Mockery::mock(Member::class);
+        $this->repository = new MemberRepository(new Member());
         parent::setUp();
     }
 
@@ -37,9 +42,8 @@ class MemberRepositoryTest extends TestCase
     {
         $this->actingAs($this->user, 'api');
         $expected = factory(Member::class)->create();
-        $repository = new MemberRepository(new Member());
 
-        $actual = $repository->find($expected->id);
+        $actual = $this->repository->find($expected->id);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
@@ -51,8 +55,7 @@ class MemberRepositoryTest extends TestCase
 
         $expectedRelations = ['user', 'billing', 'team'];
 
-        $repository = new MemberRepository(new Member());
-        $actual = $repository->findWith($expected->id, $expectedRelations);
+        $actual = $this->repository->findWith($expected->id, $expectedRelations);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
         foreach ($expectedRelations as $expectedRelation) {
@@ -62,85 +65,48 @@ class MemberRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
     {
-        $repository = new MemberRepository(new Member());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->find(0);
+        $this->repository->find(0);
     }
 
     public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void
     {
-        $repository = new MemberRepository(new Member());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->findWith(0, ['billing', 'user', 'team']);
+        $this->repository->findWith(0, ['billing', 'user', 'team']);
     }
 
-    public function testReturnCollection(): void
+    public function testReturnsCollection(): void
     {
         $this->actingAs($this->user, 'api');
+        $expected = factory(Member::class, 3)->create(['team_id' => $this->user->team_id]);
 
-        $expected = new Collection([
-            new Member(),
-            new Member(),
-            new Member()
-        ]);
+        $actual = $this->repository->all();
 
-        $this->member->shouldReceive('query->where->get')
-            ->withNoArgs()
-            ->with('team_id', $this->user->team_id)
-            ->with(['*'])
-            ->andReturn($expected);
-
-        $repository = new MemberRepository($this->member);
-        $actual = $repository->all();
-
-        $this->assertEquals($expected->take(1), $actual->take(1));
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
         $this->assertEquals(3, $actual->count());
     }
 
-    public function testReturnCollectionWithRelations(): void
+    public function testReturnsCollectionWithRelations(): void
     {
         $this->actingAs($this->user, 'api');
-
-        $expected = new Collection([
-            (new Member())->setRelations([
-                'billing' => factory(Billing::class)->create(),
-                'user' => factory(User::class)->create(),
-                'team' => factory(Team::class)->create(),
-            ]),
-            (new Member())->setRelations([
-                'billing' => factory(Billing::class)->create(),
-                'user' => factory(User::class)->create(),
-                'team' => factory(Team::class)->create(),
-            ])
-        ]);
+        $expected = factory(Member::class, 3)->create(['team_id' => $this->user->team_id]);
 
         $expectedRelations = ['billing', 'user'];
-        $this->member->shouldReceive('query->where->with->get')
-            ->withNoArgs()
-            ->with('team_id', $this->user->team_id)
-            ->with($expectedRelations)
-            ->with(['*'])
-            ->andReturn($expected);
+        $actual = $this->repository->allWith($expectedRelations);
 
-        $repository = new MemberRepository($this->member);
-        $actual = $repository->allWith($expectedRelations);
-
-        $this->assertEquals($expected->take(1), $actual->take(1));
-        $this->assertEquals(2, $actual->count());
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
+        $this->assertEquals(3, $actual->count());
         foreach ($expectedRelations as $expectedRelation) {
             $this->assertTrue($actual->first()->relationLoaded($expectedRelation));
         }
     }
 
-    public function testReturnUserTimeLogs(): void
+    public function testReturnsUserTimeLogs(): void
     {
         $member = factory(Member::class)->create();
         factory(TimeLog::class, 3)->create(['member_id' => $member->id]);
 
-        $repository = new MemberRepository(new Member());
-        $actual = $repository->timeLogs($member->id, []);
+        $actual = $this->repository->timeLogs($member->id, []);
 
         $this->assertInstanceOf(TimeLog::class, $actual->first());
         $this->assertTrue($actual->first()->relationLoaded('project'));
@@ -149,14 +115,13 @@ class MemberRepositoryTest extends TestCase
         $this->assertEquals($member->id, $actual->first()->member_id);
     }
 
-    public function testReturnUserActiveTimeLogs(): void
+    public function testReturnsUserActiveTimeLogs(): void
     {
         $member = factory(Member::class)->create();
         factory(TimeLog::class, 3)->create(['member_id' => $member->id]);
         factory(TimeLog::class, 1)->create(['member_id' => $member->id, 'start' => Carbon::today()]);
 
-        $repository = new MemberRepository(new Member());
-        $actual = $repository->timeLogs($member->id, ['active' => true]);
+        $actual = $this->repository->timeLogs($member->id, ['active' => true]);
 
         $this->assertInstanceOf(TimeLog::class, $actual->first());
         $this->assertTrue($actual->first()->relationLoaded('project'));
@@ -165,13 +130,12 @@ class MemberRepositoryTest extends TestCase
         $this->assertEquals($member->id, $actual->first()->member_id);
     }
 
-    public function testReturnUserTimeLogsFromDate(): void
+    public function testReturnsUserTimeLogsFromDate(): void
     {
         $member = factory(Member::class)->create();
         $expected = factory(TimeLog::class, 3)->create(['member_id' => $member->id]);
 
-        $repository = new MemberRepository(new Member());
-        $actual = $repository->timeLogs($member->id, [
+        $actual = $this->repository->timeLogs($member->id, [
             'date' => Carbon::createFromTimeString($expected->first()->created_at)->format('Y-m-d')
         ]);
 
@@ -184,17 +148,9 @@ class MemberRepositoryTest extends TestCase
 
     public function testCreatesModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $team = factory(Team::class)->create();
-        $user->shouldReceive('getAttribute')->with('team')->andReturn($team);
-        $user->shouldReceive('getAttribute')->with('team_id')->andReturn($team->id);
-        $user->shouldReceive('getAttribute')->with('id')->andReturn(1);
-        $this->actingAs($user, 'api');
-
+        $this->actingAs($this->user, 'api');
         $expected = $this->makeMemberData();
-
-        $repository = new MemberRepository(new Member());
-        $actual = $repository->create($expected);
+        $actual = $this->repository->create($expected);
 
         $this->assertEquals($expected['firstname'], $actual->user->firstname);
         $this->assertEquals($expected['lastname'], $actual->user->lastname);
@@ -203,14 +159,10 @@ class MemberRepositoryTest extends TestCase
 
     public function testFailsToCreateModel(): void
     {
-        $user = \Mockery::mock(User::class);
-        $user->shouldReceive('getAttribute')->with('team')->andReturn(factory(Team::class)->create());
-        $this->actingAs($user, 'api');
-
-        $repository = new MemberRepository(new Member());
+        $this->actingAs($this->user, 'api');
 
         $this->expectException(\ErrorException::class);
-        $repository->create([]);
+        $this->repository->create([]);
     }
 
     public function testCreatesTeamOwnerModel(): void
@@ -218,29 +170,26 @@ class MemberRepositoryTest extends TestCase
         $team = factory(Team::class)->create();
         $expected = $this->makeMemberData();
 
-        $repository = new MemberRepository(new Member());
-        $actual = $repository->createTeamOwner($expected, $team);
+        $actual = $this->repository->createTeamOwner($expected, $team);
 
         $this->assertEquals($expected['firstname'], $actual->user->firstname);
         $this->assertEquals($expected['lastname'], $actual->user->lastname);
-        $this->assertEquals(['user', 'team', 'billing'], $actual->getQueueableRelations());
+        foreach (['user', 'team', 'billing'] as $relation) {
+            $this->assertTrue($actual->relationLoaded($relation));
+        }
     }
 
     public function testFailsToCreateTeamOwnerModel(): void
     {
-        $repository = new MemberRepository(new Member());
-
         $this->expectException(QueryException::class);
-        $repository->createTeamOwner(['password' => 'secret'], factory(Team::class)->create());
+        $this->repository->createTeamOwner(['password' => 'secret'], factory(Team::class)->create());
     }
 
     public function testUpdatesModel(): void
     {
         $model = factory(Member::class)->create();
-        $repository = new MemberRepository(new Member());
-
         $expected = $this->makeMemberData();
-        $actual = $repository->update($model->id, $expected);
+        $actual = $this->repository->update($model->id, $expected);
 
         $this->assertEquals($expected['projects'], $actual->projects()->pluck('id')->toArray());
         $this->assertEquals($expected['roles'], $actual->roles()->pluck('id')->toArray());
@@ -249,18 +198,14 @@ class MemberRepositoryTest extends TestCase
 
     public function testThrowsModelNotFoundExceptionOnModelUpdateWithNotExistingModel(): void
     {
-        $repository = new MemberRepository(new Member());
-
         $this->expectException(ModelNotFoundException::class);
-        $repository->update(0, []);
+        $this->repository->update(0, []);
     }
 
     public function testDeletesModel(): void
     {
         $model = factory(Member::class)->create();
-        $repository = new MemberRepository(new Member());
-
-        $this->assertTrue($repository->delete($model->id));
+        $this->assertTrue($this->repository->delete($model->id));
     }
 
     public function testDoesNotDeleteModel(): void
@@ -270,7 +215,6 @@ class MemberRepositoryTest extends TestCase
             ->withNoArgs()
             ->with(1, ['*'])
             ->andReturn($member);
-
         $repository = new MemberRepository($this->member);
 
         $this->assertFalse($repository->delete(1));
@@ -278,10 +222,8 @@ class MemberRepositoryTest extends TestCase
 
     public function testFailsToDeleteModel(): void
     {
-        $repository = new MemberRepository(new Member());
         $this->expectException(ModelNotFoundException::class);
-
-        $this->assertTrue($repository->delete(0));
+        $this->assertTrue($this->repository->delete(0));
     }
 
     private function makeMemberData(): array

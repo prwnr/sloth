@@ -13,7 +13,6 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication, WithFaker, RefreshDatabase;
 
-    /** @var MockInterface */
     protected $team;
 
     /** @var MockInterface */
@@ -24,8 +23,7 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
         $this->artisan('sloth:install');
 
-        $this->team = \Mockery::mock(Team::class);
-        $this->team->shouldReceive('getAttribute')->with('id')->andReturn(1);
+        $this->team = factory(Team::class)->create();
 
         $this->user = \Mockery::mock(User::class);
         $this->user->shouldReceive('getAttribute')->with('id')->andReturn(1);
