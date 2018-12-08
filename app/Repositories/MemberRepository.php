@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Team;
 use App\Models\Team\Member;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,29 @@ class MemberRepository implements RepositoryInterface
     public function all(array $columns = ['*']): Collection
     {
         return $this->member->where('team_id', Auth::user()->team_id)->get($columns);
+    }
+
+    /**
+     * @param int $id
+     * @param array $options ['active' => true, 'date' => true/date('Y-m-d')]
+     * @return Collection
+     */
+    public function timeLogs(int $id, array $options): Collection
+    {
+        $logs = $this->find($id)->logs();
+        $date = $options['date'] ?? null;
+        if ($date) {
+            $logs->whereDate('created_at', $this->getDateFilter($date));
+        }
+
+        if (isset($options['active'])) {
+            $logs->whereNotNull('start');
+        }
+
+        $logs = $logs->get();
+        $logs->loadMissing('project', 'task');
+
+        return $logs;
     }
 
     /**
@@ -156,4 +180,23 @@ class MemberRepository implements RepositoryInterface
         ]);
         $member->billing()->associate($billing);
     }
+    /**
+     * @param null|string $date
+     * @return string
+     */
+    private function getDateFilter(?string $date): string
+    {
+        if (!$date) {
+            $date = Carbon::today();
+        }
+
+        if (\is_string($date)) {
+            $date = trim($date, '\"');
+            [$year, $month, $day] = explode('-', $date);
+            $date = Carbon::createFromDate($year, $month, $day);
+        }
+
+        return $date->format('Y-m-d');
+    }
+
 }

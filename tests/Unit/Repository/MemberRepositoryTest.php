@@ -8,8 +8,10 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\Models\Team\Member;
+use App\Models\TimeLog;
 use App\Models\User;
 use App\Repositories\MemberRepository;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -130,6 +132,54 @@ class MemberRepositoryTest extends TestCase
         foreach ($expectedRelations as $expectedRelation) {
             $this->assertTrue($actual->first()->relationLoaded($expectedRelation));
         }
+    }
+
+    public function testReturnUserTimeLogs(): void
+    {
+        $member = factory(Member::class)->create();
+        factory(TimeLog::class, 3)->create(['member_id' => $member->id]);
+
+        $repository = new MemberRepository(new Member());
+        $actual = $repository->timeLogs($member->id, []);
+
+        $this->assertInstanceOf(TimeLog::class, $actual->first());
+        $this->assertTrue($actual->first()->relationLoaded('project'));
+        $this->assertTrue($actual->first()->relationLoaded('task'));
+        $this->assertEquals(3, $actual->count());
+        $this->assertEquals($member->id, $actual->first()->member_id);
+    }
+
+    public function testReturnUserActiveTimeLogs(): void
+    {
+        $member = factory(Member::class)->create();
+        factory(TimeLog::class, 3)->create(['member_id' => $member->id]);
+        factory(TimeLog::class, 1)->create(['member_id' => $member->id, 'start' => Carbon::today()]);
+
+        $repository = new MemberRepository(new Member());
+        $actual = $repository->timeLogs($member->id, ['active' => true]);
+
+        $this->assertInstanceOf(TimeLog::class, $actual->first());
+        $this->assertTrue($actual->first()->relationLoaded('project'));
+        $this->assertTrue($actual->first()->relationLoaded('task'));
+        $this->assertEquals(1, $actual->count());
+        $this->assertEquals($member->id, $actual->first()->member_id);
+    }
+
+    public function testReturnUserTimeLogsFromDate(): void
+    {
+        $member = factory(Member::class)->create();
+        $expected = factory(TimeLog::class, 3)->create(['member_id' => $member->id]);
+
+        $repository = new MemberRepository(new Member());
+        $actual = $repository->timeLogs($member->id, [
+            'date' => Carbon::createFromTimeString($expected->first()->created_at)->format('Y-m-d')
+        ]);
+
+        $this->assertInstanceOf(TimeLog::class, $actual->first());
+        $this->assertEquals(1, $actual->count());
+        $this->assertTrue($actual->first()->relationLoaded('project'));
+        $this->assertTrue($actual->first()->relationLoaded('task'));
+        $this->assertEquals($member->id, $actual->first()->member_id);
     }
 
     public function testCreatesModel(): void
