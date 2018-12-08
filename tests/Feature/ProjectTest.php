@@ -17,11 +17,7 @@ class ProjectTest extends FeatureTestCase
     public function testProjectsAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-        for ($i = 0; $i < 5; $i++) {
-            factory(Project::class)->create([
-                'team_id' => $this->user->team_id
-            ]);
-        }
+        factory(Project::class, 5)->create(['team_id' => $this->user->team_id]);
 
         $response = $this->json(Request::METHOD_GET, '/api/projects');
 

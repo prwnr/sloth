@@ -39,7 +39,7 @@ class ProjectRequest extends FormRequest
         });
 
         if ($this->project) {
-            $uniqueProjectRule = $uniqueProjectRule->ignore($this->project->id);
+            $uniqueProjectRule = $uniqueProjectRule->ignore($this->project);
         }
 
         return [

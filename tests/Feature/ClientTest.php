@@ -16,11 +16,7 @@ class ClientTest extends FeatureTestCase
     public function testClientsAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-        for ($i = 0; $i < 5; $i++) {
-            factory(Client::class)->create([
-                'team_id' => $this->user->team_id
-            ]);
-        }
+        factory(Client::class, 5)->create(['team_id' => $this->user->team_id]);
 
         $response = $this->json(Request::METHOD_GET, '/api/clients');
 

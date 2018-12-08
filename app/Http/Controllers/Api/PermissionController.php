@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Permission;
 use App\Http\Resources\Permission as PermissionResource;
+use App\Repositories\PermissionRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -13,6 +14,21 @@ use App\Http\Controllers\Controller;
  */
 class PermissionController extends Controller
 {
+
+    /**
+     * @var PermissionRepository
+     */
+    private $permissionRepository;
+
+    /**
+     * PermissionController constructor.
+     * @param PermissionRepository $permissionRepository
+     */
+    public function __construct(PermissionRepository $permissionRepository)
+    {
+        $this->permissionRepository = $permissionRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,6 +36,6 @@ class PermissionController extends Controller
      */
     public function index(): PermissionResource
     {
-        return new PermissionResource(Permission::all());
+        return new PermissionResource($this->permissionRepository->all());
     }
 }

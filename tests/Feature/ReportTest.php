@@ -256,14 +256,12 @@ class ReportTest extends FeatureTestCase
         for ($i = 0; $i < 2; $i++) {
             $project = factory(Project::class)->create(['team_id' => $this->user->team_id]);
             $this->createdProjects[] = $project->id;
-            for ($j = 0; $j < 5; $j++) {
-                factory(TimeLog::class)->create([
-                    'member_id' => $this->user->member()->id,
-                    'project_id' => $project->id,
-                    'start' => null,
-                    'created_at' => $this->faker->dateTimeThisMonth()
-                ]);
-            }
+            factory(TimeLog::class, 5)->create([
+                'member_id' => $this->user->member()->id,
+                'project_id' => $project->id,
+                'start' => null,
+                'created_at' => $this->faker->dateTimeThisMonth()
+            ]);
         }
     }
 }

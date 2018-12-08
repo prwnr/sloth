@@ -6,14 +6,11 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Team\Member;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 abstract class FeatureTestCase extends TestCase
 {
-    use WithFaker;
 
     /**
      * @var Member
@@ -28,7 +25,6 @@ abstract class FeatureTestCase extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->artisan('sloth:install');
         $this->member = factory(Member::class)->create();
         $this->user = $this->member->user;
         $this->assertInstanceOf(Member::class, $this->member);

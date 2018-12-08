@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\{Team\Creator, User};
 use App\Http\Controllers\Controller;
+use App\Repositories\MemberRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -32,18 +33,10 @@ class RegisterController extends Controller
     protected $redirectTo = '/';
 
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * Create a new controller instance.
-     *
-     * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct()
     {
-        $this->request = $request;
         $this->middleware('guest');
     }
 

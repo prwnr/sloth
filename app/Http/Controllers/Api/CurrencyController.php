@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Currency;
 use App\Http\Resources\Currency as CurrencyResource;
 use App\Http\Controllers\Controller;
+use App\Repositories\CurrencyRepository;
 
 /**
  * Class CurrencyController
@@ -12,6 +12,21 @@ use App\Http\Controllers\Controller;
  */
 class CurrencyController extends Controller
 {
+
+    /**
+     * @var CurrencyRepository
+     */
+    private $currencyRepository;
+
+    /**
+     * CurrencyController constructor.
+     * @param CurrencyRepository $currencyRepository
+     */
+    public function __construct(CurrencyRepository $currencyRepository)
+    {
+        $this->currencyRepository = $currencyRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,6 +34,6 @@ class CurrencyController extends Controller
      */
     public function index(): CurrencyResource
     {
-        return new CurrencyResource(Currency::all());
+        return new CurrencyResource($this->currencyRepository->all());
     }
 }

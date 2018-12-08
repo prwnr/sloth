@@ -2,10 +2,11 @@
 
 namespace App\Models\Team;
 
-use App\Models\{Currency, Permission, Role, Team, User};
+use App\Models\{Role, Team, User};
+use App\Repositories\{CurrencyRepository, MemberRepository, PermissionRepository};
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\{Facades\DB, Facades\Hash, Facades\Storage};
+use Illuminate\Support\{Facades\DB, Facades\Storage};
 
 /**
  * Class Creator
@@ -35,21 +36,31 @@ class Creator
     private $member;
 
     /**
-     * @var User
-     */
-    private $user;
-
-    /**
      * @var Team
      */
     private $team;
+
+    /**
+     * @var MemberRepository
+     */
+    private $memberRepository;
+
+    /**
+     * @var PermissionRepository
+     */
+    private $permissionRepository;
+
+    /**
+     * @var CurrencyRepository
+     */
+    private $currencyRepository;
 
     /**
      * @return User
      */
     public function getUser(): User
     {
-        return $this->user;
+        return $this->member->user;
     }
 
     /**
@@ -58,6 +69,9 @@ class Creator
      */
     public function __construct(array $data)
     {
+        $this->memberRepository = app()->make(MemberRepository::class);
+        $this->permissionRepository = app()->make(PermissionRepository::class);
+        $this->currencyRepository = app()->make(CurrencyRepository::class);
         $this->data = $data;
     }
 
@@ -98,26 +112,18 @@ class Creator
      */
     private function createUser(): void
     {
-        /** @var User $user */
-        $this->user = $this->team->users()->create([
+        $data = [
             'firstname' => $this->data['firstname'],
             'lastname' => $this->data['lastname'],
             'email' => $this->data['email'],
-            'password' => Hash::make($this->data['password']),
-            'owns_team' => $this->team->id,
-            'first_login' => false
-        ]);
+            'password' => $this->data['password'],
+            'first_login' => false,
+            'billing_rate' => 0,
+            'billing_type' => '',
+            'billing_currency' => $this->currencyRepository->first()->id
+        ];
 
-        $this->member = new Member();
-        $this->member->user()->associate($this->user);
-        $this->member->team()->associate($this->team);
-        $billing = $this->member->billing()->create([
-            'rate' => 0,
-            'type' => '',
-            'currency_id' => Currency::first()->id
-        ]);
-        $this->member->billing()->associate($billing);
-        $this->member->save();
+        $this->member = $this->memberRepository->createTeamOwner($data, $this->team);
     }
 
     /**
@@ -173,8 +179,7 @@ class Creator
     {
         $assignPermissions = [];
         foreach ((array) $this->files['permissions'] as $permissionRaw) {
-            $permission = Permission::where('name', $permissionRaw['name'])->firstOrFail();
-            $assignPermissions[] = $permission->id;
+            $assignPermissions[] = $this->permissionRepository->findByName($permissionRaw['name'])->id;
         }
 
         $role->perms()->sync($assignPermissions);
@@ -188,8 +193,7 @@ class Creator
     {
         $assignPermissions = [];
         foreach ($permissions as $name) {
-            $permission = Permission::where('name', $name)->firstOrFail();
-            $assignPermissions[] = $permission->id;
+            $assignPermissions[] = $this->permissionRepository->findByName($name)->id;
         }
 
         $role->perms()->sync($assignPermissions);

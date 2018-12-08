@@ -17,11 +17,7 @@ class MemberTest extends FeatureTestCase
     public function testMembersAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-        for ($i = 0; $i < 5; $i++) {
-            factory(Member::class)->create([
-                'team_id' => $this->user->team_id
-            ]);
-        }
+        factory(Member::class, 5)->create(['team_id' => $this->user->team_id]);
 
         $response = $this->json(Request::METHOD_GET, '/api/members');
 

@@ -30,7 +30,7 @@ class UserRequest extends FormRequest
     {
         $uniqueUserRule = Rule::unique('users', 'email');
         if ($this->user) {
-            $uniqueUserRule = $uniqueUserRule->ignore($this->user->id);
+            $uniqueUserRule = $uniqueUserRule->ignore($this->user);
         }
 
         $requiredStringRules = [

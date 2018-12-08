@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleRequest;
 use App\Http\Resources\Role as RoleResource;
 use App\Models\{Role, User};
+use App\Repositories\RoleRepository;
 use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Session};
 
@@ -17,14 +18,27 @@ class RoleController extends Controller
 {
 
     /**
+     * @var RoleRepository
+     */
+    private $roleRepository;
+
+    /**
+     * RoleController constructor.
+     * @param RoleRepository $roleRepository
+     */
+    public function __construct(RoleRepository $roleRepository)
+    {
+        $this->roleRepository = $roleRepository;
+    }
+
+    /**
      * Show list of all roles
      *
      * @return RoleResource
      */
     public function index(): RoleResource
     {
-        $roles = Role::findFromTeam(Auth::user()->team)->get();
-        return new RoleResource($roles);
+        return new RoleResource($this->roleRepository->all());
     }
 
     /**
@@ -35,27 +49,15 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request): JsonResponse
     {
-        $data = $request->all();
-
-        /** @var User $user */
-        $user = Auth::user();
-        if (Role::where(['name' => $data['name'], 'team_id' => $user->team_id])->first()) {
+        if ($this->roleRepository->findByName($request->input('name'))) {
             return response()->json(['message' => __('Role with this name already exists')], Response::HTTP_BAD_REQUEST);
         }
 
         try {
-            DB::beginTransaction();
-            $role = $user->team->roles()->create([
-                'name' => $data['name'],
-                'display_name' => $data['display_name'],
-                'description' => $data['description']
-            ]);
-
-            $role->members()->sync($data['members'] ?? []);
-            $role->perms()->sync($data['permissions'] ?? []);
-            DB::commit();
+            $role = DB::transaction(function () use ($request) {
+                return $this->roleRepository->create($request->all());
+            });
         } catch (\Exception $ex) {
-            DB::rollBack();
             report($ex);
             return response()->json(['message' => __('Something went wrong when creating new role. Please try again')], Response::HTTP_BAD_REQUEST);
         }
@@ -66,53 +68,38 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Role $role
+     * @param int $id
      * @return RoleResource
      */
-    public function show(Role $role): RoleResource
+    public function show(int $id): RoleResource
     {
-        $role->loadMissing(['perms', 'members']);
-        return new RoleResource($role);
+        return new RoleResource($this->roleRepository->findWith($id, ['perms', 'members']));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param RoleRequest $request
-     * @param Role $role
+     * @param int $id
      * @return JsonResponse
      */
-    public function update(RoleRequest $request, Role $role): JsonResponse
+    public function update(RoleRequest $request, int $id): JsonResponse
     {
+        $role = $this->roleRepository->find($id);
         if (!$role->isEditable()) {
             return response()->json(['message' => __('You cannot edit this role')], Response::HTTP_BAD_REQUEST);
         }
 
-        $data = $request->all();
-        $exists = Role::where([
-            ['name', '=', $data['name']],
-            ['team_id', '=', $role->team_id],
-            ['id', '<>', $role->id]
-        ])->first();
-
-        if ($exists) {
+        $similar = $this->roleRepository->findByName($request->input('name'));
+        if ($similar && $similar->id !== $role->id) {
             return response()->json(['message' => __('Role with this name already exists')], Response::HTTP_BAD_REQUEST);
         }
 
         try {
-            DB::beginTransaction();
-            $role->update([
-                'name' => $data['name'],
-                'display_name' => $data['display_name'],
-                'description' => $data['description']
-            ]);
-
-            $role->members()->sync($data['members'] ?? []);
-            $role->perms()->sync($data['permissions'] ?? []);
-            $role->touch();
-            DB::commit();
+            $role = DB::transaction(function () use ($id, $request) {
+                return $this->roleRepository->update($id, $request->all());
+            });
         } catch (\Exception $ex) {
-            DB::rollBack();
             report($ex);
             return response()->json(['message' => __('Failed to update role. Please try again')], Response::HTTP_BAD_REQUEST);
         }
@@ -123,23 +110,25 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Role $role
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Role $role): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
+        $role = $this->roleRepository->find($id);
         if (!$role->isDeletable()) {
             return response()->json(['message' => __('You can\'t delete this role')], Response::HTTP_FORBIDDEN);
         }
 
-        DB::beginTransaction();
         try {
-            if ($role->delete()) {
-                DB::commit();
-                return response()->json(null, Response::HTTP_NO_CONTENT);   
+            $success = DB::transaction(function () use ($id) {
+                return $this->roleRepository->delete($id);
+            });
+
+            if ($success) {
+                return response()->json(null, Response::HTTP_NO_CONTENT);
             }
         } catch (\Exception $ex) {
-            DB::rollBack();
             return response()->json([
                 'message' => $ex->getMessage()
             ], Response::HTTP_BAD_REQUEST);

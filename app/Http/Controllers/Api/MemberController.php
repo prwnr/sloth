@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\MemberRequest;
 use App\Http\Resources\Project as ProjectResource;
 use App\Mail\WelcomeMail;
+use App\Repositories\MemberRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 use App\Models\{Report\MemberReport, Team, Team\Member, User};
@@ -21,15 +22,27 @@ class MemberController extends Controller
 {
 
     /**
+     * @var MemberRepository
+     */
+    private $memberRepository;
+
+    /**
+     * MemberController constructor.
+     * @param MemberRepository $memberRepository
+     */
+    public function __construct(MemberRepository $memberRepository)
+    {
+        $this->memberRepository = $memberRepository;
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return MemberResource
      */
     public function index(): MemberResource
     {
-        $members = Member::findFromTeam(Auth::user()->team)->get();
-        $members->loadMissing('roles');
-        return new MemberResource($members);
+        return new MemberResource($this->memberRepository->allWith(['roles']));
     }
 
     /**
@@ -52,37 +65,20 @@ class MemberController extends Controller
     public function store(MemberRequest $request): JsonResponse
     {
         $data = $request->all();
-        /** @var Team $team */
-        $team = Auth::user()->team;
 
         try {
-            DB::beginTransaction();
-            [$user, $password] = $this->createUser($team, $data);
-
-            $member = new Member();
-            $member->user()->associate($user);
-            $member->team()->associate($team);
-            $billing = $member->billing()->create([
-                'rate' => $data['billing_rate'],
-                'type' => $data['billing_type'],
-                'currency_id' => $data['billing_currency']
-            ]);
-            $member->billing()->associate($billing);
-            $member->save();
-
-            $member->attachRoles($data['roles']);
-            $member->projects()->sync($data['projects'] ?? []);
-
-            DB::commit();
+            $data['password'] = str_random(10);
+            $member = DB::transaction(function () use ($data) {
+               return $this->memberRepository->create($data);
+            });
         } catch (\Exception $ex) {
-            DB::rollBack();
             return response()->json([
                 'message' =>'Something went wrong when creating new team member. Please try again'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         try {
-            Mail::to($data['email'])->send(new WelcomeMail($user, $password));
+            Mail::to($data['email'])->send(new WelcomeMail($member->user, $data['password']));
         } catch (\Exception $ex) {
             $memberResource = new MemberResource($member);
             $memberResource->additional([
@@ -97,12 +93,12 @@ class MemberController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Team\Member $member
+     * @param int $id
      * @return MemberResource
      */
-    public function show(Member $member): MemberResource
+    public function show(int $id): MemberResource
     {
-        $member->loadMissing(['projects', 'billing', 'user', 'roles', 'billing.currency', 'logs']);
+        $member = $this->memberRepository->findWith($id, ['projects', 'billing', 'user', 'roles', 'billing.currency', 'logs']);
 
         $report = new MemberReport(['members' => [$member->user->id]]);
 
@@ -117,27 +113,17 @@ class MemberController extends Controller
      * Update the specified resource in storage.
      *
      * @param MemberRequest $request
-     * @param  \App\Models\Team\Member $member
+     * @param int $id
      * @return JsonResponse
      */
-    public function update(MemberRequest $request, Member $member): JsonResponse
+    public function update(MemberRequest $request, int $id): JsonResponse
     {
-        $data = $request->all();
         try {
-            DB::beginTransaction();
-            $member->roles()->sync($data['roles'] ?? []);
-            $member->billing()->update([
-                'rate' => $data['billing_rate'],
-                'type' => $data['billing_type'],
-                'currency_id' => $data['billing_currency']
-            ]);
+            $member = DB::transaction(function () use ($id, $request) {
+                return $this->memberRepository->update($id, $request->all()) ;
+            });
 
-            $member->projects()->sync($data['projects'] ?? []);
-            $member->touch();
-
-            DB::commit();
         } catch (\Exception $ex) {
-            DB::rollBack();
             return response()->json([
                 'message' => __('Failed to update team member. Please try again')
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -149,19 +135,20 @@ class MemberController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Team\Member $member
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Member $member): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        DB::beginTransaction();
         try {
-            if ($member->delete() && ($member->billing && $member->billing->delete())) {
-                DB::commit();
-                return response()->json(null, Response::HTTP_NO_CONTENT);   
+            $success = DB::transaction(function () use ($id) {
+                return $this->memberRepository->delete($id);
+            });
+
+            if ($success) {
+                return response()->json(null, Response::HTTP_NO_CONTENT);
             }
         } catch (\Exception $ex) {
-            DB::rollBack();
             return response()->json([
                 'message' => $ex->getMessage()
             ], Response::HTTP_BAD_REQUEST);
@@ -170,28 +157,5 @@ class MemberController extends Controller
         return response()->json([
             'message' => __('Something went wrong and member could not be deleted. It may not exists, please try again')
         ], Response::HTTP_BAD_REQUEST);
-    }
-
-    /**
-     * @param $team
-     * @param $data
-     * @return array
-     */
-    private function createUser($team, $data): array
-    {
-        $password = null;
-        /** @var User $user */
-        $user = User::where('email', $data['email'])->first();
-        if (!$user) {
-            $password = str_random(10);
-            $user = $team->users()->create([
-                'firstname' => $data['firstname'],
-                'lastname' => $data['lastname'],
-                'email' => $data['email'],
-                'password' => Hash::make($password)
-            ]);
-        }
-
-        return [$user, $password];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Team\Member;
 use App\Models\Team\Teamed;
+use App\Repositories\PermissionRepository;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -136,7 +137,8 @@ class User extends Authenticatable
     {
         $roles = $this->member()->roles()->select(['id', 'name', 'display_name'])->get();
         $permissions = [];
-        foreach (Permission::all() as $perm) {
+        $permissionRepository = new PermissionRepository(new Permission());
+        foreach ($permissionRepository->all() as $perm) {
             if ($this->member()->can($perm->name)) {
                 $permissions[] = $perm->name;
             }

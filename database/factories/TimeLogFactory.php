@@ -8,9 +8,8 @@ $factory->define(App\Models\TimeLog::class, function (Faker $faker) {
         'task_id' => factory(\App\Models\Task::class)->create()->id,
         'member_id' => factory(\App\Models\Team\Member::class)->create()->id,
         'description' => $faker->sentence,
-        'start' => $faker->dateTime(),
+        'start' => null,
         'duration' => $faker->numberBetween(0, 99999),
-        'created_at' => $faker->date(),
-        'updated_at' => $faker->date()
+        'created_at' => $faker->date('Y-m-d H:i:s')
     ];
 });
