@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Permission;
 use App\Http\Resources\Permission as PermissionResource;
 use App\Repositories\PermissionRepository;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 /**

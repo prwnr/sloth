@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleRequest;
 use App\Http\Resources\Role as RoleResource;
-use App\Models\{Role, User};
 use App\Repositories\RoleRepository;
 use Illuminate\Http\{JsonResponse, Response};
-use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Session};
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class RoleController

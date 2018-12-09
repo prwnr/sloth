@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Date\CustomRange;
 use App\Models\Report\{Periodic\HoursReport, FullReport, Periodic\SalesReport, Periodic\UserProjectsReport};
-use App\Models\Team\Member;
 use Illuminate\Http\{JsonResponse, Request};
 use App\Http\Controllers\Controller;
 
@@ -26,37 +25,37 @@ class ReportController extends Controller
 
     /**
      * @param Request $request
-     * @param Member $member
+     * @param int $id
      * @return JsonResponse
      */
-    public function show(Request $request, Member $member): JsonResponse
+    public function show(Request $request, int $id): JsonResponse
     {
         $options = $request->input('filters');
-        $options['members'] = [$member->id];
+        $options['members'] = [$id];
 
         return response()->json($this->createFullReport($options));
     }
 
     /**
-     * @param Member $member
+     * @param int $id
      * @param string $period
      * @return JsonResponse
      */
-    public function userHours(Member $member, string $period): JsonResponse
+    public function userHours(int $id, string $period): JsonResponse
     {
-        $report = new HoursReport(['members' => [$member->id]], $period);
+        $report = new HoursReport(['members' => [$id]], $period);
 
         return response()->json($report->generate());
     }
 
     /**
-     * @param Member $member
+     * @param int $id
      * @param string $period
      * @return JsonResponse
      */
-    public function userProjects(Member $member, string $period): JsonResponse
+    public function userProjects(int $id, string $period): JsonResponse
     {
-        $report = new UserProjectsReport(['members' => [$member->id]], $period);
+        $report = new UserProjectsReport(['members' => [$id]], $period);
 
         return response()->json($report->generate());
     }

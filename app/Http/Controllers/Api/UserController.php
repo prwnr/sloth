@@ -9,8 +9,7 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Repositories\MemberRepository;
 use App\Repositories\UserRepository;
-use Carbon\Carbon;
-use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Hash};
+use Illuminate\Support\{Facades\Auth, Facades\DB};
 use Illuminate\Http\{JsonResponse, Request, Response};
 
 /**

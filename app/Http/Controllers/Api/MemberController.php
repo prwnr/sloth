@@ -8,9 +8,9 @@ use App\Mail\WelcomeMail;
 use App\Repositories\MemberRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
-use App\Models\{Report\MemberReport, Team, Team\Member, User};
+use App\Models\{Report\MemberReport};
 use Illuminate\Http\Response;
-use Illuminate\Support\{Facades\Auth, Facades\DB, Facades\Hash};
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Member as MemberResource;
 
@@ -46,13 +46,15 @@ class MemberController extends Controller
     }
 
     /**
-     * @param Member $member
+     * @param int $id
      * @return ProjectResource
      */
-    public function showProjects(Member $member): ProjectResource
+    public function showProjects(int $id): ProjectResource
     {
+        $member = $this->memberRepository->find($id);
         $projects = $member->projects()->where('team_id', '=', $member->user->team_id)->get();
         $projects->loadMissing('tasks');
+
         return new ProjectResource($projects);
     }
 

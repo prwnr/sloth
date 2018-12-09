@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ProjectRequest;
-use App\Models\{Report\ProjectReport, Team, Client, Project};
+use App\Models\{Report\ProjectReport, Project};
 use App\Repositories\ProjectRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Project as ProjectResource;
 
 /**

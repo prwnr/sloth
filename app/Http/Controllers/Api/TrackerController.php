@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Tracker\{CreateLogRequest, UpdateLogRequest, UpdateTimeRequest};
-use App\Models\TimeLog;
 use App\Http\Resources\TimeLog as TimeLogResource;
 use App\Repositories\TimeLogRepository;
-use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
