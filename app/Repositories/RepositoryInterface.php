@@ -30,7 +30,6 @@ interface RepositoryInterface
      * Get model by ID
      * @param int $id
      * @param array $columns
-     * @return Model
      */
     public function find(int $id, array $columns = ['*']);
 
@@ -39,14 +38,12 @@ interface RepositoryInterface
      * @param int $id
      * @param array $relations
      * @param array $columns
-     * @return Model
      */
     public function findWith(int $id, array $relations, array $columns = ['*']);
 
     /**
      * Create new model
      * @param array $data
-     * @return Model
      */
     public function create(array $data);
 
@@ -54,7 +51,6 @@ interface RepositoryInterface
      * Updated existing model by ID
      * @param int $id
      * @param array $data
-     * @return Model
      */
     public function update(int $id, array $data);
 

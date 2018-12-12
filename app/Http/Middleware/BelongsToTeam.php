@@ -50,7 +50,7 @@ class BelongsToTeam
             $model = $class::findOrFail($model);
         }
         if ($model->team_id !== $user->team_id) {
-            return abort(404);
+            abort(404);
         }
 
         return $next($request);
