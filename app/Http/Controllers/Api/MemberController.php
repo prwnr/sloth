@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\MemberRequest;
-use App\Http\Resources\Project as ProjectResource;
 use App\Mail\WelcomeMail;
 use App\Repositories\MemberRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\{JsonResource, ResourceCollection};
 use Illuminate\Support\Facades\Mail;
 use App\Models\{Report\MemberReport};
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Member as MemberResource;
 
 /**
  * Class MemberController
@@ -38,24 +37,24 @@ class MemberController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return MemberResource
+     * @return ResourceCollection
      */
-    public function index(): MemberResource
+    public function index(): ResourceCollection
     {
-        return new MemberResource($this->memberRepository->allWith(['roles']));
+        return new ResourceCollection($this->memberRepository->allWith(['roles']));
     }
 
     /**
      * @param int $id
-     * @return ProjectResource
+     * @return JsonResource
      */
-    public function showProjects(int $id): ProjectResource
+    public function showProjects(int $id): JsonResource
     {
         $member = $this->memberRepository->find($id);
         $projects = $member->projects()->where('team_id', '=', $member->user->team_id)->get();
         $projects->loadMissing('tasks');
 
-        return new ProjectResource($projects);
+        return new JsonResource($projects);
     }
 
     /**
@@ -82,29 +81,29 @@ class MemberController extends Controller
         try {
             Mail::to($data['email'])->send(new WelcomeMail($member->user, $data['password']));
         } catch (\Exception $ex) {
-            $memberResource = new MemberResource($member);
+            $memberResource = new JsonResource($member);
             $memberResource->additional([
                 'warning' => __('There was an error during email delivery to new member with his account password.')
             ]);
             return $memberResource->response()->setStatusCode(Response::HTTP_CREATED);
         }
 
-        return (new MemberResource($member))->response()->setStatusCode(Response::HTTP_CREATED);
+        return (new JsonResource($member))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      *
      * @param int $id
-     * @return MemberResource
+     * @return JsonResource
      */
-    public function show(int $id): MemberResource
+    public function show(int $id): JsonResource
     {
         $member = $this->memberRepository->findWith($id, ['projects', 'billing', 'user', 'roles', 'billing.currency', 'logs']);
 
         $report = new MemberReport(['members' => [$member->user->id]]);
 
-        $meberResource = new MemberResource($member);
+        $meberResource = new JsonResource($member);
         $meberResource->additional([
             'report' => $report->generate()
         ]);
@@ -131,7 +130,7 @@ class MemberController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return (new MemberResource($member))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        return (new JsonResource($member))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**

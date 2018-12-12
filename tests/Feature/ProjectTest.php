@@ -7,7 +7,7 @@ use App\Models\Client;
 use App\Models\Currency;
 use App\Models\Project;
 use App\Models\Role;
-use App\Models\Task;
+use App\Models\Project\Task;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

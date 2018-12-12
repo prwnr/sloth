@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Project\Task;
 use App\Models\Team\Member;
 use App\Models\Team\Teamed;
 use Illuminate\Database\Eloquent\Model;

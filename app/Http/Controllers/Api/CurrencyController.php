@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Resources\Currency as CurrencyResource;
 use App\Http\Controllers\Controller;
 use App\Repositories\CurrencyRepository;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
  * Class CurrencyController
@@ -30,10 +30,10 @@ class CurrencyController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return CurrencyResource
+     * @return ResourceCollection
      */
-    public function index(): CurrencyResource
+    public function index(): ResourceCollection
     {
-        return new CurrencyResource($this->currencyRepository->all());
+        return new ResourceCollection($this->currencyRepository->all());
     }
 }

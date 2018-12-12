@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Resources\Permission as PermissionResource;
 use App\Repositories\PermissionRepository;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
  * Class PermissionController
@@ -30,10 +30,10 @@ class PermissionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return PermissionResource
+     * @return ResourceCollection
      */
-    public function index(): PermissionResource
+    public function index(): ResourceCollection
     {
-        return new PermissionResource($this->permissionRepository->all());
+        return new ResourceCollection($this->permissionRepository->all());
     }
 }

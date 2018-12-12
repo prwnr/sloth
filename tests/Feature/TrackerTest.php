@@ -5,7 +5,7 @@ namespace Tests\Feature;
 
 use App\Models\Project;
 use App\Models\Role;
-use App\Models\Task;
+use App\Models\Project\Task;
 use App\Models\Team\Member;
 use App\Models\TimeLog;
 use Illuminate\Http\Request;

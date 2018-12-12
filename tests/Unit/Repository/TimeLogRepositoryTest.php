@@ -3,7 +3,7 @@
 namespace Tests\Unit\Repository;
 
 use App\Models\Project;
-use App\Models\Task;
+use App\Models\Project\Task;
 use App\Models\Team\Member;
 use App\Models\TimeLog;
 use App\Repositories\TimeLogRepository;

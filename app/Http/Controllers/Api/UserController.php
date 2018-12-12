@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\{UserPasswordRequest, UserRequest};
-use App\Http\Resources\{TimeLog as TimeLogResource, User as UserResource, Users as UsersCollectionResource};
+use App\Http\Resources\User as UserResource;
 use App\Models\Team;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Repositories\MemberRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\{Facades\Auth, Facades\DB};
-use Illuminate\Http\{JsonResponse, Request, Response};
+use Illuminate\Http\{JsonResponse, Request, Resources\Json\JsonResource, Resources\Json\ResourceCollection, Response};
 
 /**
  * Class UserController
@@ -43,11 +43,11 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return UsersCollectionResource
+     * @return ResourceCollection
      */
-    public function index(): UsersCollectionResource
+    public function index(): ResourceCollection
     {
-        return new UsersCollectionResource($this->userRepository->all());
+        return new ResourceCollection($this->userRepository->all());
     }
 
     /**
@@ -64,7 +64,7 @@ class UserController extends Controller
             return response()->json(['error' => 'Date format is invalid'], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new TimeLogResource($logs))->response()->setStatusCode(Response::HTTP_OK);
+        return (new JsonResource($logs))->response()->setStatusCode(Response::HTTP_OK);
     }
 
     /**

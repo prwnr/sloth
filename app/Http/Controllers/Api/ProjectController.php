@@ -6,10 +6,10 @@ use App\Http\Requests\ProjectRequest;
 use App\Models\{Report\ProjectReport, Project};
 use App\Repositories\ProjectRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\{JsonResource, ResourceCollection};
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Project as ProjectResource;
 
 /**
  * Class ProjectController
@@ -35,11 +35,11 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return ProjectResource
+     * @return ResourceCollection
      */
-    public function index(): ProjectResource
+    public function index(): ResourceCollection
     {
-        return new ProjectResource($this->projectRepository->allWith(['tasks']));
+        return new ResourceCollection($this->projectRepository->allWith(['tasks']));
     }
 
     /**
@@ -68,19 +68,19 @@ class ProjectController extends Controller
             return response()->json(['message' => __('Something went wrong when creating new project. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new ProjectResource($project))->response()->setStatusCode(Response::HTTP_CREATED);
+        return (new JsonResource($project))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      *
      * @param int $id
-     * @return ProjectResource
+     * @return JsonResource
      */
-    public function show(int $id): ProjectResource
+    public function show(int $id): JsonResource
     {
         $project = $this->projectRepository->findWith($id, ['members', 'client', 'billing', 'tasks', 'budgetCurrency', 'tasks.currency', 'billing.currency']);
-        $projectResource = new ProjectResource($project);
+        $projectResource = new JsonResource($project);
 
         $report = new ProjectReport(['projects' => [$project->id]]);
 
@@ -108,7 +108,7 @@ class ProjectController extends Controller
             return response()->json(['message' => __('Something went wrong when updating project. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new ProjectResource($project))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        return (new JsonResource($project))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Resources\Currency as CurrencyResource;
-use App\Models\Billing;
 use App\Http\Resources\Billing as BillingResource;
+use App\Models\Billing;
 use App\Models\Project;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
  * Class BillingController
@@ -48,7 +48,7 @@ class BillingController extends Controller
     {
         return [
             'billing_types' => (new BillingResource(Billing::getRateTypes()))->toArray($request),
-            'currencies' => (new CurrencyResource($this->currencyRepository->all()))->toArray($request),
+            'currencies' => (new ResourceCollection($this->currencyRepository->all()))->toArray($request),
             'budget_periods' => Project::BUDGET_PERIOD
         ];
     }

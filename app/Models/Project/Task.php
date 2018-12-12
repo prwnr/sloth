@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Project;
 
+use App\Models\Currency;
+use App\Models\TimeLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

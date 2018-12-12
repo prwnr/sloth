@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Tracker\{CreateLogRequest, UpdateLogRequest, UpdateTimeRequest};
-use App\Http\Resources\TimeLog as TimeLogResource;
 use App\Repositories\TimeLogRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -49,7 +49,7 @@ class TrackerController extends Controller
         }
 
         $timeLog->loadMissing('project', 'task', 'member');
-        return (new TimeLogResource($timeLog))->response()->setStatusCode(Response::HTTP_CREATED);
+        return (new JsonResource($timeLog))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -70,7 +70,7 @@ class TrackerController extends Controller
             return response()->json(['message' => __('Something went wrong. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new TimeLogResource($timeLog))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        return (new JsonResource($timeLog))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -92,7 +92,7 @@ class TrackerController extends Controller
             return response()->json(['message' => __('Something went wrong stopping time. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new TimeLogResource($timeLog))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        return (new JsonResource($timeLog))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**

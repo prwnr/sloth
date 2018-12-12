@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleRequest;
-use App\Http\Resources\Role as RoleResource;
 use App\Repositories\RoleRepository;
-use Illuminate\Http\{JsonResponse, Response};
+use Illuminate\Http\{JsonResponse, Resources\Json\JsonResource, Resources\Json\ResourceCollection, Response};
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -33,11 +32,11 @@ class RoleController extends Controller
     /**
      * Show list of all roles
      *
-     * @return RoleResource
+     * @return ResourceCollection
      */
-    public function index(): RoleResource
+    public function index(): ResourceCollection
     {
-        return new RoleResource($this->roleRepository->all());
+        return new ResourceCollection($this->roleRepository->all());
     }
 
     /**
@@ -61,18 +60,18 @@ class RoleController extends Controller
             return response()->json(['message' => __('Something went wrong when creating new role. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new RoleResource($role))->response()->setStatusCode(Response::HTTP_CREATED);
+        return (new JsonResource($role))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      *
      * @param int $id
-     * @return RoleResource
+     * @return JsonResource
      */
-    public function show(int $id): RoleResource
+    public function show(int $id): JsonResource
     {
-        return new RoleResource($this->roleRepository->findWith($id, ['perms', 'members']));
+        return new JsonResource($this->roleRepository->findWith($id, ['perms', 'members']));
     }
 
     /**
@@ -103,7 +102,7 @@ class RoleController extends Controller
             return response()->json(['message' => __('Failed to update role. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new RoleResource($role))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        return (new JsonResource($role))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**

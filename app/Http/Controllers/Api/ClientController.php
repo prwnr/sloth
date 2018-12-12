@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ClientRequest;
-use App\Http\Resources\Client as ClientResource;
 use App\Models\Report\ClientReport;
 use App\Http\Controllers\Controller;
 use App\Repositories\ClientRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\{JsonResource, ResourceCollection};
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -35,11 +35,11 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return ClientResource
+     * @return ResourceCollection
      */
-    public function index(): ClientResource
+    public function index(): ResourceCollection
     {
-        return new ClientResource($this->clientRepository->allWith(['billing']));
+        return new ResourceCollection($this->clientRepository->allWith(['billing']));
     }
 
     /**
@@ -59,24 +59,25 @@ class ClientController extends Controller
             return response()->json(['message' => __('Something went wrong when creating new client. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new ClientResource($client))->response()->setStatusCode(Response::HTTP_CREATED);
+        return (new JsonResource($client))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      *
      * @param int $id
-     * @return ClientResource
+     * @return JsonResource
      */
-    public function show(int $id): ClientResource
+    public function show(int $id): JsonResource
     {
         $client = $this->clientRepository->findWith($id, ['projects', 'billing', 'billing.currency']);
         $report = new ClientReport(['clients' => [$client->id]]);
 
-        $clientResource = new ClientResource($client);
+        $clientResource = new JsonResource($client);
         $clientResource->additional([
             'report' => $report->generate()
         ]);
+
         return $clientResource;
     }
 
@@ -98,7 +99,7 @@ class ClientController extends Controller
             return response()->json(['message' => __('Failed to update client. Please try again')], Response::HTTP_BAD_REQUEST);
         }
 
-        return (new ClientResource($client))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+        return (new JsonResource($client))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**

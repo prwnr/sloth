@@ -2,10 +2,10 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\Models\Task::class, function (Faker $faker) {
+$factory->define(App\Models\Project\Task::class, function (Faker $faker) {
     return [
         'name' => $faker->word,
-        'type' => $faker->randomKey(\App\Models\Task::getTypes()),
+        'type' => $faker->randomKey(\App\Models\Project\Task::getTypes()),
         'billable' => $faker->boolean,
         'billing_rate' => $faker->numberBetween(0, 100),
         'currency_id' => \App\Models\Currency::all()->random()->id,

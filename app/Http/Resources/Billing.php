@@ -16,7 +16,7 @@ class Billing extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         $array = [];
         foreach ($this->resource as $key => $value) {

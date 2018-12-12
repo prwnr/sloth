@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Task;
+use App\Models\Project\Task;
 use App\Http\Controllers\Controller;
 
 /**

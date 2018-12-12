@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\TeamRequest;
 use App\Models\Team;
-use App\Http\Resources\Team as TeamResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +35,7 @@ class TeamController extends Controller
                 'name' => $request->input('name')
             ]);
 
-            return (new TeamResource($team))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+            return (new JsonResource($team))->response()->setStatusCode(Response::HTTP_ACCEPTED);
         } catch (\Exception $ex) {
             return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
