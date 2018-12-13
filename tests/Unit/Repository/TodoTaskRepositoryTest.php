@@ -3,6 +3,7 @@
 namespace Tests\Unit\Repository;
 
 use App\Models\Project\Task;
+use App\Models\Team\Member;
 use App\Models\TimeLog;
 use App\Models\TodoTask;
 use App\Repositories\TodoTaskRepository;
@@ -35,7 +36,7 @@ class TodoTaskRepositoryTest extends TestCase
     {
         $expected = factory(TodoTask::class)->create();
 
-        $expectedRelations = ['project', 'task', 'timelog'];
+        $expectedRelations = ['project', 'task', 'timelog', 'member'];
         $actual = $this->repository->findWith($expected->id, $expectedRelations);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
@@ -70,7 +71,7 @@ class TodoTaskRepositoryTest extends TestCase
     public function testReturnsCollectionWithRelation(): void
     {
         $expected = factory(TodoTask::class, 3)->create();
-        $expectedRelations = ['project', 'task', 'timelog'];
+        $expectedRelations = ['project', 'task', 'timelog', 'member'];
         $actual = $this->repository->allWith($expectedRelations);
 
         $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
@@ -125,6 +126,7 @@ class TodoTaskRepositoryTest extends TestCase
         $task = factory(Task::class)->create();
         return [
             'description' => $this->faker->sentence,
+            'member_id' => factory(Member::class)->create()->id,
             'project_id' => $task->project_id,
             'task_id' => $task->id,
             'timelog_id' => factory(TimeLog::class)->create()->id,

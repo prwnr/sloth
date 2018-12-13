@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Project\Task;
+use App\Models\Team\Member;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,8 +14,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TodoTask extends Model
 {
     protected $fillable = [
-        'description', 'project_id', 'task_id', 'timelog_id', 'finished'
+        'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished'
     ];
+
+    /**
+     * @return BelongsTo
+     */
+    public function member(): BelongsTo
+    {
+        return $this->belongsTo(Member::class);
+    }
 
     /**
      * @return BelongsTo
