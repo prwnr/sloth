@@ -31,14 +31,17 @@ class TodoTaskRepositoryTest extends TestCase
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
-    public function testFindsModelWithNoRelation(): void
+    public function testFindsModelWithRelation(): void
     {
         $expected = factory(TodoTask::class)->create();
 
-        $actual = $this->repository->findWith($expected->id, []);
+        $expectedRelations = ['project', 'task', 'timelog'];
+        $actual = $this->repository->findWith($expected->id, $expectedRelations);
 
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
-        $this->assertEmpty($actual->relationsToArray());
+        foreach ($expectedRelations as $relation) {
+            $this->assertTrue($actual->relationLoaded($relation));
+        }
     }
 
     public function testThrowsModelNotFoundExceptionOnFind(): void
@@ -64,14 +67,17 @@ class TodoTaskRepositoryTest extends TestCase
         $this->assertEquals(3, $actual->count());
     }
 
-    public function testReturnsCollectionWithNoRelation(): void
+    public function testReturnsCollectionWithRelation(): void
     {
         $expected = factory(TodoTask::class, 3)->create();
-        $actual = $this->repository->allWith([]);
+        $expectedRelations = ['project', 'task', 'timelog'];
+        $actual = $this->repository->allWith($expectedRelations);
 
         $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
         $this->assertEquals(3, $actual->count());
-        $this->assertEmpty($actual->first()->relationsToArray());
+        foreach ($expectedRelations as $relation) {
+            $this->assertTrue($actual->first()->relationLoaded($relation));
+        }
     }
 
     public function testCreatesModel(): void
