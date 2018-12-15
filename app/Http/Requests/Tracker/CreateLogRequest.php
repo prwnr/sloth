@@ -2,12 +2,17 @@
 
 namespace App\Http\Requests\Tracker;
 
+use App\Http\Requests\RequiresTask;
+use Illuminate\Foundation\Http\FormRequest;
+
 /**
  * Class CreateLogRequest
  * @package App\Http\Requests\Tracker
  */
-class CreateLogRequest extends LogRequest
+class CreateLogRequest extends FormRequest
 {
+
+    use RequiresTask;
 
     /**
      * Get the validation rules that apply to the request.

@@ -3,17 +3,25 @@
         <h1 class="text-center">New todo task</h1><hr>
 
         <form @submit.prevent="create" @change="form.errors.clear($event.target.name)" @keydown="form.errors.clear($event.target.name)">
-            <div class="row">
-                <div class="col-12">
-                    <div class="form-group">
-                        <label for="name">Choose your project</label>
-                        <select class="form-control" name="project" v-model="form.project_id" :class="{ 'is-invalid': form.errors.has('project_id')}">
-                            <option v-if="projects.length == 0" value="''" disabled selected="false">There are no projects that you could choose</option>
-                            <option v-for="project in projects" :value="project.id">{{ project.name }}</option>
-                        </select>
-                        <form-error :text="form.errors.get('project_id')" :show="form.errors.has('project_id')"></form-error>
+            <div class="form-group">
+                <label for="name">Write what you want to do</label>
+                <div class="input-group">
+                    <textarea id="name" type="text" class="form-control"
+                              name="name" value="" placeholder="Description" v-model="form.description" :maxlength="200"></textarea>
+                    <div class="input-group-append">
+                        <span class="input-group-text" v-text="(500 - form.description.length)"></span>
                     </div>
                 </div>
+                <form-error :text="form.errors.get('description')" :show="form.errors.has('description')"></form-error>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Choose associated project</label>
+                <select class="form-control" name="project" v-model="form.project_id" :class="{ 'is-invalid': form.errors.has('project_id')}">
+                    <option v-if="projects.length == 0" value="''" disabled selected="false">There are no projects that you could choose</option>
+                    <option v-for="project in projects" :value="project.id">{{ project.name }}</option>
+                </select>
+                <form-error :text="form.errors.get('project_id')" :show="form.errors.has('project_id')"></form-error>
             </div>
 
             <div class="form-group">
@@ -24,18 +32,6 @@
                 </select>
                 <form-error :text="form.errors.get('task_id')" :show="form.errors.has('task_id')"></form-error>
             </div>
-
-            <div class="form-group">
-                <label for="name">Write description <span class="small">(optional)</span></label>
-                <div class="input-group">
-                    <textarea id="name" type="text" class="form-control"
-                              name="name" value="" placeholder="Description" v-model="form.description" :maxlength="200"></textarea>
-                    <div class="input-group-append">
-                        <span class="input-group-text" v-text="(500 - form.description.length)"></span>
-                    </div>
-                </div>
-            </div>
-
             <div class="col-lg-12 p-0">
                 <button type="button" data-dismiss="modal" aria-label="Close" id="closeDialog" class="btn btn-danger" >Cancel</button>
                 <button class="btn btn-success float-right" type="submit">Create</button>

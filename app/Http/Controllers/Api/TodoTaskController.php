@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TodoTaskRequest;
 use App\Repositories\TodoTaskRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
@@ -43,10 +43,10 @@ class TodoTaskController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param TodoTaskRequest $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(TodoTaskRequest $request): JsonResponse
     {
         try {
             $todo = DB::transaction(function () use ($request) {
@@ -64,11 +64,11 @@ class TodoTaskController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param TodoTaskRequest $request
      * @param int $id
      * @return JsonResponse
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(TodoTaskRequest $request, int $id): JsonResponse
     {
         $todo = $this->repository->find($id);
         if ($todo->member->id !== Auth::user()->member()->id) {
