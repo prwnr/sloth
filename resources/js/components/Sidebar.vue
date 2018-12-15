@@ -26,6 +26,13 @@
                 </li>
 
                 <li class="nav-item">
+                    <router-link class="nav-link" :to="{ name: 'todo' }" tag="a">
+                        <i class="fa nav-icon fa-list-ul"></i>
+                        <p>Todo list</p>
+                    </router-link>
+                </li>
+
+                <li class="nav-item">
                     <router-link v-if="user.can('manage_team')" class="nav-link" :to="{ name: 'members.index' }" tag="a">
                         <i class="fa nav-icon fa-users"></i>
                         <p>Team</p>

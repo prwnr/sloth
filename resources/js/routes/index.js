@@ -26,6 +26,8 @@ import Tracker from '../views/Tracker.vue';
 import Profile from '../views/Profile.vue';
 import Reports from '../views/Reports.vue';
 
+import Todo from '../views/Todo.vue';
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -59,8 +61,11 @@ const routes = [
     //Profile route
     { path: '/profile', component: Profile, name: 'profile' },
 
-    //Reports routes
+    //Reports route
     { path: '/reports', component: Reports, name: 'reports' },
+
+    //Todos list route
+    { path: '/todo', component: Todo, name: 'todo' },
 ];
 
 export default new VueRouter({
