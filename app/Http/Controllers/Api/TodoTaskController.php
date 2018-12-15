@@ -2,63 +2,121 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\TodoTask;
+use App\Http\Controllers\Controller;
+use App\Repositories\TodoTaskRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TodoTaskController extends Controller
 {
+
+    /**
+     * @var TodoTaskRepository
+     */
+    private $repository;
+
+    /**
+     * TodoTaskController constructor.
+     * @param TodoTaskRepository $todoTaskRepository
+     */
+    public function __construct(TodoTaskRepository $todoTaskRepository)
+    {
+        $this->repository = $todoTaskRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return ResourceCollection
      */
-    public function index()
+    public function index(): ResourceCollection
     {
-        //
+        $user = Auth::user();
+        return new ResourceCollection($this->repository->allOfMemberWith($user->member()->id, ['project', 'task', 'timelog', 'member']));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        //
-    }
+        try {
+            $todo = DB::transaction(function () use ($request) {
+                return $this->repository->create($request->all());
+            });
+        } catch (\Exception $ex) {
+            report($ex);
+            return response()->json(['message' => __('Something went wrong when creating new todo task. Please try again')], Response::HTTP_BAD_REQUEST);
+        }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\TodoTask  $todoTask
-     * @return \Illuminate\Http\Response
-     */
-    public function show(TodoTask $todoTask)
-    {
-        //
+        $todo->loadMissing(['project', 'task', 'timelog', 'member']);
+        return (new JsonResource($todo))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TodoTask  $todoTask
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param int $id
+     * @return JsonResponse
      */
-    public function update(Request $request, TodoTask $todoTask)
+    public function update(Request $request, int $id): JsonResponse
     {
-        //
+        $todo = $this->repository->find($id);
+        if ($todo->member->id !== Auth::user()->member()->id) {
+            return response()->json(['message' => 'You are not allowed to edit this todo task'], Response::HTTP_FORBIDDEN);
+        }
+
+        try {
+            $todo = DB::transaction(function () use ($id, $request) {
+                return $this->repository->update($id, $request->all());
+            });
+        } catch (\Exception $ex) {
+            report($ex);
+            return response()->json(['message' => __('Failed to update todo task. Please try again')], Response::HTTP_BAD_REQUEST);
+        }
+
+        $todo->loadMissing(['project', 'task', 'timelog', 'member']);
+        return (new JsonResource($todo))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\TodoTask  $todoTask
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function destroy(TodoTask $todoTask)
+    public function destroy(int $id): JsonResponse
     {
-        //
+        $todo = $this->repository->find($id);
+        if ($todo->member->id !== Auth::user()->member()->id) {
+            return response()->json(['message' => 'You are not allowed to delete this todo task'], Response::HTTP_FORBIDDEN);
+        }
+
+        try {
+            $success = DB::transaction(function () use ($id) {
+                return $this->repository->delete($id);
+            });
+
+            if ($success) {
+                return response()->json(null, Response::HTTP_NO_CONTENT);
+            }
+        } catch (\Exception $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json([
+            'message' => __('Something went wrong and member could not be deleted. It may not exists, please try again')
+        ], Response::HTTP_BAD_REQUEST);
     }
 }

@@ -38,6 +38,9 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
     Route::put('time/{time}/duration', 'TrackerController@updateTime')->middleware('permission:track_time');
     Route::apiResource('time', 'TrackerController')->middleware('permission:track_time');
 
+    //Todos routes
+    Route::apiResource('todos', 'TodoTaskController')->except('show');
+
     //Report routes
     Route::post('reports', 'ReportController@index')->middleware('permission:view_reports');
     Route::post('reports/{member}', 'ReportController@show');

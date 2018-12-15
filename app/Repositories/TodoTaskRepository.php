@@ -27,9 +27,7 @@ class TodoTaskRepository implements RepositoryInterface
     }
 
     /**
-     * Get all models with given columns as Collection
-     * @param array $columns
-     * @return Collection
+     * {@inheritdoc}
      */
     public function all(array $columns = ['*']): Collection
     {
@@ -37,10 +35,7 @@ class TodoTaskRepository implements RepositoryInterface
     }
 
     /**
-     * Get all models with given columns and loaded relations as Collection
-     * @param array $relations
-     * @param array $columns
-     * @return Collection
+     * {@inheritdoc}
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
@@ -48,9 +43,18 @@ class TodoTaskRepository implements RepositoryInterface
     }
 
     /**
-     * Get model by ID
-     * @param int $id
+     * @param int $memberId
+     * @param array $relations
      * @param array $columns
+     * @return Collection
+     */
+    public function allOfMemberWith(int $memberId, array $relations, array $columns = ['*']): Collection
+    {
+        return $this->todoTask->query()->where('member_id', $memberId)->with($relations)->get($columns);
+    }
+
+    /**
+     * {@inheritdoc}
      * @return TodoTask
      */
     public function find(int $id, array $columns = ['*']): TodoTask
@@ -59,10 +63,7 @@ class TodoTaskRepository implements RepositoryInterface
     }
 
     /**
-     * Get model by ID and return it with relations loaded
-     * @param int $id
-     * @param array $relations
-     * @param array $columns
+     * {@inheritdoc}
      * @return TodoTask
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): TodoTask
@@ -71,8 +72,7 @@ class TodoTaskRepository implements RepositoryInterface
     }
 
     /**
-     * Create new model
-     * @param array $data
+     * {@inheritdoc}
      * @return TodoTask
      */
     public function create(array $data): TodoTask
@@ -81,9 +81,7 @@ class TodoTaskRepository implements RepositoryInterface
     }
 
     /**
-     * Updated existing model by ID
-     * @param int $id
-     * @param array $data
+     * {@inheritdoc}
      * @return TodoTask
      */
     public function update(int $id, array $data): TodoTask
@@ -95,9 +93,7 @@ class TodoTaskRepository implements RepositoryInterface
     }
 
     /**
-     * Delete model by ID
-     * @param int $id
-     * @return bool
+     * {@inheritdoc}
      */
     public function delete(int $id): bool
     {
