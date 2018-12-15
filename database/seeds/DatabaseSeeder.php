@@ -3,8 +3,8 @@
 use App\Models\Currency;
 use App\Models\Permission;
 use App\Models\Project;
+use App\Models\Project\Task;
 use App\Models\Role;
-use App\Models\Task;
 use App\Models\Team\Member;
 use App\Models\User;
 use Illuminate\Database\Seeder;
