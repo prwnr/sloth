@@ -75,9 +75,14 @@ class TodoTaskController extends Controller
             return response()->json(['message' => 'You are not allowed to edit this todo task'], Response::HTTP_FORBIDDEN);
         }
 
+        $data = $request->all();
+        if ($data['task_id'] === 0) {
+            $data['task_id'] = null;
+        }
+
         try {
-            $todo = DB::transaction(function () use ($id, $request) {
-                return $this->repository->update($id, $request->all());
+            $todo = DB::transaction(function () use ($id, $data) {
+                return $this->repository->update($id, $data);
             });
         } catch (\Exception $ex) {
             report($ex);

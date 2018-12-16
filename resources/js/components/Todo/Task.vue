@@ -3,15 +3,22 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="col-lg-12 p-0">
-                    Project: {{ item.project.name }} ({{ item.task.type }})
+                    Project: {{ item.project.name }} <span v-if="item.task">({{ item.task.name }})</span>
                 </div>
                 <div class="col-lg-12 mt-1 pl-1 pt-2 pb-0">
                     <h5>{{ item.description }}</h5>
                 </div>
             </div>
             <div class="col-lg-2 todo-buttons text-right">
-                <i class="fa fa-trash text-danger btn" @click="remove" title="Remove"></i>
                 <i class="fa fa-check text-success btn" @click="finish" title="Mark as finished"></i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 item-action-buttons">
+                <a href="" @click.prevent="remove" class="small text-danger"><i class="fa fa-trash" title="Delete"></i> delete</a>
+                <a href="" @click.prevent="edit" class="small text-primary" data-toggle="modal" data-target="#edit">
+                    <i class="fa fa-edit" title="Edit"></i> edit
+                </a>
             </div>
         </div>
     </div>
@@ -19,13 +26,17 @@
 
 <script>
     export default {
-        name: "Todo",
+        name: "Task",
 
         props: ['item'],
 
         methods: {
             finish() {
 
+            },
+
+            edit() {
+                this.$emit('updating-task', this.item)
             },
 
             remove() {
@@ -40,7 +51,7 @@
                     reverseButtons: true
                 }).then(result => {
                     if (result.value) {
-                        this.$emit('item-deleted', this.item.id);
+                        this.$emit('task-deleted', this.item.id);
                     }
                 })
             }
@@ -56,10 +67,5 @@
     .fa-check:hover {
         cursor: pointer;
         color: #218838 !important;
-    }
-
-    .fa-trash:hover {
-        cursor: pointer;
-        color: #c82333 !important;
     }
 </style>

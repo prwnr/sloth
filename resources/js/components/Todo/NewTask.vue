@@ -7,7 +7,7 @@
                 <label for="name">Write what you want to do</label>
                 <div class="input-group">
                     <textarea id="name" type="text" class="form-control"
-                              name="name" value="" placeholder="Description" v-model="form.description" :maxlength="200"></textarea>
+                              name="name" value="" placeholder="Description" v-model="form.description" :maxlength="500"></textarea>
                     <div class="input-group-append">
                         <span class="input-group-text" v-text="(500 - form.description.length)"></span>
                     </div>
@@ -42,7 +42,7 @@
 
 <script>
     export default {
-        name: "NewItem",
+        name: "NewTask",
 
         props: ['projects'],
 
@@ -63,7 +63,7 @@
                 if (this.form.project_id) {
                     let project = this.projects.find(item => item.id === this.form.project_id);
                     this.tasks = project.tasks.filter(item => item.is_deleted == false);
-                    this.form.task = null;
+                    this.form.task_id = null;
                 }
             }
         },
@@ -74,8 +74,10 @@
              */
             create() {
                 this.form.post('/api/todos').then(response => {
-                    this.$emit('item-created', response.data);
-                    this.$awn.success('New todo task created');
+                    this.$emit('task-created', response.data);
+                    this.$awn.success('New todo task created successfully');
+                    this.form.reset();
+                    this.form.member_id = this.$user.member.id;
                     $('#new').modal('hide');
                 }).catch(error => {
                     this.$awn.alert(error.message);

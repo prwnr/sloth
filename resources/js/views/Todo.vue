@@ -18,7 +18,7 @@
                 <div>
                     <div class="p-3" v-if="items.length == 0">Too slothful to make a list?</div>
                     <div class="list-group list-group-flush">
-                        <todo-item v-for="item in items" :key="item.id" :item="item" @item-deleted="deleteItem"></todo-item>
+                        <task v-for="item in items" :key="item.id" :item="item" @task-deleted="deleteTask" @updating-task="handleTaskUpdate"></task>
                     </div>
                 </div>
             </div>
@@ -30,7 +30,23 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-todo :projects="projects" @item-created="addItem"></new-todo>
+                            <new-task :projects="projects" @task-created="createTask"></new-task>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content card-primary card-outline">
+                        <div class="modal-body">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeEditDialog">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <edit-task v-if="editedTask"
+                                       :projects="projects"
+                                       :item="editedTask"
+                                       @task-updated="updateTask"></edit-task>
                         </div>
                     </div>
                 </div>
@@ -40,22 +56,25 @@
 </template>
 
 <script>
-    import TodoItem from '../components/Todos/Item';
-    import NewTodo from '../components/Todos/NewItem';
+    import Task from '../components/Todo/Task';
+    import NewTask from '../components/Todo/NewTask';
+    import EditTask from '../components/Todo/EditTask';
 
     export default {
         name: "Todo",
 
         components: {
-            TodoItem,
-            NewTodo
+            Task,
+            NewTask,
+            EditTask
         },
 
         data() {
             return {
                 loading: false,
                 items: [],
-                projects: []
+                projects: [],
+                editedTask: null
             }
         },
 
@@ -68,15 +87,28 @@
              * Add item to the list
              * @param item
              */
-            addItem(item) {
+            createTask(item) {
                 this.items.push(item)
+            },
+
+            /**
+             * Update task on the list
+             * @param task
+             */
+            updateTask(task) {
+                let index = this.items.findIndex(item => item.id === task.id);
+
+                let project = this.projects.find(item => item.id === task.project_id);
+                this.items[index].project = project;
+                this.items[index].task = project.tasks.find(item => item.id === task.task_id);
+                this.items[index].description = task.description;
             },
 
             /**
              * Delete item from the list
              * @param id
              */
-            deleteItem(id) {
+            deleteTask(id) {
                 axios.delete(`/api/todos/${id}`).then(response => {
                     this.items = this.items.filter(item => {
                         if (item.id !== id) {
@@ -86,6 +118,17 @@
                     this.$awn.success('Todo task succesfully deleted.');
                 }).catch(error => {
                     this.$awn.alert(error.message);
+                })
+            },
+
+            /**
+             * @param task
+             */
+            handleTaskUpdate(task) {
+                this.editedTask = task;
+                let self = this;
+                $('#edit').on('hidden.bs.modal', function (e) {
+                    self.editedTask = null;
                 })
             },
 
