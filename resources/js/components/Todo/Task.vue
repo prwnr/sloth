@@ -15,10 +15,10 @@
         </div>
         <div class="row">
             <div class="col-lg-12 item-action-buttons">
-                <a href="" @click.prevent="remove" class="small text-danger"><i class="fa fa-trash" title="Delete"></i> delete</a>
                 <a href="" @click.prevent="edit" class="small text-primary" data-toggle="modal" data-target="#edit">
                     <i class="fa fa-edit" title="Edit"></i> edit
                 </a>
+                <a href="" @click.prevent="remove" class="small text-danger"><i class="fa fa-trash" title="Delete"></i> delete</a>
             </div>
         </div>
     </div>

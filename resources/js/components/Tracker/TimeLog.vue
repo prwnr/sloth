@@ -1,14 +1,10 @@
 <template>
-    <div class="list-group-item form-group log pb-4" @mouseover="mouseOver = true" @mouseleave="mouseOver = false">
+    <div class="list-group-item form-group log pb-2" @mouseover="mouseOver = true" @mouseleave="mouseOver = false">
         <div class="row">
             <div class="col-lg-10">
                 <div class="col-lg-10 p-0">
                     <strong>{{ time.project.name }} ({{ time.project.code }})</strong>
                     <span v-if="time.task">- {{ time.task.name }} ({{ time.task.billable_text }})</span>
-                    <span class="log-buttons pl-3" v-if="mouseOver">
-                    <span><i class="text-info fa fa-edit p-1" @click="editLog" data-toggle="modal" data-target="#editRow"></i></span>
-                    <span><i class="text-danger fa fa-trash p-1" @click="deleteLog"></i></span>
-                </span>
                 </div>
                 <div class="col-lg-12 mt-1 small p-0">
                     Description: {{ description }}
@@ -37,6 +33,14 @@
                         <i v-if="editing" class="fa fa-times" title="Cancel"></i>
                     </button>
                 </div>
+            </div>
+        </div>
+        <div class="row pt-1 pb-0">
+            <div class="col-lg-12 item-action-buttons">
+                <a href="" @click.prevent="editLog" class="small text-primary" data-toggle="modal" data-target="#editRow">
+                    <i class="fa fa-edit" title="Edit"></i> edit
+                </a>
+                <a href="" @click.prevent="deleteLog" class="small text-danger"><i class="fa fa-trash" title="Delete"></i> delete</a>
             </div>
         </div>
     </div>

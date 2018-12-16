@@ -43,13 +43,20 @@
                 </div>
             </div>
 
-            <div class="form-group col-5 p-0">
-                <label for="name">Time <span v-if="!disableStartButton" class="small">(optional)</span></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
+            <div class="row">
+                <div class="form-group col-5">
+                    <label for="name">Time <span v-if="!disableStartButton" class="small">(optional)</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
+                        </div>
+                        <time-input v-model="duration"></time-input>
                     </div>
-                    <time-input v-model="duration"></time-input>
+                </div>
+
+                <div class="col-7 small pl-0 time-input-example">
+                    exmaple formats for 2.5 hour of work: <br>
+                    150 (as minutes) or 2:30 (as hours)
                 </div>
             </div>
 
@@ -156,3 +163,9 @@
         }
     }
 </script>
+
+<style scoped>
+    .time-input-example {
+        padding-top: 30px !important;
+    }
+</style>
