@@ -72,7 +72,7 @@
 
         methods: {
             /**
-             * Creates new todo task
+             * Creates new to do task
              */
             create() {
                 this.form.post('/api/todos').then(response => {
@@ -80,6 +80,7 @@
                     this.$awn.success('New todo task created successfully');
                     this.form.reset();
                     this.form.member_id = this.$user.member.id;
+                    this.form.finished = false;
                     $('#new').modal('hide');
                 }).catch(error => {
                     this.$awn.alert(error.message);
