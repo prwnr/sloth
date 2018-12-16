@@ -1,5 +1,5 @@
 <template>
-    <div class="list-group-item pb-2">
+    <div class="list-group-item pb-2" :class="{ 'bg-muted': item.finished}">
         <div class="row">
             <div class="col-lg-10">
                 <div class="col-lg-12 p-0">
@@ -17,7 +17,7 @@
         </div>
         <div class="row">
             <div class="col-lg-12 item-action-buttons">
-                <a href="" @click.prevent="edit" class="small text-primary" data-toggle="modal" data-target="#edit">
+                <a v-if="!item.finished" href="" @click.prevent="edit" class="small text-primary" data-toggle="modal" data-target="#edit">
                     <i class="fa fa-edit" title="Edit"></i> edit
                 </a>
                 <a href="" @click.prevent="remove" class="small text-danger"><i class="fa fa-trash" title="Delete"></i> delete</a>
@@ -38,8 +38,6 @@
                     finished: !this.item.finished
                 }).then(response => {
                     this.item.finished = !this.item.finished;
-                    let status = this.item.finished ? 'finished' : 'unfinished';
-                    this.$awn.success('Task status changed to ' + status)
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 })
@@ -70,6 +68,10 @@
 </script>
 
 <style scoped>
+    .bg-muted {
+        background-color: #e9e9e9;
+    }
+
     .todo-buttons i {
         font-size: 24px;
     }

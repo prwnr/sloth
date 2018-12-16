@@ -77,7 +77,7 @@ class TodoTaskController extends Controller
         }
 
         $data = $request->all();
-        if ($data['task_id'] === 0) {
+        if (!isset($data['task_id']) || $data['task_id'] === 0) {
             $data['task_id'] = null;
         }
 

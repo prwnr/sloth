@@ -53,7 +53,8 @@
                     member_id: this.$user.member.id,
                     project_id: '',
                     task_id: '',
-                    description: ''
+                    description: '',
+                    finished: false
                 })
             }
         },
@@ -63,8 +64,9 @@
                 if (this.form.project_id) {
                     let project = this.projects.find(item => item.id === this.form.project_id);
                     this.tasks = project.tasks.filter(item => item.is_deleted == false);
-                    this.form.task_id = null;
                 }
+
+                this.form.task_id = null;
             }
         },
 

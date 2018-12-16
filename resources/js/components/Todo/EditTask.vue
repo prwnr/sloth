@@ -67,7 +67,6 @@
                 if (this.form.project_id) {
                     let project = this.projects.find(item => item.id === this.form.project_id);
                     this.tasks = project.tasks.filter(item => item.is_deleted == false);
-                    return;
                 }
 
                 this.form.task_id = null;
