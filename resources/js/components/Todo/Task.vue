@@ -3,14 +3,16 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="col-lg-12 p-0">
-                    Project: {{ item.project.name }} <span v-if="item.task">({{ item.task.name }})</span>
+                    <small title="Project" class="badge badge-success"><i class="fa fa-briefcase"></i> {{ item.project.name }}</small>
+                    <small title="Task type" v-if="item.task" class="badge badge-info"><i class="fa fa-tasks"></i> {{ item.task.name }}</small>
                 </div>
-                <div class="col-lg-12 mt-1 pl-1 pt-2 pb-0">
+                <div class="col-lg-12 mt-1 pl-0 pt-2 pb-0">
                     <h5>{{ item.description }}</h5>
                 </div>
             </div>
             <div class="col-lg-2 todo-buttons text-right">
-                <i class="fa fa-check text-success btn" @click="finish" title="Mark as finished"></i>
+                <i v-if="!item.finished" class="fa fa-check text-success btn" @click="finish" title="Mark as finished"></i>
+                <i v-if="item.finished" class="fa fa-close text-danger btn" @click="finish" title="Mark as unfinished"></i>
             </div>
         </div>
         <div class="row">
@@ -32,7 +34,15 @@
 
         methods: {
             finish() {
-
+                axios.patch(`/api/todos/${this.item.id}/status`, {
+                    finished: !this.item.finished
+                }).then(response => {
+                    this.item.finished = !this.item.finished;
+                    let status = this.item.finished ? 'finished' : 'unfinished';
+                    this.$awn.success('Task status changed to ' + status)
+                }).catch(error => {
+                    this.$awn.alert(error.message);
+                })
             },
 
             edit() {

@@ -8,7 +8,7 @@
                     </div>
                     <div class="col-md-2">
                         <button class="btn btn-success btn-block" type="button" data-toggle="modal"
-                                data-target="#new">Add new <i class="fa fa-fw fa-plus"></i></button>
+                                data-target="#new">Add new task <i class="fa fa-fw fa-plus"></i></button>
                     </div>
                 </div>
             </div>

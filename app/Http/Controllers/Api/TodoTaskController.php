@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TodoTaskRequest;
 use App\Repositories\TodoTaskRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
@@ -90,6 +91,35 @@ class TodoTaskController extends Controller
         }
 
         $todo->loadMissing(['project', 'task', 'timelog', 'member']);
+        return (new JsonResource($todo))->response()->setStatusCode(Response::HTTP_ACCEPTED);
+    }
+
+    /**
+     * Change task status
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function changeStatus(Request $request, int $id): JsonResponse
+    {
+        $todo = $this->repository->find($id);
+        if ($todo->member->id !== Auth::user()->member()->id) {
+            return response()->json(['message' => 'You are not allowed to edit this todo task'], Response::HTTP_FORBIDDEN);
+        }
+
+        $this->validate($request, ['finished' => ['required', 'boolean']]);
+
+        try {
+            $todo = DB::transaction(function () use ($id, $request) {
+                return $this->repository->update($id, $request->all());
+            });
+        } catch (\Exception $ex) {
+            report($ex);
+            return response()->json(['message' => __('Failed to update todo task. Please try again')], Response::HTTP_BAD_REQUEST);
+        }
+
         return (new JsonResource($todo))->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
