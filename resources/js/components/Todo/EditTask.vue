@@ -51,22 +51,21 @@
                 tasks: [],
                 form: new Form({
                     member_id: this.$user.member.id,
-                    project_id: '',
-                    task_id: this.item.task ? this.item.task.id : 0,
+                    project_id: this.item.project_id,
+                    task_id: this.item.task_id ? this.item.task_id : 0,
                     description: this.item.description
                 })
             }
         },
 
         created() {
-            this.form.project_id = this.item.project.id;
+            this.fillTasks();
         },
 
         watch: {
             'form.project_id': function () {
                 if (this.form.project_id) {
-                    let project = this.projects.find(item => item.id === this.form.project_id);
-                    this.tasks = project.tasks.filter(item => item.is_deleted == false);
+                    this.fillTasks();
                 }
 
                 this.form.task_id = null;
@@ -86,7 +85,15 @@
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
-            }
+            },
+
+            /**
+             * Fill tasks variable with array of tasks for current project
+             */
+            fillTasks() {
+                let project = this.projects.find(item => item.id === this.form.project_id);
+                this.tasks = project.tasks.filter(item => item.is_deleted == false);
+            },
         }
     }
 </script>

@@ -100,7 +100,9 @@
 
                 let project = this.projects.find(item => item.id === task.project_id);
                 this.items[index].project = project;
+                this.items[index].project_id = project.id;
                 this.items[index].task = project.tasks.find(item => item.id === task.task_id);
+                this.items[index].task_id = this.items[index].task.id;
                 this.items[index].description = task.description;
             },
 
