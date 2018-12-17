@@ -90,7 +90,8 @@
 
         computed: {
             todoList() {
-                return this.items = _.orderBy(this.items, 'priority', 'asc')
+                this.items = _.orderBy(this.items, 'priority', 'asc');
+                return this.items = _.orderBy(this.items, 'finished', 'asc');
             }
         },
 
