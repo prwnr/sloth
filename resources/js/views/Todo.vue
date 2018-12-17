@@ -18,7 +18,7 @@
                 <div>
                     <div class="p-3" v-if="items.length == 0">Too slothful to make a list?</div>
                     <div class="list-group list-group-flush">
-                        <task v-for="item in items" :key="item.id" :item="item" @task-deleted="deleteTask" @updating-task="handleTaskUpdate"></task>
+                        <task v-for="item in todoList" :key="item.id" :item="item" @task-deleted="deleteTask" @updating-task="handleTaskUpdate"></task>
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-task :projects="projects" @task-created="createTask"></new-task>
+                            <new-task :projects="projects" :priorities="priorities" @task-created="createTask"></new-task>
                         </div>
                     </div>
                 </div>
@@ -45,6 +45,7 @@
                             </button>
                             <edit-task v-if="editedTask"
                                        :projects="projects"
+                                       :priorities="priorities"
                                        :item="editedTask"
                                        @task-updated="updateTask"></edit-task>
                         </div>
@@ -74,12 +75,23 @@
                 loading: false,
                 items: [],
                 projects: [],
+                priorities: {
+                    1: 'high',
+                    2: 'medium',
+                    3: 'low'
+                },
                 editedTask: null
             }
         },
 
         created() {
             this.fetchData();
+        },
+
+        computed: {
+            todoList() {
+                return this.items = _.orderBy(this.items, 'priority', 'asc')
+            }
         },
 
         methods: {
@@ -99,10 +111,18 @@
                 let index = this.items.findIndex(item => item.id === task.id);
 
                 let project = this.projects.find(item => item.id === task.project_id);
+                let newTask = project.tasks.find(item => item.id === task.task_id);
                 this.items[index].project = project;
                 this.items[index].project_id = project.id;
-                this.items[index].task = project.tasks.find(item => item.id === task.task_id);
-                this.items[index].task_id = this.items[index].task.id;
+
+                this.items[index].task = null;
+                this.items[index].task_id = '';
+                if (newTask) {
+                    this.items[index].task = newTask;
+                    this.items[index].task_id = newTask.id;
+                }
+
+                this.items[index].priority = task.priority;
                 this.items[index].description = task.description;
             },
 

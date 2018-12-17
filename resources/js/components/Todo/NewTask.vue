@@ -32,6 +32,23 @@
                 </select>
                 <form-error :text="form.errors.get('task_id')" :show="form.errors.has('task_id')"></form-error>
             </div>
+
+            <div class="form-group">
+                <label class="">Priority of your task</label>
+                <div class="form-group">
+                    <div v-for="(priority, index) in priorities" class="form-check form-check-inline">
+                        <label class="form-check-label" :for="'new_'+priority">
+                            <input :id="'new_'+priority" type="radio" class="form-check-input"
+                                   v-model="form.priority"
+                                   :value="index"
+                                   :class="{ 'is-invalid': form.errors.has('priority')}">
+                            <priority-badge :priority="index">{{ priority }}</priority-badge>
+                        </label>
+                    </div>
+                </div>
+                <form-error :text="form.errors.get('priority')" :show="form.errors.has('priority')"></form-error>
+            </div>
+
             <div class="col-lg-12 p-0">
                 <button type="button" data-dismiss="modal" aria-label="Close" id="closeDialog" class="btn btn-danger" >Cancel</button>
                 <button class="btn btn-success float-right" type="submit">Create</button>
@@ -41,10 +58,16 @@
 </template>
 
 <script>
+    import PriorityBadge from './PriorityBadge';
+
     export default {
         name: "NewTask",
 
-        props: ['projects'],
+        components: {
+            PriorityBadge
+        },
+
+        props: ['projects', 'priorities'],
 
         data() {
             return {
@@ -54,7 +77,8 @@
                     project_id: '',
                     task_id: '',
                     description: '',
-                    finished: false
+                    finished: false,
+                    priority: ''
                 })
             }
         },
@@ -91,5 +115,7 @@
 </script>
 
 <style scoped>
-
+    .badge {
+        font-size: 100% !important;
+    }
 </style>

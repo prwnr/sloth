@@ -5,6 +5,7 @@
                 <div class="col-lg-12 p-0">
                     <small title="Project" class="badge badge-success"><i class="fa fa-briefcase"></i> {{ item.project.name }}</small>
                     <small title="Task type" v-if="item.task" class="badge badge-info"><i class="fa fa-tasks"></i> {{ item.task.name }}</small>
+                    <priority-badge :priority="item.priority"><i class="fa fa-signal"></i> Priority: {{ itemPriority }} </priority-badge>
                 </div>
                 <div class="col-lg-12 mt-1 pl-0 pt-2 pb-0">
                     <h5>{{ item.description }}</h5>
@@ -27,10 +28,28 @@
 </template>
 
 <script>
+    import PriorityBadge from './PriorityBadge';
+
     export default {
         name: "Task",
 
+        components: {
+            PriorityBadge
+        },
+
         props: ['item'],
+
+        computed: {
+            itemPriority() {
+                let priorities = {
+                    1: 'high',
+                    2: 'medium',
+                    3: 'low'
+                };
+
+                return priorities[this.item.priority];
+            }
+        },
 
         methods: {
             finish() {

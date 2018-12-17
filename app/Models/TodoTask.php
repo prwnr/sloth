@@ -13,8 +13,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class TodoTask extends Model
 {
+
+    public const PRIORITY_HIGH = 1;
+    public const PRIORITY_MEDIUM = 2;
+    public const PIORITY_LOW = 3;
+
     protected $fillable = [
-        'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished'
+        'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'priority'
     ];
 
     /**

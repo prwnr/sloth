@@ -4,10 +4,10 @@
 
         <form @submit.prevent="save" @change="form.errors.clear($event.target.name)" @keydown="form.errors.clear($event.target.name)">
             <div class="form-group">
-                <label for="name">Write what you want to do</label>
+                <label for="description">Write what you want to do</label>
                 <div class="input-group">
-                    <textarea id="name" type="text" class="form-control"
-                              name="name" value="" placeholder="Description" v-model="form.description" :maxlength="500"></textarea>
+                    <textarea id="description" type="text" class="form-control"
+                              name="description" value="" placeholder="Description" v-model="form.description" :maxlength="500"></textarea>
                     <div class="input-group-append">
                         <span class="input-group-text" v-text="(500 - form.description.length)"></span>
                     </div>
@@ -16,7 +16,7 @@
             </div>
 
             <div class="form-group">
-                <label for="name">Choose associated project</label>
+                <label for="project">Choose associated project</label>
                 <select class="form-control" name="project" v-model="form.project_id" :class="{ 'is-invalid': form.errors.has('project_id')}">
                     <option v-if="projects.length == 0" value="''" disabled selected="false">There are no projects that you could choose</option>
                     <option v-for="project in projects" :value="project.id">{{ project.name }}</option>
@@ -25,13 +25,30 @@
             </div>
 
             <div class="form-group">
-                <label for="name">Pick your task</label>
+                <label for="task">Pick your task</label>
                 <select class="form-control" name="task" v-model="form.task_id" :class="{ 'is-invalid': form.errors.has('task_id')}">
                     <option v-if="tasks.length == 0" value="''" disabled selected="false">There are no tasks that you could pick</option>
                     <option v-for="task in tasks" :value="task.id">{{ task.name }}</option>
                 </select>
                 <form-error :text="form.errors.get('task_id')" :show="form.errors.has('task_id')"></form-error>
             </div>
+
+            <div class="form-group">
+                <label class="">Priority of your task</label>
+                <div class="form-group">
+                    <div v-for="(priority, index) in priorities" class="form-check form-check-inline">
+                        <label class="form-check-label" :for="'edit_'+priority">
+                            <input :id="'edit_'+priority" type="radio" class="form-check-input"
+                                   v-model="form.priority"
+                                   :value="index"
+                                   :class="{ 'is-invalid': form.errors.has('priority')}">
+                            <priority-badge :priority="index">{{ priority }}</priority-badge>
+                        </label>
+                    </div>
+                </div>
+                <form-error :text="form.errors.get('priority')" :show="form.errors.has('priority')"></form-error>
+            </div>
+
             <div class="col-lg-12 p-0">
                 <button type="button" data-dismiss="modal" aria-label="Close" id="closeDialog" class="btn btn-danger" >Cancel</button>
                 <button class="btn btn-success float-right" type="submit">Save</button>
@@ -41,10 +58,16 @@
 </template>
 
 <script>
+    import PriorityBadge from './PriorityBadge';
+
     export default {
         name: "EditTask",
 
-        props: ['item', 'projects'],
+        components: {
+            PriorityBadge
+        },
+
+        props: ['item', 'projects', 'priorities'],
 
         data() {
             return {
@@ -53,7 +76,8 @@
                     member_id: this.$user.member.id,
                     project_id: this.item.project_id,
                     task_id: this.item.task_id ? this.item.task_id : 0,
-                    description: this.item.description
+                    description: this.item.description,
+                    priority: this.item.priority
                 })
             }
         },
@@ -99,5 +123,7 @@
 </script>
 
 <style scoped>
-
+    .badge {
+        font-size: 100% !important;
+    }
 </style>

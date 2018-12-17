@@ -45,6 +45,9 @@ class TodoTaskRequest extends FormRequest
             ],
             'finished' => [
                 'nullable', 'boolean'
+            ],
+            'priority' => [
+                'required', 'numeric'
             ]
         ];
     }
