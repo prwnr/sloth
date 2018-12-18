@@ -14,7 +14,8 @@
             </div>
         </section>
         <section class="content pb-5">
-            <div class="card mb-4">
+            <loading v-if="loading"></loading>
+            <div v-else class="card mb-4">
                 <div>
                     <div class="p-3" v-if="items.length == 0">Too slothful to make a list?</div>
                     <div class="list-group list-group-flush">
@@ -90,8 +91,8 @@
 
         computed: {
             todoList() {
-                this.items = _.orderBy(this.items, 'priority', 'asc');
-                return this.items = _.orderBy(this.items, 'finished', 'asc');
+                let items = _.orderBy(this.items, 'priority', 'asc');
+                return _.orderBy(items, 'finished', 'asc');
             }
         },
 
@@ -101,6 +102,8 @@
              * @param item
              */
             createTask(item) {
+                item.priority = parseInt(item.priority);
+                item.finished = item.finished ? 1 : 0;
                 this.items.push(item)
             },
 

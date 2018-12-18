@@ -6,8 +6,8 @@
             <div class="form-group">
                 <label for="name">Write what you want to do</label>
                 <div class="input-group">
-                    <textarea id="name" type="text" class="form-control"
-                              name="name" value="" placeholder="Description" v-model="form.description" :maxlength="500"></textarea>
+                    <textarea id="description" type="text" class="form-control"
+                              name="description" value="" placeholder="Description" v-model="form.description" :maxlength="500"></textarea>
                     <div class="input-group-append">
                         <span class="input-group-text" v-text="(500 - form.description.length)"></span>
                     </div>
@@ -16,8 +16,8 @@
             </div>
 
             <div class="form-group">
-                <label for="name">Choose associated project</label>
-                <select class="form-control" name="project" v-model="form.project_id" :class="{ 'is-invalid': form.errors.has('project_id')}">
+                <label for="project_id">Choose associated project</label>
+                <select id="project_id" class="form-control" name="project_id" v-model="form.project_id" :class="{ 'is-invalid': form.errors.has('project_id')}">
                     <option v-if="projects.length == 0" value="''" disabled selected="false">There are no projects that you could choose</option>
                     <option v-for="project in projects" :value="project.id">{{ project.name }}</option>
                 </select>
@@ -25,8 +25,8 @@
             </div>
 
             <div class="form-group">
-                <label for="name">Pick your task</label>
-                <select class="form-control" name="task" v-model="form.task_id" :class="{ 'is-invalid': form.errors.has('task_id')}">
+                <label for="task_id">Pick your task</label>
+                <select id="task_id" class="form-control" name="task_id" v-model="form.task_id" :class="{ 'is-invalid': form.errors.has('task_id')}">
                     <option v-if="tasks.length == 0" value="''" disabled selected="false">There are no tasks that you could pick</option>
                     <option v-for="task in tasks" :value="task.id">{{ task.name }}</option>
                 </select>
@@ -38,7 +38,7 @@
                 <div class="form-group">
                     <div v-for="(priority, index) in priorities" class="form-check form-check-inline">
                         <label class="form-check-label" :for="'new_'+priority">
-                            <input :id="'new_'+priority" type="radio" class="form-check-input"
+                            <input name="priority" :id="'new_'+priority" type="radio" class="form-check-input"
                                    v-model="form.priority"
                                    :value="index"
                                    :class="{ 'is-invalid': form.errors.has('priority')}">
