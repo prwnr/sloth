@@ -25,7 +25,8 @@ class CreateTimeLogsTable extends Migration
 
             $table->foreign('project_id')->references('id')->on('projects')
                 ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('task_id')->references('id')->on('tasks');
+            $table->foreign('task_id')->references('id')->on('tasks')
+                ->onDelete('set null');
             $table->foreign('member_id')->references('id')->on('members')
                 ->onUpdate('cascade')->onDelete('cascade');
         });

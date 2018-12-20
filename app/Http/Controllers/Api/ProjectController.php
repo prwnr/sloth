@@ -119,7 +119,6 @@ class ProjectController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        DB::beginTransaction();
         try {
             $success = DB::transaction(function () use ($id) {
                 return $this->projectRepository->delete($id);
