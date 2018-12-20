@@ -111,7 +111,8 @@ class TodoTaskTest extends FeatureTestCase
             'project_id' => factory(Project::class)->create()->id,
             'task_id' => factory(Project\Task::class)->create()->id,
             'timelog_id' => $this->faker->randomElement([factory(TimeLog::class)->create()->id, null]),
-            'finished' => $this->faker->boolean
+            'finished' => $this->faker->boolean,
+            'priority' => $this->faker->numberBetween(0, 5)
         ];
     }
 }

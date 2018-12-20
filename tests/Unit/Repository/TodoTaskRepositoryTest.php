@@ -137,7 +137,7 @@ class TodoTaskRepositoryTest extends TestCase
         $this->assertFalse($this->repository->delete(0));
     }
 
-    private function makeTodoTaskData()
+    private function makeTodoTaskData(): array
     {
         $task = factory(Task::class)->create();
         return [
@@ -146,7 +146,8 @@ class TodoTaskRepositoryTest extends TestCase
             'project_id' => $task->project_id,
             'task_id' => $task->id,
             'timelog_id' => factory(TimeLog::class)->create()->id,
-            'finished' => $this->faker->boolean
+            'finished' => (int)$this->faker->boolean,
+            'priority' => $this->faker->numberBetween(0,5)
         ];
     }
 }

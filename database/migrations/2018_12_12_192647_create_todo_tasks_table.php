@@ -20,7 +20,7 @@ class CreateTodoTasksTable extends Migration
             $table->integer('project_id')->unsigned()->nullable(false);
             $table->integer('task_id')->unsigned()->nullable();
             $table->integer('timelog_id')->unsigned()->nullable();
-            $table->float('finished')->default(false);
+            $table->boolean('finished')->default(false);
             $table->timestamps();
 
             $table->foreign('member_id')->references('id')->on('members')
