@@ -23,7 +23,7 @@ class TodoTaskTest extends FeatureTestCase
         $response->assertJsonStructure([
             'data' => [
                 [
-                    'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'member', 'project', 'task', 'timelog'
+                    'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'member', 'project', 'task', 'timelog', 'priority'
                 ]
             ]
         ]);
@@ -51,7 +51,7 @@ class TodoTaskTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_CREATED);
         $response->assertJsonStructure([
             'data' => [
-                'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'member', 'project', 'task', 'timelog'
+                'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'member', 'project', 'task', 'timelog', 'priority'
             ]
         ]);
         $response->assertJsonFragment($expecpted);
@@ -68,7 +68,7 @@ class TodoTaskTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_ACCEPTED);
         $response->assertJsonStructure([
             'data' => [
-                'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'member', 'project', 'task', 'timelog'
+                'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'member', 'project', 'task', 'timelog', 'priority'
             ]
         ]);
         $response->assertJsonFragment($expecpted);
@@ -81,6 +81,57 @@ class TodoTaskTest extends FeatureTestCase
         $expecpted = $this->makeTodoTaskData();
 
         $response = $this->json(Request::METHOD_PUT, "/api/todos/{$todo->id}", $expecpted);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testTodoTasksStatusIsChangedToFinishedCorrectly(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $todo = factory(TodoTask::class)->create(['member_id' => $this->member->id]);
+        $expecpted = [
+            'finished' => true
+        ];
+
+        $response = $this->json(Request::METHOD_PATCH, "/api/todos/{$todo->id}/status", $expecpted);
+
+        $response->assertStatus(Response::HTTP_ACCEPTED);
+        $response->assertJsonStructure([
+            'data' => [
+                'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'priority'
+            ]
+        ]);
+        $response->assertJsonFragment($expecpted);
+    }
+
+    public function testTodoTasksStatusIsChangedToUnfinishedCorrectly(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $todo = factory(TodoTask::class)->create(['member_id' => $this->member->id]);
+        $expecpted = [
+            'finished' => false
+        ];
+
+        $response = $this->json(Request::METHOD_PATCH, "/api/todos/{$todo->id}/status", $expecpted);
+
+        $response->assertStatus(Response::HTTP_ACCEPTED);
+        $response->assertJsonStructure([
+            'data' => [
+                'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'priority'
+            ]
+        ]);
+        $response->assertJsonFragment($expecpted);
+    }
+
+    public function testTodoTasksStatusIsNotChangedByNotOwner(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $todo = factory(TodoTask::class)->create();
+        $expecpted = [
+            'finished' => true
+        ];
+
+        $response = $this->json(Request::METHOD_PATCH, "/api/todos/{$todo->id}/status", $expecpted);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
