@@ -39,7 +39,7 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
     Route::apiResource('time', 'TrackerController')->middleware('permission:track_time');
 
     //Todos routes
-    Route::patch('todos/{todoTask}/status', 'TodoTaskController@changeStatus');
+    Route::patch('todos/{todo}/status', 'TodoTaskController@changeStatus');
     Route::apiResource('todos', 'TodoTaskController')->except('show');
 
     //Report routes

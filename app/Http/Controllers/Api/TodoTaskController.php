@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TodoTaskAuthorizationRequest;
 use App\Http\Requests\TodoTaskRequest;
 use App\Repositories\TodoTaskRepository;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Http\Response;
+use Illuminate\Http\{JsonResponse, Resources\Json\JsonResource, Resources\Json\ResourceCollection, Response};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Class TodoTaskController
+ * @package App\Http\Controllers\Api
+ */
 class TodoTaskController extends Controller
 {
 
@@ -71,11 +72,6 @@ class TodoTaskController extends Controller
      */
     public function update(TodoTaskRequest $request, int $id): JsonResponse
     {
-        $todo = $this->repository->find($id);
-        if ($todo->member->id !== Auth::user()->member()->id) {
-            return response()->json(['message' => 'You are not allowed to edit this todo task'], Response::HTTP_FORBIDDEN);
-        }
-
         $data = $request->all();
         if (!isset($data['task_id']) || $data['task_id'] === 0) {
             $data['task_id'] = null;
@@ -97,18 +93,13 @@ class TodoTaskController extends Controller
     /**
      * Change task status
      *
-     * @param Request $request
+     * @param TodoTaskAuthorizationRequest $request
      * @param int $id
      * @return JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function changeStatus(Request $request, int $id): JsonResponse
+    public function changeStatus(TodoTaskAuthorizationRequest $request, int $id): JsonResponse
     {
-        $todo = $this->repository->find($id);
-        if ($todo->member->id !== Auth::user()->member()->id) {
-            return response()->json(['message' => 'You are not allowed to edit this todo task'], Response::HTTP_FORBIDDEN);
-        }
-
         $this->validate($request, ['finished' => ['required', 'boolean']]);
 
         try {
@@ -126,16 +117,12 @@ class TodoTaskController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param TodoTaskAuthorizationRequest $request
      * @param int $id
      * @return JsonResponse
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(TodoTaskAuthorizationRequest $request, int $id): JsonResponse
     {
-        $todo = $this->repository->find($id);
-        if ($todo->member->id !== Auth::user()->member()->id) {
-            return response()->json(['message' => 'You are not allowed to delete this todo task'], Response::HTTP_FORBIDDEN);
-        }
-
         try {
             $success = DB::transaction(function () use ($id) {
                 return $this->repository->delete($id);

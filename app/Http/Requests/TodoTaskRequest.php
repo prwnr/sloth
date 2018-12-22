@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 /**
  * Class TodoTaskRequest
  * @package App\Http\Requests
  */
-class TodoTaskRequest extends FormRequest
+class TodoTaskRequest extends TodoTaskAuthorizationRequest
 {
 
     use RequiresTask;
@@ -20,7 +20,11 @@ class TodoTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        if ($this->isMethod(Request::METHOD_POST)) {
+            return true;
+        }
+
+        return parent::authorize();
     }
 
     /**
