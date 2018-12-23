@@ -49,8 +49,9 @@ class BelongsToTeam
         if (!$model instanceof Model) {
             $model = $class::findOrFail($model);
         }
+
         if ($model->team_id !== $user->team_id) {
-            abort(404);
+            abort(404, 'Not found');
         }
 
         return $next($request);

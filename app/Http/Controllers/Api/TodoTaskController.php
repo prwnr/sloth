@@ -56,7 +56,7 @@ class TodoTaskController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Something went wrong when creating new todo task. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when creating new todo task. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         $todo->loadMissing(['project', 'task', 'timelog', 'member']);
@@ -83,7 +83,7 @@ class TodoTaskController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Failed to update todo task. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when updating todo task. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         $todo->loadMissing(['project', 'task', 'timelog', 'member']);
@@ -108,7 +108,7 @@ class TodoTaskController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Failed to update todo task. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when changing todo task status. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         return (new JsonResource($todo))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -132,13 +132,11 @@ class TodoTaskController extends Controller
                 return response()->json(null, Response::HTTP_NO_CONTENT);
             }
         } catch (\Exception $ex) {
-            return response()->json([
-                'message' => $ex->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
+            report($ex);
         }
 
         return response()->json([
-            'message' => __('Something went wrong and member could not be deleted. It may not exists, please try again')
+            'message' => 'Something went wrong and todo task could not be deleted. It may not exists, please try again'
         ], Response::HTTP_BAD_REQUEST);
     }
 }

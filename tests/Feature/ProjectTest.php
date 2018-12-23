@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Project\Task;
 use App\Models\Team;
+use App\Repositories\ProjectRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -77,6 +78,23 @@ class ProjectTest extends FeatureTestCase
         ]);
     }
 
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnProjectCreate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $data = $this->makeProjectData();
+        $mock = $this->mockAndReplaceInstance(ProjectRepository::class);
+        $mock->shouldReceive('create')->with($data)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_POST, '/api/projects', $data);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong when creating new project. Please try again'
+        ]);
+    }
+
     public function testProjectsAreNotCreatedForUserWithoutPermissions(): void
     {
         $this->actingAs($this->user, 'api');
@@ -141,6 +159,9 @@ class ProjectTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_GET, "/api/projects/{$project->id}");
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertJson([
+            'message' => 'Not found'
+        ]);
     }
 
     public function testProjectsAreNotShowedForUserWithoutPermissions(): void
@@ -174,6 +195,24 @@ class ProjectTest extends FeatureTestCase
         ]);
     }
 
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnProjectUpdate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $project = factory(Project::class)->create(['team_id' => $this->user->team_id]);
+        $data = $this->makeProjectData();
+        $mock = $this->mockAndReplaceInstance(ProjectRepository::class);
+        $mock->shouldReceive('update')->with($project->id, $data)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_PUT, "/api/projects/{$project->id}", $data);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong when updating project. Please try again'
+        ]);
+    }
+
     public function testProjectsAreNotUpdatedByUserFromDifferentTeam(): void
     {
         $this->actingAs($this->user, 'api');
@@ -184,6 +223,9 @@ class ProjectTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_PUT, "/api/projects/{$project->id}", $this->makeProjectData());
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertJson([
+            'message' => 'Not found'
+        ]);
     }
 
     public function testProjectsAreNotUpdatedForUserWithoutPermissions(): void
@@ -229,6 +271,41 @@ class ProjectTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
+
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnProjectDelete(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+        $project = factory(Project::class)->create(['team_id' => $this->user->team_id]);
+
+        $mock = $this->mockAndReplaceInstance(ProjectRepository::class);
+        $mock->shouldReceive('delete')->with($project->id)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_DELETE, "/api/projects/{$project->id}");
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertJson([
+            'message' => 'Something went wrong and project could not be deleted. It may not exists, please try again'
+        ]);
+    }
+
+    public function testErrorMessageIsReturnedWhenProjectCannotBeDeleted(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+        $project = factory(Project::class)->create(['team_id' => $this->user->team_id]);
+
+        $mock = $this->mockAndReplaceInstance(ProjectRepository::class);
+        $mock->shouldReceive('delete')->with($project->id)->andReturn(false);
+
+        $response = $this->json(Request::METHOD_DELETE, "/api/projects/{$project->id}");
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertJson([
+            'message' => 'Something went wrong and project could not be deleted. It may not exists, please try again'
+        ]);
+    }
+
     public function testProjectsAreNotDeletedForUserWithoutPermissions(): void
     {
         $this->actingAs($this->user, 'api');
@@ -251,6 +328,9 @@ class ProjectTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_DELETE, "/api/projects/{$project->id}");
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertJson([
+            'message' => 'Not found'
+        ]);
     }
 
     /**

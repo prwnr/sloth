@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -22,10 +23,10 @@ class TeamTest extends FeatureTestCase
         $data = [
             'name' => $this->faker->word
         ];
-        $respone = $this->json(Request::METHOD_PUT, "/api/teams/{$this->user->team_id}", $data);
+        $response = $this->json(Request::METHOD_PUT, "/api/teams/{$this->user->team_id}", $data);
 
-        $respone->assertStatus(Response::HTTP_ACCEPTED);
-        $respone->assertJson([
+        $response->assertStatus(Response::HTTP_ACCEPTED);
+        $response->assertJson([
             'data' => [
                 'id' => $this->user->team->id,
                 'name' => $data['name'],
@@ -40,13 +41,37 @@ class TeamTest extends FeatureTestCase
             'owns_team' => null
         ]);
 
-        $respone = $this->json(Request::METHOD_PUT, "/api/teams/{$this->user->team_id}", [
+        $response = $this->json(Request::METHOD_PUT, "/api/teams/{$this->user->team_id}", [
             'name' => $this->faker->word
         ]);
 
-        $respone->assertStatus(Response::HTTP_FORBIDDEN);
-        $respone->assertJson([
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+        $response->assertJson([
             'message' => 'You are not allowed to edit this team'
+        ]);
+    }
+
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnTeamUpdate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->user->update([
+            'owns_team' => $this->user->team_id
+        ]);
+
+        $data = [
+            'name' => $this->faker->word
+        ];
+
+        $mock = $this->mockAndReplaceInstance(Team::class);
+        $mock->shouldReceive('resolveRouteBinding')->with($this->user->team_id)->andReturn($mock);
+        $mock->shouldReceive('getAttribute')->with('id')->andReturn($this->user->team_id);
+        $mock->shouldReceive('update')->with($data)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_PUT, "/api/teams/{$this->user->team_id}", $data);
+
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertJson([
+            'message' => 'Something went wrong when trying to update your team. Please try again'
         ]);
     }
 }

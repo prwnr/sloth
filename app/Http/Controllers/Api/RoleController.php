@@ -48,7 +48,7 @@ class RoleController extends Controller
     public function store(RoleRequest $request): JsonResponse
     {
         if ($this->roleRepository->findByName($request->input('name'))) {
-            return response()->json(['message' => __('Role with this name already exists')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Role with this name already exists'], Response::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -57,7 +57,7 @@ class RoleController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Something went wrong when creating new role. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when creating new role. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         return (new JsonResource($role))->response()->setStatusCode(Response::HTTP_CREATED);
@@ -85,12 +85,12 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->find($id);
         if (!$role->isEditable()) {
-            return response()->json(['message' => __('You cannot edit this role')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'You cannot edit this role'], Response::HTTP_BAD_REQUEST);
         }
 
         $similar = $this->roleRepository->findByName($request->input('name'));
         if ($similar && $similar->id !== $role->id) {
-            return response()->json(['message' => __('Role with this name already exists')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Role with this name already exists'], Response::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -99,7 +99,7 @@ class RoleController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Failed to update role. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when updating role. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         return (new JsonResource($role))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -115,7 +115,7 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->find($id);
         if (!$role->isDeletable()) {
-            return response()->json(['message' => __('You can\'t delete this role')], Response::HTTP_FORBIDDEN);
+            return response()->json(['message' => 'You can\'t delete this role'], Response::HTTP_FORBIDDEN);
         }
 
         try {
@@ -127,13 +127,11 @@ class RoleController extends Controller
                 return response()->json(null, Response::HTTP_NO_CONTENT);
             }
         } catch (\Exception $ex) {
-            return response()->json([
-                'message' => $ex->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
+            report($ex);
         }
 
         return response()->json([
-            'message' => __('Something went wrong and role could not be deleted. It may not exists, please try again')
+            'message' => 'Something went wrong and role could not be deleted. It may not exists, please try again'
         ], Response::HTTP_BAD_REQUEST);
     }
 }

@@ -73,22 +73,24 @@ class MemberController extends Controller
                return $this->memberRepository->create($data);
             });
         } catch (\Exception $ex) {
+            report($ex);
             return response()->json([
-                'message' =>'Something went wrong when creating new team member. Please try again'
+                'message' => 'Something went wrong when creating new team member. Please try again'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
+        $memberResource = new JsonResource($member);
 
         try {
             Mail::to($data['email'])->send(new WelcomeMail($member->user, $data['password']));
         } catch (\Exception $ex) {
-            $memberResource = new JsonResource($member);
+            report($ex);
             $memberResource->additional([
-                'warning' => __('There was an error during email delivery to new member with his account password.')
+                'warning' => 'There was an error during email delivery to new member with his account password.'
             ]);
+        } finally {
             return $memberResource->response()->setStatusCode(Response::HTTP_CREATED);
         }
-
-        return (new JsonResource($member))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -125,8 +127,9 @@ class MemberController extends Controller
             });
 
         } catch (\Exception $ex) {
+            report($ex);
             return response()->json([
-                'message' => __('Failed to update team member. Please try again')
+                'message' => 'Something went wrong when updating team member. Please try again'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -150,13 +153,11 @@ class MemberController extends Controller
                 return response()->json(null, Response::HTTP_NO_CONTENT);
             }
         } catch (\Exception $ex) {
-            return response()->json([
-                'message' => $ex->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
+            report($ex);
         }
 
         return response()->json([
-            'message' => __('Something went wrong and member could not be deleted. It may not exists, please try again')
+            'message' => 'Something went wrong and member could not be deleted. It may not exists, please try again'
         ], Response::HTTP_BAD_REQUEST);
     }
 }

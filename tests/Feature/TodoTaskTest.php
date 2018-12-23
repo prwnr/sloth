@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\Team\Member;
 use App\Models\TimeLog;
 use App\Models\TodoTask;
+use App\Repositories\TodoTaskRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -57,6 +58,22 @@ class TodoTaskTest extends FeatureTestCase
         $response->assertJsonFragment($expecpted);
     }
 
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnTodoTaskCreate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $expecpted = $this->makeTodoTaskData();
+
+        $mock = $this->mockAndReplaceInstance(TodoTaskRepository::class);
+        $mock->shouldReceive('create')->with($expecpted)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_POST, '/api/todos', $expecpted);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong when creating new todo task. Please try again'
+        ]);
+    }
+
     public function testTodoTasksAreUpdatedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
@@ -72,6 +89,41 @@ class TodoTaskTest extends FeatureTestCase
             ]
         ]);
         $response->assertJsonFragment($expecpted);
+    }
+
+    public function testTodoTasksAreUpdatedCorrectlyWithoutProjectTask(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $todo = factory(TodoTask::class)->create(['member_id' => $this->member->id]);
+        $expecpted = $this->makeTodoTaskData();
+        unset($expecpted['task_id']);
+
+        $response = $this->json(Request::METHOD_PUT, "/api/todos/{$todo->id}", $expecpted);
+
+        $response->assertStatus(Response::HTTP_ACCEPTED);
+        $response->assertJsonStructure([
+            'data' => [
+                'id', 'description', 'member_id', 'project_id', 'task_id', 'timelog_id', 'finished', 'member', 'project', 'task', 'timelog', 'priority'
+            ]
+        ]);
+        $response->assertJsonFragment($expecpted);
+    }
+
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnTodoTaskUpdate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $todo = factory(TodoTask::class)->create(['member_id' => $this->member->id]);
+        $expecpted = $this->makeTodoTaskData();
+
+        $mock = $this->mockAndReplaceInstance(TodoTaskRepository::class);
+        $mock->shouldReceive('update')->with($todo->id, $expecpted)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_PUT, "/api/todos/{$todo->id}", $expecpted);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong when updating todo task. Please try again'
+        ]);
     }
 
     public function testTodoTasksAreNotUpdatedByNotOwner(): void
@@ -102,6 +154,25 @@ class TodoTaskTest extends FeatureTestCase
             ]
         ]);
         $response->assertJsonFragment($expecpted);
+    }
+
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnTodoTaskStatusChange(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $todo = factory(TodoTask::class)->create(['member_id' => $this->member->id]);
+        $expecpted = [
+            'finished' => true
+        ];
+
+        $mock = $this->mockAndReplaceInstance(TodoTaskRepository::class);
+        $mock->shouldReceive('update')->with($todo->id, $expecpted)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_PATCH, "/api/todos/{$todo->id}/status", $expecpted);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong when changing todo task status. Please try again'
+        ]);
     }
 
     public function testTodoTasksStatusIsChangedToUnfinishedCorrectly(): void
@@ -143,6 +214,39 @@ class TodoTaskTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/todos/{$todo->id}" );
         $response->assertStatus(Response::HTTP_NO_CONTENT);
+    }
+
+
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnTodoTaskDelete(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $todo = factory(TodoTask::class)->create(['member_id' => $this->member->id]);
+
+        $mock = $this->mockAndReplaceInstance(TodoTaskRepository::class);
+        $mock->shouldReceive('delete')->with($todo->id)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_DELETE, "/api/todos/{$todo->id}");
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong and todo task could not be deleted. It may not exists, please try again'
+        ]);
+    }
+
+    public function testErrorMessageIsReturnedWhenTodoTaskCannotBeDeleted(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $todo = factory(TodoTask::class)->create(['member_id' => $this->member->id]);
+
+        $mock = $this->mockAndReplaceInstance(TodoTaskRepository::class);
+        $mock->shouldReceive('delete')->with($todo->id)->andReturn(false);
+
+        $response = $this->json(Request::METHOD_DELETE, "/api/todos/{$todo->id}");
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong and todo task could not be deleted. It may not exists, please try again'
+        ]);
     }
 
     public function testTodoTasksAreNotDeletedByNotOwner(): void

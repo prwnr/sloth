@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\Team\Member;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 abstract class FeatureTestCase extends TestCase
@@ -39,6 +40,14 @@ abstract class FeatureTestCase extends TestCase
         $role = Role::findFromTeam($this->user->team)->where('name', $role)->first();
         $this->user->member()->attachRole($role);
         $this->user->member()->save();
+    }
+
+    protected function mockAndReplaceInstance(string $abstract): MockInterface
+    {
+        $mock = \Mockery::mock($abstract);
+        $this->instance($abstract, $mock);
+
+        return $mock;
     }
 
     private function setUpRolesAndPermissions(): void

@@ -37,7 +37,8 @@ class TeamController extends Controller
 
             return (new JsonResource($team))->response()->setStatusCode(Response::HTTP_ACCEPTED);
         } catch (\Exception $ex) {
-            return response()->json(['message' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            report($ex);
+            return response()->json(['message' => 'Something went wrong when trying to update your team. Please try again'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

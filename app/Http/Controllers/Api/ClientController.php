@@ -56,7 +56,7 @@ class ClientController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Something went wrong when creating new client. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when creating new client. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         return (new JsonResource($client))->response()->setStatusCode(Response::HTTP_CREATED);
@@ -96,7 +96,7 @@ class ClientController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Failed to update client. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when updating client. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         return (new JsonResource($client))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -110,16 +110,20 @@ class ClientController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $result = DB::transaction(function() use ($id) {
-            return $this->clientRepository->delete($id);
-        });
+        try {
+            $result = DB::transaction(function() use ($id) {
+                return $this->clientRepository->delete($id);
+            });
 
-        if ($result) {
-            return response()->json(null, Response::HTTP_NO_CONTENT);
+            if ($result) {
+                return response()->json(null, Response::HTTP_NO_CONTENT);
+            }
+        } catch (\Exception $ex) {
+            report($ex);
         }
 
         return response()->json([
-            'message' => __('Something went wrong and client could not be deleted. It may not exists, please try again')
+            'message' => 'Something went wrong and client could not be deleted. It may not exists, please try again'
         ], Response::HTTP_BAD_REQUEST);
     }
 }

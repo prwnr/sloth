@@ -13,8 +13,12 @@ class PermissionTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_GET, '/api/perms');
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJson([
-            'data' => []
+        $response->assertJsonStructure([
+            'data' => [
+                [
+                    'id', 'name', 'display_name', 'description', 'created_at', 'updated_at'
+                ]
+            ]
         ]);
         $response->assertJsonCount(7, 'data');
     }

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Role;
 use App\Models\Team;
+use App\Repositories\RoleRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -39,13 +40,7 @@ class RoleTest extends FeatureTestCase
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
 
-        $data = [
-            'name' => $this->faker->toLower($this->faker->word),
-            'display_name' => $this->faker->word,
-            'description' => $this->faker->sentence,
-            'members' => [],
-            'permissions' => []
-        ];
+        $data = $this->makeRoleData();
         $response = $this->json(Request::METHOD_POST, '/api/roles', $data);
 
         $response->assertStatus(Response::HTTP_CREATED);
@@ -56,19 +51,31 @@ class RoleTest extends FeatureTestCase
         ]);
     }
 
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnRoleCreate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $data = $this->makeRoleData();
+        $mock = $this->mockAndReplaceInstance(RoleRepository::class);
+        $mock->shouldReceive('findByName')->with($data['display_name'])->andReturn(null);
+        $mock->shouldReceive('create')->with($data)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_POST, '/api/roles', $data);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertJson([
+            'message' => 'Something went wrong when creating new role. Please try again'
+        ]);
+    }
+
     public function testRolesAreNotCreatedForUserWithoutPermissions(): void
     {
         $this->actingAs($this->user, 'api');
         $role = factory(Role::class)->create();
         $this->actAsRole($role->name);
 
-        $data = [
-            'name' => $this->faker->toLower($this->faker->word),
-            'display_name' => $this->faker->word,
-            'description' => $this->faker->sentence,
-            'members' => [],
-            'permissions' => []
-        ];
+        $data = $this->makeRoleData();
         $response = $this->json(Request::METHOD_POST, '/api/roles', $data);
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -136,6 +143,9 @@ class RoleTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_GET, "/api/roles/{$role->id}");
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertJson([
+            'message' => 'Not found'
+        ]);
     }
 
     public function testRolesAreUpdatedCorrectly(): void
@@ -144,11 +154,7 @@ class RoleTest extends FeatureTestCase
         $this->actAsRole(Role::ADMIN);
 
         $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
-        $data = [
-            'name' => $this->faker->toLower($this->faker->word),
-            'display_name' => $this->faker->word,
-            'description' => $this->faker->sentence,
-        ];
+        $data = $this->makeRoleUpdateData();
 
         $response = $this->json(Request::METHOD_PUT, "/api/roles/{$role->id}", $data);
 
@@ -163,6 +169,27 @@ class RoleTest extends FeatureTestCase
         ]);
     }
 
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnRoleUpdate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
+        $data = $this->makeRoleUpdateData();
+
+        $mock = $this->mockAndReplaceInstance(RoleRepository::class);
+        $mock->shouldReceive('find')->with($role->id)->andReturn($role);
+        $mock->shouldReceive('findByName')->with($data['display_name'])->andReturn(null);
+        $mock->shouldReceive('update')->with($role->id, $data)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_PUT, "/api/roles/{$role->id}", $data);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertJson([
+            'message' => 'Something went wrong when updating role. Please try again'
+        ]);
+    }
+
     public function testRolesAreNotUpdatedForUserWithoutPermissions(): void
     {
         $this->actingAs($this->user, 'api');
@@ -170,11 +197,7 @@ class RoleTest extends FeatureTestCase
         $this->actAsRole($role->name);
 
         $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
-        $data = [
-            'name' => $this->faker->toLower($this->faker->word),
-            'display_name' => $this->faker->word,
-            'description' => $this->faker->sentence,
-        ];
+        $data = $this->makeRoleUpdateData();
 
         $response = $this->json(Request::METHOD_PUT, "/api/roles/{$role->id}", $data);
 
@@ -188,15 +211,14 @@ class RoleTest extends FeatureTestCase
 
         $differentTeam = factory(Team::class)->create()->id;
         $role = factory(Role::class)->create(['team_id' => $differentTeam]);
-        $data = [
-            'name' => $this->faker->toLower($this->faker->word),
-            'display_name' => $this->faker->word,
-            'description' => $this->faker->sentence,
-        ];
+        $data = $this->makeRoleUpdateData();
 
         $response = $this->json(Request::METHOD_PUT, "/api/roles/{$role->id}", $data);
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertJson([
+            'message' => 'Not found'
+        ]);
     }
 
     public function testRolesAreNotUpdatedWhenNotEditable(): void
@@ -205,11 +227,7 @@ class RoleTest extends FeatureTestCase
         $this->actAsRole(Role::ADMIN);
 
         $role = Role::findFromTeam($this->user->team)->where('name', Role::ADMIN)->first();
-        $data = [
-            'name' => $this->faker->toLower($this->faker->word),
-            'display_name' => $this->faker->word,
-            'description' => $this->faker->sentence,
-        ];
+        $data = $this->makeRoleUpdateData();
 
         $response = $this->json(Request::METHOD_PUT, "/api/roles/{$role->id}", $data);
 
@@ -249,6 +267,43 @@ class RoleTest extends FeatureTestCase
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnRoleDelete(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+        $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
+
+        $mock = $this->mockAndReplaceInstance(RoleRepository::class);
+        $mock->shouldReceive('find')->with($role->id)->andReturn($role);
+        $mock->shouldReceive('delete')->with($role->id)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_DELETE, "/api/roles/{$role->id}");
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertJson([
+            'message' => 'Something went wrong and role could not be deleted. It may not exists, please try again'
+        ]);
+    }
+
+    public function testErrorMessageIsReturnedWhenRoleCannotBeDeleted(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+        $role = factory(Role::class)->create(['team_id' => $this->user->team_id]);
+
+        $mock = $this->mockAndReplaceInstance(RoleRepository::class);
+        $mock->shouldReceive('find')->with($role->id)->andReturn($role);
+        $mock->shouldReceive('delete')->with($role->id)->andReturn(false);
+
+        $response = $this->json(Request::METHOD_DELETE, "/api/roles/{$role->id}");
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertJson([
+            'message' => 'Something went wrong and role could not be deleted. It may not exists, please try again'
+        ]);
+
+    }
+
     public function testRolesAreNotDeletedForUserWithoutPermissions(): void
     {
         $this->actingAs($this->user, 'api');
@@ -270,6 +325,9 @@ class RoleTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_DELETE, "/api/roles/{$role->id}");
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertJson([
+            'message' => 'Not found'
+        ]);
     }
 
     public function testRolesAreNotDeletedWhenNotDeletable(): void
@@ -283,5 +341,30 @@ class RoleTest extends FeatureTestCase
         $response->assertJson([
             'message' => 'You can\'t delete this role'
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    private function makeRoleData(): array
+    {
+        return [
+            'name' => $this->faker->toLower($this->faker->word),
+            'display_name' => $this->faker->word,
+            'description' => $this->faker->sentence,
+            'members' => [],
+            'permissions' => []
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function makeRoleUpdateData(): array
+    {
+        return [
+            'display_name' => $this->faker->word,
+            'description' => $this->faker->sentence,
+        ];
     }
 }

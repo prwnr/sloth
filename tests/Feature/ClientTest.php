@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Currency;
 use App\Models\Role;
 use App\Models\Team;
+use App\Repositories\ClientRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -48,20 +49,7 @@ class ClientTest extends FeatureTestCase
         $this->actingAs($this->user, 'api');
         $this->actAsRole(Role::ADMIN);
 
-        $data = [
-            'company_name' => $this->faker->company,
-            'city' => $this->faker->city,
-            'zip' => $this->faker->postcode,
-            'country' => $this->faker->country,
-            'street' => $this->faker->streetAddress,
-            'vat' => (string) $this->faker->numberBetween(1111111, 9999999),
-            'fullname' => $this->faker->name,
-            'email' => $this->faker->email,
-            'billing_rate' => $this->faker->numberBetween(0, 50),
-            'billing_currency' => Currency::all()->random()->id,
-            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
-        ];
-        $response = $this->json(Request::METHOD_POST, '/api/clients', $data);
+        $response = $this->json(Request::METHOD_POST, '/api/clients', $this->makeClientData());
 
         $response->assertStatus(Response::HTTP_CREATED);
         $response->assertJsonStructure([
@@ -73,6 +61,22 @@ class ClientTest extends FeatureTestCase
         ]);
     }
 
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnClientCreate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $expectedData = $this->makeClientData();
+        $repository = $this->mockAndReplaceInstance(ClientRepository::class);
+        $repository->shouldReceive('create')->with($expectedData)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_POST, '/api/clients', $expectedData);
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong when creating new client. Please try again'
+        ]);
+    }
+
     public function testClientsAreNotCretedForUserWithoutPermissions(): void
     {
         $this->actingAs($this->user, 'api');
@@ -80,19 +84,7 @@ class ClientTest extends FeatureTestCase
 
         $this->actAsRole($role->name);
 
-        $data = [
-            'company_name' => $this->faker->company,
-            'city' => $this->faker->city,
-            'zip' => $this->faker->postcode,
-            'country' => $this->faker->country,
-            'street' => $this->faker->streetAddress,
-            'vat' => (string) $this->faker->numberBetween(1111111, 9999999),
-            'fullname' => $this->faker->name,
-            'email' => $this->faker->email,
-            'billing_rate' => $this->faker->numberBetween(0, 50),
-            'billing_currency' => Currency::all()->random()->id,
-            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
-        ];
+        $data = $this->makeClientData();
         $response = $this->json(Request::METHOD_POST, '/api/clients', $data);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
@@ -146,6 +138,9 @@ class ClientTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_GET, "/api/clients/{$client->id}");
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertJson([
+            'message' => 'Not found'
+        ]);
     }
 
     public function testClientsAreUpdatedCorrectly(): void
@@ -154,19 +149,7 @@ class ClientTest extends FeatureTestCase
         $this->actAsRole(Role::ADMIN);
 
         $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
-        $data = [
-            'company_name' => $this->faker->company,
-            'city' => $this->faker->city,
-            'zip' => $this->faker->postcode,
-            'country' => $this->faker->country,
-            'street' => $this->faker->streetAddress,
-            'vat' => (string) $this->faker->numberBetween(1111111, 9999999),
-            'fullname' => $this->faker->name,
-            'email' => $this->faker->email,
-            'billing_rate' => $this->faker->numberBetween(0, 50),
-            'billing_currency' => Currency::all()->random()->id,
-            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
-        ];
+        $data = $this->makeClientData();
         $response = $this->json(Request::METHOD_PUT, "/api/clients/{$client->id}", $data);
 
         $response->assertStatus(Response::HTTP_ACCEPTED);
@@ -185,6 +168,25 @@ class ClientTest extends FeatureTestCase
         ]);
     }
 
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnClientUpdate(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+
+        $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
+        $data = $this->makeClientData();
+
+        $mock = $this->mockAndReplaceInstance(ClientRepository::class);
+        $mock->shouldReceive('update')->with($client->id, $data)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_PUT, "/api/clients/{$client->id}", $data);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong when updating client. Please try again'
+        ]);
+    }
+
     public function testClientsAreNotUpdatedForUserWithoutPermissions(): void
     {
         $this->actingAs($this->user, 'api');
@@ -192,19 +194,7 @@ class ClientTest extends FeatureTestCase
         $this->actAsRole($role->name);
 
         $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
-        $data = [
-            'company_name' => $this->faker->company,
-            'city' => $this->faker->city,
-            'zip' => $this->faker->postcode,
-            'country' => $this->faker->country,
-            'street' => $this->faker->streetAddress,
-            'vat' => (string) $this->faker->numberBetween(1111111, 9999999),
-            'fullname' => $this->faker->name,
-            'email' => $this->faker->email,
-            'billing_rate' => $this->faker->numberBetween(0, 50),
-            'billing_currency' => Currency::all()->random()->id,
-            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
-        ];
+        $data = $this->makeClientData();
         $response = $this->json(Request::METHOD_PUT, "/api/clients/{$client->id}", $data);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
@@ -217,19 +207,7 @@ class ClientTest extends FeatureTestCase
 
         $differentTeam = factory(Team::class)->create()->id;
         $client = factory(Client::class)->create(['team_id' => $differentTeam]);
-        $data = [
-            'company_name' => $this->faker->company,
-            'city' => $this->faker->city,
-            'zip' => $this->faker->postcode,
-            'country' => $this->faker->country,
-            'street' => $this->faker->streetAddress,
-            'vat' => (string) $this->faker->numberBetween(1111111, 9999999),
-            'fullname' => $this->faker->name,
-            'email' => $this->faker->email,
-            'billing_rate' => $this->faker->numberBetween(0, 50),
-            'billing_currency' => Currency::all()->random()->id,
-            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
-        ];
+        $data = $this->makeClientData();
         $response = $this->json(Request::METHOD_PUT, "/api/clients/{$client->id}", $data);
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
@@ -243,6 +221,40 @@ class ClientTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
+    }
+
+    public function testErrorMessageIsReturnedWhenExceptionIsThrownOnClientDelete(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+        $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
+
+        $mock = $this->mockAndReplaceInstance(ClientRepository::class);
+        $mock->shouldReceive('delete')->with($client->id)->andThrow(\Exception::class);
+
+        $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong and client could not be deleted. It may not exists, please try again'
+        ]);
+    }
+
+    public function testErrorMessageIsReturnedWhenClientCannotBeDeleted(): void
+    {
+        $this->actingAs($this->user, 'api');
+        $this->actAsRole(Role::ADMIN);
+        $client = factory(Client::class)->create(['team_id' => $this->user->team_id]);
+
+        $mock = $this->mockAndReplaceInstance(ClientRepository::class);
+        $mock->shouldReceive('delete')->with($client->id)->andReturn(false);
+
+        $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertExactJson([
+            'message' => 'Something went wrong and client could not be deleted. It may not exists, please try again'
+        ]);
     }
 
     public function testClientsAreNotDeletedForUserWithoutPermissions(): void
@@ -267,5 +279,28 @@ class ClientTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertJson([
+            'message' => 'Not found'
+        ]);
+    }
+
+    /**
+     * @return array
+     */
+    private function makeClientData(): array
+    {
+        return [
+            'company_name' => $this->faker->company,
+            'city' => $this->faker->city,
+            'zip' => $this->faker->postcode,
+            'country' => $this->faker->country,
+            'street' => $this->faker->streetAddress,
+            'vat' => (string)$this->faker->numberBetween(1111111, 9999999),
+            'fullname' => $this->faker->name,
+            'email' => $this->faker->email,
+            'billing_rate' => $this->faker->numberBetween(0, 50),
+            'billing_currency' => Currency::all()->random()->id,
+            'billing_type' => $this->faker->randomKey(Billing::getRateTypes())
+        ];
     }
 }

@@ -65,7 +65,7 @@ class ProjectController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Something went wrong when creating new project. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when creating new project. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         return (new JsonResource($project))->response()->setStatusCode(Response::HTTP_CREATED);
@@ -105,7 +105,7 @@ class ProjectController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => __('Something went wrong when updating project. Please try again')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when updating project. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         return (new JsonResource($project))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -128,13 +128,11 @@ class ProjectController extends Controller
                 return response()->json(null, Response::HTTP_NO_CONTENT);
             }
         } catch (\Exception $ex) {
-            return response()->json([
-                'message' => $ex->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
+            report($ex);
         }
 
         return response()->json([
-            'message' => __('Something went wrong and project could not be deleted. It may not exists, please try again')
+            'message' => 'Something went wrong and project could not be deleted. It may not exists, please try again'
         ], Response::HTTP_BAD_REQUEST);
     }
 }

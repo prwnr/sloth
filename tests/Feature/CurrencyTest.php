@@ -14,7 +14,11 @@ class CurrencyTest extends FeatureTestCase
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
-            'data' => []
+            'data' => [
+                [
+                    'id', 'name', 'code', 'symbol', 'created_at', 'updated_at'
+                ]
+            ]
         ]);
         $response->assertJsonCount(5, 'data');
     }
