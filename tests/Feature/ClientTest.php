@@ -181,7 +181,7 @@ class ClientTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_PUT, "/api/clients/{$client->id}", $data);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when updating client. Please try again'
         ]);
@@ -234,7 +234,7 @@ class ClientTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong and client could not be deleted. It may not exists, please try again'
         ]);
@@ -251,7 +251,7 @@ class ClientTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/clients/{$client->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong and client could not be deleted. It may not exists, please try again'
         ]);

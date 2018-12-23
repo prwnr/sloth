@@ -89,7 +89,7 @@ class ProjectTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_POST, '/api/projects', $data);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when creating new project. Please try again'
         ]);
@@ -207,7 +207,7 @@ class ProjectTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_PUT, "/api/projects/{$project->id}", $data);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when updating project. Please try again'
         ]);
@@ -283,7 +283,7 @@ class ProjectTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/projects/{$project->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJson([
             'message' => 'Something went wrong and project could not be deleted. It may not exists, please try again'
         ]);
@@ -300,7 +300,7 @@ class ProjectTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/projects/{$project->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJson([
             'message' => 'Something went wrong and project could not be deleted. It may not exists, please try again'
         ]);

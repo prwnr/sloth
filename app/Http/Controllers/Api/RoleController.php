@@ -57,7 +57,7 @@ class RoleController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => 'Something went wrong when creating new role. Please try again'], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when creating new role. Please try again'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return (new JsonResource($role))->response()->setStatusCode(Response::HTTP_CREATED);
@@ -99,7 +99,7 @@ class RoleController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => 'Something went wrong when updating role. Please try again'], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when updating role. Please try again'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return (new JsonResource($role))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -132,6 +132,6 @@ class RoleController extends Controller
 
         return response()->json([
             'message' => 'Something went wrong and role could not be deleted. It may not exists, please try again'
-        ], Response::HTTP_BAD_REQUEST);
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

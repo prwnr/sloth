@@ -68,7 +68,7 @@ class TodoTaskTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_POST, '/api/todos', $expecpted);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when creating new todo task. Please try again'
         ]);
@@ -120,7 +120,7 @@ class TodoTaskTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_PUT, "/api/todos/{$todo->id}", $expecpted);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when updating todo task. Please try again'
         ]);
@@ -169,7 +169,7 @@ class TodoTaskTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_PATCH, "/api/todos/{$todo->id}/status", $expecpted);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when changing todo task status. Please try again'
         ]);
@@ -227,7 +227,7 @@ class TodoTaskTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/todos/{$todo->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong and todo task could not be deleted. It may not exists, please try again'
         ]);
@@ -243,7 +243,7 @@ class TodoTaskTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/todos/{$todo->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong and todo task could not be deleted. It may not exists, please try again'
         ]);

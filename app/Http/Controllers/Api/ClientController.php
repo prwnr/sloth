@@ -96,7 +96,7 @@ class ClientController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => 'Something went wrong when updating client. Please try again'], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something went wrong when updating client. Please try again'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return (new JsonResource($client))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -124,6 +124,6 @@ class ClientController extends Controller
 
         return response()->json([
             'message' => 'Something went wrong and client could not be deleted. It may not exists, please try again'
-        ], Response::HTTP_BAD_REQUEST);
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

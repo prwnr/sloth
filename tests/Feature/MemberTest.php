@@ -317,7 +317,7 @@ class MemberTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/members/{$member->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJson([
             'message' => 'Something went wrong and member could not be deleted. It may not exists, please try again'
         ]);
@@ -334,7 +334,7 @@ class MemberTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/members/{$member->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJson([
             'message' => 'Something went wrong and member could not be deleted. It may not exists, please try again'
         ]);

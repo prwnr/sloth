@@ -50,7 +50,7 @@ class TrackerTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_POST, '/api/time', $data);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when creating new time log. Please try again'
         ]);
@@ -173,7 +173,7 @@ class TrackerTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_PUT, "/api/time/{$log->id}", $data);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when updating time log. Please try again'
         ]);
@@ -256,7 +256,7 @@ class TrackerTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_PUT, "/api/time/{$log->id}/duration", $data);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong when updating time. Please try again'
         ]);
@@ -283,7 +283,7 @@ class TrackerTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/time/{$log->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong and your time log could not be deleted. It may not exists, please try again'
         ]);
@@ -300,7 +300,7 @@ class TrackerTest extends FeatureTestCase
 
         $response = $this->json(Request::METHOD_DELETE, "/api/time/{$log->id}");
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
             'message' => 'Something went wrong and your time log could not be deleted. It may not exists, please try again'
         ]);
