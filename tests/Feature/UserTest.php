@@ -70,7 +70,7 @@ class UserTest extends FeatureTestCase
 
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
         $response->assertExactJson([
-            'message' => 'Something when wrong when listing user time logs. Please ry again'
+            'message' => 'Something when wrong when listing user time logs. Please try again'
         ]);
     }
 
@@ -234,7 +234,7 @@ class UserTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_PUT, "/api/users/{$this->user->id}", $data);
         $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
-            'message' => 'Something when wrong when updating user data. Please ry again'
+            'message' => 'Something when wrong when updating user data. Please try again'
         ]);
     }
 
@@ -285,7 +285,7 @@ class UserTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_PUT, "/api/users/{$user->id}/password", $data);
         $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
-            'message' => 'Something when wrong when updating user password. Please ry again'
+            'message' => 'Something when wrong when updating user password. Please try again'
         ]);
     }
 
@@ -336,7 +336,7 @@ class UserTest extends FeatureTestCase
         $response = $this->json(Request::METHOD_PUT, "/api/users/{$this->user->id}/switch", ['team' => $member->team_id]);
         $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertExactJson([
-            'message' => 'Something when wrong when switching active team. Please ry again'
+            'message' => 'Something when wrong when switching active team. Please try again'
         ]);
     }
 

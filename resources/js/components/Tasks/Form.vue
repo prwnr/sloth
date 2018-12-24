@@ -95,7 +95,7 @@
             EventHub.listen('destroy_task', this.removeTask);
             this.allTasks = this.tasks;
             if (this.allTasks.length == 0) {
-                axios.get('/api/tasks').then(response => {
+                axios.get('/api/projects/task-types').then(response => {
                     this.allTasks = response.data;
                     this.prepareTasksForm();
                 }).catch(error => {

@@ -62,7 +62,7 @@ class UserController extends Controller
             $logs = $this->memberRepository->timeLogs($user->member()->id, $request->all());
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => 'Something when wrong when listing user time logs. Please ry again'], Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Something when wrong when listing user time logs. Please try again'], Response::HTTP_BAD_REQUEST);
         }
 
         return (new JsonResource($logs))->response()->setStatusCode(Response::HTTP_OK);
@@ -118,7 +118,7 @@ class UserController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => 'Something when wrong when updating user data. Please ry again'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Something when wrong when updating user data. Please try again'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);
@@ -139,7 +139,7 @@ class UserController extends Controller
             return response()->json($user->getAllInfoData())->setStatusCode(Response::HTTP_ACCEPTED);
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => 'Something when wrong when switching active team. Please ry again'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Something when wrong when switching active team. Please try again'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -158,7 +158,7 @@ class UserController extends Controller
             });
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json(['message' => 'Something when wrong when updating user password. Please ry again'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Something when wrong when updating user password. Please try again'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return (new UserResource($user))->response()->setStatusCode(Response::HTTP_ACCEPTED);

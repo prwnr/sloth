@@ -11,10 +11,13 @@
 |
 */
 Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'], function () {
+    Route::prefix('billings')->group(function () {
+        Route::get('/types', 'BillingController@types');
+        Route::get('/data', 'BillingController@showBillingData');
+    });
+
     Route::apiResource('currencies', 'CurrencyController')->only('index');
     Route::apiResource('perms', 'PermissionController')->only('index');
-    Route::get('/billings/types', 'BillingController@types');
-    Route::get('/billings/data', 'BillingController@showBillingData');
 
     //Roles routes
     Route::apiResource('roles', 'RoleController')->except('index')->middleware(['permission:manage_roles', 'team:role']);
@@ -27,6 +30,7 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
 
     //Projects routes
     Route::get('projects/budget_periods', 'ProjectController@budgetPeriods');
+    Route::get('projects/task-types', 'ProjectController@taskTypes')->middleware('team:project');
     Route::apiResource('projects', 'ProjectController')->except('index')->middleware(['permission:manage_projects', 'team:project']);
     Route::apiResource('projects', 'ProjectController')->only('index');
 
@@ -43,19 +47,23 @@ Route::group(['middleware' => ['auth:api'], 'namespace' => 'Api', 'as' => 'api.'
     Route::apiResource('todos', 'TodoTaskController')->except('show');
 
     //Report routes
-    Route::post('reports', 'ReportController@index')->middleware('permission:view_reports');
-    Route::post('reports/{member}', 'ReportController@show');
-    Route::get('reports/{member}/hours/{period}', 'ReportController@userHours');
-    Route::get('reports/{member}/projects/{period}', 'ReportController@userProjects');
-    Route::get('reports/sales/{period}', 'ReportController@sales')->middleware('permission:view_reports');
+    Route::prefix('reports')->group(function () {
+        Route::post('', 'ReportController@index')->middleware('permission:view_reports');
+        Route::post('/{member}', 'ReportController@show');
+        Route::get('/{member}/hours/{period}', 'ReportController@userHours');
+        Route::get('/{member}/projects/{period}', 'ReportController@userProjects');
+        Route::get('/sales/{period}', 'ReportController@sales')->middleware('permission:view_reports');
+    });
 
-    Route::apiResource('tasks', 'TaskController')->only('index')->middleware('team:project');
-
-    Route::get('/users/active', 'UserController@showActive')->name('users.active');
-    Route::get('/users/{user}/logs', 'UserController@timeLogs');
-    Route::put('/users/{user}/password', 'UserController@updatePassword')->middleware('permission:manage_team');
-    Route::put('/users/{user}/switch', 'UserController@switchTeam');
+    //User routes
+    Route::prefix('users')->group(function () {
+        Route::get('/active', 'UserController@showActive')->name('users.active');
+        Route::get('/{user}/logs', 'UserController@timeLogs');
+        Route::put('/{user}/password', 'UserController@updatePassword')->middleware('permission:manage_team');
+        Route::put('/{user}/switch', 'UserController@switchTeam');
+    });
     Route::apiResource('users', 'UserController');
+
     Route::apiResource('teams', 'TeamController')->only(['update']);
 });
 

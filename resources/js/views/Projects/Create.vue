@@ -312,7 +312,7 @@
              * Load default tasks for project
              */
             fetchTasks() {
-                axios.get('/api/tasks').then(response => {
+                axios.get('/api/projects/task-types').then(response => {
                     this.tasks = response.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

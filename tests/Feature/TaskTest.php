@@ -15,7 +15,7 @@ class TaskTest extends FeatureTestCase
     public function testTasksAreListedCorrectly(): void
     {
         $this->actingAs($this->user, 'api');
-        $response = $this->json(Request::METHOD_GET, '/api/tasks');
+        $response = $this->json(Request::METHOD_GET, '/api/projects/task-types');
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJson([

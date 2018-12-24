@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ProjectRequest;
-use App\Models\{Report\ProjectReport, Project};
+use App\Models\{Project\Task, Report\ProjectReport, Project};
 use App\Repositories\ProjectRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\{JsonResource, ResourceCollection};
@@ -40,6 +40,23 @@ class ProjectController extends Controller
     public function index(): ResourceCollection
     {
         return new ResourceCollection($this->projectRepository->allWith(['tasks']));
+    }
+
+    /**
+     * Available default task types
+     * @return array
+     */
+    public function taskTypes(): array
+    {
+        $tasks = [];
+        foreach (Task::getTypes() as $type => $name) {
+            $tasks[] = [
+                'type' => $type,
+                'name' => $name,
+                'billable' => true
+            ];
+        }
+        return $tasks;
     }
 
     /**

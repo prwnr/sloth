@@ -269,7 +269,7 @@
                     reverseButtons: true
                 }).then(result => {
                     if (result.value) {
-                        axios.get('/api/tasks').then(response => {
+                        axios.get('/api/projects/task-types').then(response => {
                             this.tasks = response.data;
                             this.showTasks = true;
                         }).catch(error => {
