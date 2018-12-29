@@ -25,7 +25,7 @@ class ClientReport extends Report
         foreach ($this->logs->get() as $log) {
             $hours += $log->duration();
             $billableHours += $log->isBillabe() ? $log->duration() : 0.0;
-            $sale += $log->clientSalary();
+            $sale += $log->isBillabe() ? $log->clientSalary() : 0.0;
         }
 
         $report = [
