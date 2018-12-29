@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\Project\Task;
 use App\Models\Role;
 use App\Models\Team\Member;
+use App\Models\TodoTask;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -67,6 +68,7 @@ class DatabaseSeeder extends Seeder
         $this->member->save();
 
         $this->seedLogs();
+        $this->seedTodoTasks();
     }
 
     private function seedProjects(): void
@@ -147,6 +149,22 @@ class DatabaseSeeder extends Seeder
                 ];
                 $member->logs()->create($data);
             }
+        }
+    }
+
+    private function seedTodoTasks(): void
+    {
+        for ($i = 0; $i < 3; $i++) {
+            $project = $this->member->projects()->get()->random();
+            $task = null;
+            if ($project->tasks->count() > 0) {
+                $task = $project->tasks()->get()->random();
+            }
+            factory(TodoTask::class, 2)->create([
+                'project_id' => $project->id,
+                'task_id' => $task ? $task->id : null,
+                'member_id' => $this->member->id
+            ]);
         }
     }
 

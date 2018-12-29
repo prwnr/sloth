@@ -10,6 +10,6 @@ $factory->define(App\Models\TodoTask::class, function (Faker $faker) {
         'task_id' => factory(\App\Models\Project\Task::class)->create()->id,
         'timelog_id' => factory(\App\Models\TimeLog::class)->create()->id,
         'finished' => $faker->boolean,
-        'priority' => $faker->numberBetween(0, 5)
+        'priority' => $faker->numberBetween(1, 3)
     ];
 });
