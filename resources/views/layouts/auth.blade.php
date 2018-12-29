@@ -87,9 +87,10 @@
                                         <ul class="list-unstyled">
                                             <li>Clients management with budget and billings,</li>
                                             <li>Projects management with budget and billings,</li>
-                                            <li>Your own team memberes with salary,</li>
+                                            <li>Your own team members with salary,</li>
                                             <li>Roles and permissions management for your members,</li>
                                             <li>Detailed reports for everything that is tracked,</li>
+                                            <li>List of todo tasks,</li>
                                             <li>and of course, time tracker.</li>
                                         </ul>
                                         <p>Create your team and find out more!</p>
