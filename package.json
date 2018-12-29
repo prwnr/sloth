@@ -10,26 +10,30 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
+        "admin-lte": "^3.0.0-alpha.2",
         "axios": "^0.18",
-        "laravel-mix": "^2.0",
-        "bootstrap": "^4.1.1",
+        "bootstrap": "^4.2.1",
         "cross-env": "^5.1.6",
         "jquery": "^3.2",
-        "lodash": "^4.17.10",
-        "popper.js": "^1.12",
-        "v-select2-component": "^0.3.0",
-        "vue": "^2.5.16",
+        "laravel-mix": "^4.0.12",
+        "lodash": "^4.17.11",
+        "moment": "^2.23.0",
+        "popper.js": "^1.14.6",
+        "resolve-url-loader": "^2.3.1",
+        "sass": "^1.15.2",
+        "sass-loader": "^7.1.0",
+        "v-select2-component": "^0.3.1",
+        "vue": "^2.5.21",
         "vue-awesome-notifications": "^2.2.5",
         "vue-bootstrap-toggle": "^1.1.3",
-        "vue-router": "^3.0.1",
-        "vue-sweetalert2": "^1.3.1",
-        "vue2-datatable-component": "^2.3.1",
-        "admin-lte": "^3.0.0-alpha.2",
-        "moment": "^2.22.2"
+        "vue-router": "^3.0.2",
+        "vue-sweetalert2": "^1.6.3",
+        "vue-template-compiler": "^2.5.21",
+        "vue2-datatable-component": "^2.3.1"
     },
     "dependencies": {
-        "chart.js": "^2.7.2",
+        "chart.js": "^2.7.3",
         "vue-chartjs": "^3.4.0",
-        "vuejs-datepicker": "^1.5.2"
+        "vuejs-datepicker": "^1.5.4"
     }
 }

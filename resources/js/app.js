@@ -1,11 +1,6 @@
 
 require('./bootstrap');
-
 window.Vue = require('vue');
-
-import Form from './utilities/Form';
-window.Form = Form;
-
 require('./event-hub');
 
 import router from './routes'
@@ -13,6 +8,17 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import Select2 from 'v-select2-component';
 import Datatable from 'vue2-datatable-component';
 import VueAWN from 'vue-awesome-notifications';
+import Form from './utilities/Form';
+import AuthUser from './components/AuthUser';
+import FormError from './components/FormError';
+import Loading from './components/Loading';
+import Sidebar from './components/Sidebar';
+import ControlSidebar from './components/ControlSidebar';
+import NavbarControlSidebar from './components/Navbar/ControlSidebar';
+import CardHeader from './components/Card/Header';
+import BootstrapToggle from 'vue-bootstrap-toggle';
+
+window.Form = Form;
 
 Vue.use(Datatable);
 Vue.use(VueAWN, {
@@ -20,15 +26,14 @@ Vue.use(VueAWN, {
 });
 Vue.component('Select2', Select2);
 Vue.use(VueSweetalert2);
-
-Vue.component('auth-user', require('./components/AuthUser.vue'));
-Vue.component('form-error', require('./components/FormError.vue'));
-Vue.component('loading', require('./components/Loading.vue'));
-Vue.component('sidebar', require('./components/Sidebar.vue'));
-Vue.component('control-sidebar', require('./components/ControlSidebar.vue'));
-Vue.component('navbar-control-sidebar', require('./components/Navbar/ControlSidebar.vue'));
-Vue.component('card-header', require('./components/Card/Header.vue'));
-Vue.component('bootstrap-toggle', require('vue-bootstrap-toggle'));
+Vue.component('auth-user', AuthUser);
+Vue.component('form-error', FormError);
+Vue.component('loading', Loading);
+Vue.component('sidebar', Sidebar);
+Vue.component('control-sidebar', ControlSidebar);
+Vue.component('navbar-control-sidebar', NavbarControlSidebar);
+Vue.component('card-header', CardHeader);
+Vue.component('bootstrap-toggle', BootstrapToggle);
 
 const app = new Vue({
     el: '#app',
