@@ -43,17 +43,6 @@
                   v-html="form.errors.get('password_confirmation')"
                   v-show="form.errors.has('password_confirmation')"></span>
         </div>
-        <!--<div class="form-group">-->
-            <!--<label>Choose your theme skin:-->
-                <!--<bootstrap-toggle v-model="checked" :disabled="true" :options="{-->
-                        <!--on: 'Dark skin',-->
-                        <!--off: 'Light skin',-->
-                        <!--onstyle: 'primary',-->
-                        <!--offstyle: 'default',-->
-                        <!--style: 'disabled',-->
-                        <!--size: 'small' }"/>-->
-            <!--</label>-->
-        <!--</div>-->
 
         <button type="submit" class="btn btn-success" :disabled="form.errors.any()">Save</button>
     </form>
@@ -85,7 +74,7 @@
             onSubmit() {
                 this.$awn.async(
                     this.form.put('/api/users/' + this.user.id).then(response => {
-                        this.$emit('userUpdated', response.data);
+                        this.$emit('user-updated', response.data);
                         this.form.updateOriginalData();
                         this.resetPasswordData();
                         this.$awn.success('Your account has been updated.');

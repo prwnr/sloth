@@ -52,10 +52,10 @@
                                     <reports v-if="activeTab == 'reports'"></reports>
                                 </div>
                                 <div class="tab-pane" id="settings">
-                                    <settings v-if="activeTab == 'settings'" @userUpdated="updateUser" :user="user.data"></settings>
+                                    <settings v-if="activeTab == 'settings'" @user-updated="updateUser" :user="user.data"></settings>
                                 </div>
                                 <div v-if="$user.hasRole('admin')" class="tab-pane" id="team">
-                                    <team v-if="activeTab == 'team'" @teamUpdated="updateTeam" :team="user.team"></team>
+                                    <team v-if="activeTab == 'team'" @team-updated="updateTeam" :team="user.team"></team>
                                 </div>
                             </div>
                         </div>
@@ -141,9 +141,8 @@
              * @param team
              */
             updateTeam(team) {
-                if (team.name != this.user.team.name) {
-                    this.user.team.name = team.name;
-                }
+                let index = this.teams.findIndex(item => item.id === team.id);
+                this.teams[index].name = team.name;
             },
 
             /**

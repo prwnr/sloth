@@ -48,10 +48,10 @@
                                 :key="time.id"
                                 :time="time"
                                 :projects="projects"
-                                @logDeleted="deleteLog"
-                                @workedTimeChanged="addToTotalTime"
-                                @minuteTick="totalTime++"
-                                @editTime="handleEditDialog"></time-log>
+                                @log-deleted="deleteLog"
+                                @worked-time-changed="addToTotalTime"
+                                @minute-tick="totalTime++"
+                                @time-edit="handleEditDialog"></time-log>
                     </div>
                     <div v-if="timeLogs.length != 0" class="text-right p-2 d-block">
                         <span class="pr-4">This day you worked for {{ totalTimeWorked }}</span>
@@ -66,7 +66,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-log :projects="projects" :day="currentDay" @logAdded="addLog"></new-log>
+                            <new-log :projects="projects" :day="currentDay" @log-added="addLog"></new-log>
                         </div>
                     </div>
                 </div>
@@ -84,8 +84,8 @@
                                     :time="editedTime"
                                     :projects="projects"
                                     :day="currentDay"
-                                    @logUpdated="updateLog"
-                                    @dateChanged="fetchTimeLogs"
+                                    @log-updated="updateLog"
+                                    @date-changed="fetchTimeLogs"
                             ></edit-log>
                         </div>
                     </div>

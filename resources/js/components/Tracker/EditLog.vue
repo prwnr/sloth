@@ -108,11 +108,11 @@
             save() {
                 this.form.created_at = moment(this.form.created_at).format('YYYY-MM-DD');
                 this.form.put('/api/time/' + this.time.id).then(response => {
-                    this.$emit('logUpdated', response.data);
+                    this.$emit('log-updated', response.data);
                     $('#editRow').modal('hide');
 
                     if (this.day !== this.form.created_at) {
-                        this.$emit('dateChanged');
+                        this.$emit('date-changed');
                         EventHub.fire('log_updated', this.time);
                     }
 

@@ -146,7 +146,7 @@
 
                     let created_at = this.form.created_at;
                     if (this.day === created_at) {
-                        this.$emit('logAdded', response.data);
+                        this.$emit('log_added', response.data);
                     }
 
                     EventHub.fire('log_created', response.data);
