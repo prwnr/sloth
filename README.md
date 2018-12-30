@@ -35,8 +35,10 @@ Requirements:
 ## Installation
 
 If you would like to install _Sloth_ on your server, there are few small steps to do it:
-1. Install Composer packages
-2. Install NPM packages and run `npm prod` command to compile JS and CSS files
+1. Project installation
+    * run `composer create-project prwnr/sloth` command to get project files and install all packages,
+    * or clone repository and run `composer install` command to install packages
+2. Install NPM packages and run `npm run prod` command to compile JS and CSS files
 3. Run `php artisan migrate` command to import application tables
 4. Run `php artisan sloth:install` command to install base permissions and currencies used by _Sloth_
 
