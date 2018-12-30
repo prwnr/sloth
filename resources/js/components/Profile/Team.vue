@@ -93,7 +93,7 @@
             onSubmit() {
                 this.$awn.async(
                     this.form.put('/api/teams/' + this.teamId).then(response => {
-                        this.$emit('teamUpdated', response.data);
+                        this.$emit('team-updated', response.data);
                         this.$awn.success('Your team name has been updated.');
                         this.form.updateOriginalData();
                     }).catch(error => {

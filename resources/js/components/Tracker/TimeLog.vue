@@ -155,7 +155,7 @@
                     this.workedTime = seconds;
                     this.time.duration = newDuration;
                     this.duration = this.timer.format(seconds);
-                    this.$emit('workedTimeChanged', timeDiff);
+                    this.$emit('worked-time-changed', timeDiff);
                     this.$awn.success('Time log successfully updated');
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -166,7 +166,7 @@
              * Sends event with current log data to be processed in popup
              */
             editLog() {
-                this.$emit('editTime', this.time);
+                this.$emit('time-edit', this.time);
             },
 
             /**
@@ -187,7 +187,7 @@
                         if (this.startTime) {
                             this.stopCounter();
                         }
-                        this.$emit('logDeleted', this.time.id);
+                        this.$emit('log-deleted', this.time.id);
                     }
                 })
             },
@@ -205,7 +205,7 @@
 
                     this.updateWorkedTime(false);
                     if (!this.firstTick && this.workedTime % 60 == 0) {
-                        this.$emit('minuteTick');
+                        this.$emit('minute-tick');
                     }
                     this.firstTick = false;
                 }, 1000);
@@ -224,7 +224,7 @@
 
                 if (emitEvent) {
                     let diff = this.timer.secondsToMinutes(workedTime) - this.time.duration;
-                    this.$emit('workedTimeChanged', diff);
+                    this.$emit('worked-time-changed', diff);
                 }
 
                 this.workedTime = workedTime;
