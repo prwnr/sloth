@@ -3,6 +3,7 @@ require('./bootstrap');
 window.Vue = require('vue');
 require('./event-hub');
 
+import store from './store'
 import router from './routes'
 import VueSweetalert2 from 'vue-sweetalert2';
 import Select2 from 'v-select2-component';
@@ -59,5 +60,6 @@ const app = new Vue({
         });
     },
 
+    store,
     router,
 })
