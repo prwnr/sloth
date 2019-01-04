@@ -17,6 +17,7 @@
     import PieChart from '../Charts/PieChart';
     import DateRange from '../Report/DateRange';
     import Color from '../../utilities/Color';
+    import {mapGetters} from 'vuex';
 
     export default {
         components: {
@@ -37,6 +38,10 @@
             this.fetchData();
         },
 
+        computed: {
+            ...mapGetters(['authUser'])
+        },
+
         methods: {
             /**
              * @param range
@@ -52,7 +57,7 @@
             fetchData() {
                 let color = new Color();
                 this.chartData = null;
-                axios.get('api/reports/' + this.$user.member.id + '/projects/' + this.period).then(response => {
+                axios.get('api/reports/' + this.authUser.member.id + '/projects/' + this.period).then(response => {
                     let labelsNum = response.data.labels.length;
                     if (labelsNum === 0) {
                         return;

@@ -12,6 +12,8 @@
 </template>
 
 <script>
+    import {mapGetters} from 'vuex';
+
     export default {
         data() {
             return {
@@ -31,6 +33,10 @@
             formatDateTo: function (date, format) {
                 return moment(date).format(format);
             }
+        },
+
+        computed: {
+            ...mapGetters(['authUser'])
         },
 
         methods: {
@@ -66,7 +72,7 @@
              * Fetch logs
              */
             fetchTimeLogs() {
-                axios.get('/api/users/' + this.$user.data.id + '/logs', {
+                axios.get('/api/users/' + this.authUser.data.id + '/logs', {
                     params: {
                         active: true
                     }

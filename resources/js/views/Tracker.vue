@@ -101,6 +101,7 @@
     import EditLog from '../components/Tracker/EditLog.vue';
     import DatePicker from "vuejs-datepicker";
     import Timer from "../utilities/Timer";
+    import {mapGetters} from 'vuex'
 
     export default {
         components: {
@@ -140,6 +141,7 @@
         },
 
         computed: {
+            ...mapGetters(['authUser']),
             currentDayText: function () {
                 return moment(this.currentDay).format('LL');
             },
@@ -265,7 +267,7 @@
              * Fetch tracker data
              */
             fetchData() {
-                if (!this.$user.member) {
+                if (!this.authUser.member) {
                     axios.get('/api/projects').then(response => {
                         this.projects = response.data.data;
                     }).catch(error => {
@@ -276,7 +278,7 @@
                     return;
                 }
 
-                axios.get('/api/members/' + this.$user.member.id + '/projects').then(response => {
+                axios.get('/api/members/' + this.authUser.member.id + '/projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -288,7 +290,7 @@
              * Fetch logs for given user
              */
             fetchTimeLogs() {
-                axios.get('/api/users/' + this.$user.data.id + '/logs', {
+                axios.get('/api/users/' + this.authUser.get('id') + '/logs', {
                     params: {
                         date: this.currentDay
                     }

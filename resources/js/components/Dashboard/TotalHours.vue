@@ -16,6 +16,7 @@
     import BarChart from '../Charts/BarChart';
     import DateRange from '../Report/DateRange';
     import Color from '../../utilities/Color';
+    import {mapGetters} from 'vuex';
 
     export default {
         components: {
@@ -43,6 +44,10 @@
             this.fetchData();
         },
 
+        computed: {
+            ...mapGetters(['authUser'])
+        },
+
         methods: {
             /**
              * @param range
@@ -59,7 +64,7 @@
                 this.chartData = null;
                 let color = new Color();
                 let background = color.random();
-                axios.get('api/reports/' + this.$user.member.id + '/hours/' + this.period).then(response => {
+                axios.get('api/reports/' + this.authUser.member.id + '/hours/' + this.period).then(response => {
                     this.chartData = {
                         labels: response.data.labels,
                         datasets: [

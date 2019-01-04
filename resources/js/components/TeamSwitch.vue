@@ -7,15 +7,18 @@
 </template>
 
 <script>
+    import {mapGetters} from 'vuex';
+
     export default {
         data() {
             return {
                 teams: [],
-                currentTeam: this.$user.team.id
+                currentTeam: 0
             }
         },
 
         created() {
+            this.currentTeam = this.authUser.team.id;
             this.fetchTeams();
         },
 
@@ -25,9 +28,13 @@
             }
         },
 
+        computed: {
+            ...mapGetters(['authUser'])
+        },
+
         methods: {
             fetchTeams() {
-                axios.get(`/api/users/${this.$user.get('id')}`).then(response => {
+                axios.get(`/api/users/${this.authUser.get('id')}`).then(response => {
                     response.data.teams.forEach(team => {
                         this.teams.push(team);
                     });
@@ -40,7 +47,7 @@
              * Switch team and reloads user data
              */
             switchTeam() {
-                axios.put(`/api/users/${this.$user.get('id')}/switch`, {
+                axios.put(`/api/users/${this.authUser.get('id')}/switch`, {
                     team: this.currentTeam
                 }).then(response => {
                     this.$emit('change', response.data);
