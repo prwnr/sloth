@@ -36,8 +36,8 @@ export default new Vuex.Store({
                     password: user.password,
                     remember_me: user.remember_me
                 }).then(response => {
-                    let token = response.data.access_token;
-                    commit('setAuthToken', token)
+                    let token = response.data;
+                    commit('setAuthToken', token.access_token)
                     resolve(token)
                 }).catch(error => {
                     reject(error)

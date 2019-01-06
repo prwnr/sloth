@@ -54,8 +54,8 @@
             ...mapActions(['logIn', 'loadAuthUser']),
             async submit() {
                 await this.logIn(this.form.data()).then(async (token) => {
-                    this.$cookie.set('auth-token', token)
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+                    this.$cookie.set('auth-token', token.access_token, { expires:  token.expires_at})
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${token.access_token}`
                     await this.loadAuthUser
                     this.$router.push('/')
                 }).catch(error => {

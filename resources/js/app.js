@@ -73,7 +73,10 @@ const app = new Vue({
             let self = this;
             axios.interceptors.request.use(function (config) {
                 if (self.$store.getters.authToken) {
-                    config.headers = { Authorization: `Bearer ${self.$store.getters.authToken}`};
+                    config.headers = {
+                        Authorization: `Bearer ${self.$store.getters.authToken}`,
+                        Accept: 'application/json'
+                    };
                 }
 
                 return config;
@@ -88,7 +91,15 @@ const app = new Vue({
                     return Promise.reject(error);
                 }
 
-                if (error.response.status == 401 || error.response.status == 403) {
+                if (error.response.status == 401) {
+                    if (self.$cookie.get('auth-token')) {
+                        self.$cookie.delete('auth-token')
+                        self.$router.push({ name: 'login' });
+                    }
+                    return Promise.reject(error);
+                }
+
+                if (error.response.status == 403) {
                     self.$router.push({ name: 'dashboard' });
                     error.message = 'Access forbidden.';
                     return Promise.reject(error);

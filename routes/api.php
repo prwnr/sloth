@@ -11,7 +11,6 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
         });
     });
 
-
     Route::group(['middleware' => ['auth:api']], function () {
         Route::prefix('billings')->group(function () {
             Route::get('/types', 'BillingController@types');
