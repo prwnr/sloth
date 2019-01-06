@@ -20,7 +20,9 @@
 <body class="hold-transition">
 <div id="app" :class="layoutClass">
     <component :is="layout">
-        <router-view :key="$route.fullPath"></router-view>
+        <transition name="fade" mode="out-in">
+            <router-view :key="$route.fullPath"></router-view>
+        </transition>
     </component>
 </div>
 <script src="{{ asset('js/app.js') }}"></script>
