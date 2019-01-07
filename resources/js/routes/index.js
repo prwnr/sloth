@@ -28,6 +28,7 @@ import Reports from '../views/Reports.vue';
 
 import Login from '../components/Auth/Login.vue';
 import Signup from '../components/Auth/Signup.vue';
+import PasswordReset from '../components/Auth/Password/Reset.vue';
 
 import Todo from '../views/Todo.vue';
 
@@ -37,6 +38,7 @@ const routes = [
     { path: '/', component: Dashboard, name: 'dashboard' },
     { path: '/login', meta: { layout: 'blank'}, component: Login, name: 'login' },
     { path: '/signup', meta: { layout: 'blank'}, component: Signup, name: 'signup' },
+    { path: '/password/reset', meta: { layout: 'blank'}, component: PasswordReset, name: 'password_reset' },
 
     { path: '/time', component: Tracker, name: 'tracker' },
 

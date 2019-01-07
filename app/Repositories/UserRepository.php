@@ -54,6 +54,16 @@ class UserRepository implements RepositoryInterface
     }
 
     /**
+     * @param string $email
+     * @param array $columns
+     * @return User
+     */
+    public function findByEmail(string $email, array $columns = ['*']): User
+    {
+        return $this->user->query()->where('email', $email)->firstOrFail($columns);
+    }
+
+    /**
      * {@inheritdoc}
      * @return User
      */

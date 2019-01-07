@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Http\Mail\ResetPasswordMail;
 use App\Models\Team\Member;
 use App\Models\Team\Teamed;
+use App\Notifications\PasswordResetNotification;
 use App\Repositories\PermissionRepository;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
@@ -152,5 +154,15 @@ class User extends Authenticatable
             'team' => $this->team,
             'member' => $this->member()
         ];
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new PasswordResetNotification($token));
     }
 }

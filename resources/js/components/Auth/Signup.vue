@@ -44,9 +44,12 @@
             <button class="btn btn-success btn-block float-right">Register</button>
         </form>
         <div class="copy-text">
-            <router-link class="mt-3" :to="{ name: 'login' }" tag="a">Already have account? Log in!</router-link>
-            <!--<a class="d-block" href="">Already have account? Log in!</a>-->
-            <!--<a class="d-block" href="">Forgot Password?</a>-->
+            <div class="d-block">
+                <router-link class="mt-3" :to="{ name: 'login' }" tag="a">Already have account? Log in!</router-link>
+            </div>
+            <div class="d-block">
+                <router-link class="mt-3" :to="{ name: 'password_reset' }" tag="a">Forgot Password?</router-link>
+            </div>
         </div>
     </div>
 </template>

@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\User as UserResource;
 use App\Models\Team\Creator;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Carbon\Carbon;
+use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -18,6 +21,23 @@ use Illuminate\Support\Facades\Auth;
  */
 class AuthController extends Controller
 {
+
+    use SendsPasswordResetEmails;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
+     * AuthController constructor.
+     * @param UserRepository $userRepository
+     */
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * @param Request $request
      * @return JsonResponse
@@ -92,6 +112,27 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
 
         return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function passwordReset(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email'
+        ]);
+
+        $response = $this->broker()->sendResetLink(
+            $request->only('email')
+        );
+
+        if ($response === PasswordBroker::INVALID_USER) {
+            return response()->json(['message' => 'We can\'t find a user with that e-mail address.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
     /**

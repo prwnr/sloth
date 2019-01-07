@@ -3,12 +3,12 @@
         <h2 class="text-center">Sign in!</h2>
         <form @submit.prevent="submit" class="login-form">
             <div class="form-group">
-                <input id="email" type="email" class="form-control"
+                <input id="email" type="email" class="form-control" :class="{ 'is-invalid': form.errors.has('email')}"
                        name="email" v-model="form.email" autofocus placeholder="E-mail">
                 <form-error :text="form.errors.get('email')" :show="form.errors.has('email')"></form-error>
             </div>
             <div class="form-group">
-                <input id="password" type="password" class="form-control"
+                <input id="password" type="password" class="form-control" :class="{ 'is-invalid': form.errors.has('password')}"
                        name="password"  v-model="form.password" placeholder="Password">
                 <form-error :text="form.errors.get('password')" :show="form.errors.has('password')"></form-error>
             </div>
@@ -28,7 +28,7 @@
                 <router-link class="mt-3" :to="{ name: 'signup' }" tag="a">Dont have account yet?</router-link>
             </div>
             <div class="d-block">
-                <!--<a class="" href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>-->
+                <router-link class="mt-3" :to="{ name: 'password_reset' }" tag="a">Forgot Password?</router-link>
             </div>
         </div>
     </div>
@@ -59,7 +59,7 @@
                     await this.loadAuthUser
                     this.$router.push('/')
                 }).catch(error => {
-                    this.$awn.alert(error.message)
+
                 })
             }
         }
