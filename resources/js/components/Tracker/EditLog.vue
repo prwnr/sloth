@@ -54,6 +54,7 @@
 <script>
     import Timer from "../../utilities/Timer";
     import DatePicker from "vuejs-datepicker";
+    import {mapGetters} from "vuex";
 
     export default {
         props: ['time', 'projects', 'day'],
@@ -68,7 +69,7 @@
                 duration: null,
                 timer: new Timer(),
                 form: new Form({
-                    member: this.$user.member.id,
+                    member: 0,
                     project: this.time.project.id,
                     task: this.time.task ? this.time.task.id : null,
                     description: this.time.description ? this.time.description : '',
@@ -82,6 +83,7 @@
             EventHub.listen('new_current_day', day => {
                 this.form.created_at = day;
             });
+            this.form.member = this.authUser.member.id
         },
 
         watch: {
@@ -91,6 +93,10 @@
                     this.form.task = null
                 }
             }
+        },
+
+        computed: {
+            ...mapGetters(['authUser'])
         },
 
         methods: {

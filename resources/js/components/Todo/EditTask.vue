@@ -59,6 +59,7 @@
 
 <script>
     import PriorityBadge from './PriorityBadge';
+    import {mapGetters} from 'vuex';
 
     export default {
         name: "EditTask",
@@ -73,7 +74,7 @@
             return {
                 tasks: [],
                 form: new Form({
-                    member_id: this.$user.member.id,
+                    member_id: 0,
                     project_id: this.item.project_id,
                     task_id: this.item.task_id ? this.item.task_id : 0,
                     description: this.item.description,
@@ -84,6 +85,7 @@
 
         created() {
             this.fillTasks();
+            this.form.member_id = this.authUser.member.id
         },
 
         watch: {
@@ -94,6 +96,10 @@
 
                 this.form.task_id = null;
             }
+        },
+
+        computed: {
+            ...mapGetters(['authUser'])
         },
 
         methods: {

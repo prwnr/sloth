@@ -11,7 +11,6 @@ import Select2 from 'v-select2-component';
 import Datatable from 'vue2-datatable-component';
 import VueAWN from 'vue-awesome-notifications';
 import Form from './utilities/Form';
-import AuthUser from './components/AuthUser';
 import FormError from './components/FormError';
 import Loading from './components/Loading';
 import Sidebar from './components/Sidebar';
@@ -30,7 +29,6 @@ Vue.use(VueAWN, {
 });
 Vue.component('Select2', Select2);
 Vue.use(VueSweetalert2);
-Vue.component('auth-user', AuthUser);
 Vue.component('form-error', FormError);
 Vue.component('loading', Loading);
 Vue.component('sidebar', Sidebar);

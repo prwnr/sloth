@@ -38,7 +38,7 @@
                             <ul class="nav nav-pills">
                                 <!--<li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab" @click="toggleTab">Activity</a></li>-->
                                 <li class="nav-item"><a class="nav-link active" href="#reports" data-toggle="tab" @click="toggleTab">My reports</a></li>
-                                <li v-if="$user.hasRole('admin')" class="nav-item">
+                                <li v-if="authUser.hasRole('admin')" class="nav-item">
                                     <a class="nav-link" href="#team" data-toggle="tab" @click="toggleTab">My team</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab" @click="toggleTab">Settings</a></li>
                             </ul>
@@ -54,7 +54,7 @@
                                 <div class="tab-pane" id="settings">
                                     <settings v-if="activeTab == 'settings'" @user-updated="updateUser" :user="user.data"></settings>
                                 </div>
-                                <div v-if="$user.hasRole('admin')" class="tab-pane" id="team">
+                                <div v-if="authUser.hasRole('admin')" class="tab-pane" id="team">
                                     <team v-if="activeTab == 'team'" @team-updated="updateTeam" :team="user.team"></team>
                                 </div>
                             </div>
@@ -71,7 +71,8 @@
     import Settings from './../components/Profile/Settings.vue';
     import Reports from './../components/Profile/Reports.vue';
     import Activity from './../components/Profile/Activity.vue';
-    import User from "../models/User";
+    import User from '../models/User';
+    import {mapGetters} from 'vuex';
 
     export default {
         components: {
@@ -101,6 +102,7 @@
         },
 
         computed: {
+            ...mapGetters(['authUser']),
             roles: function () {
                 let roles = this.user.roles.map(item => item.display_name);
                 return roles.join(', ');
@@ -114,7 +116,7 @@
         methods: {
             fetchUser() {
                 this.loading = true;
-                axios.get(`/api/users/${this.$user.get('id')}`).then(response => {
+                axios.get(`/api/users/${this.authUser.get('id')}`).then(response => {
                     this.user = new User(response.data);
                     this.teams = response.data.teams;
                 }).catch(error => {

@@ -59,6 +59,7 @@
 
 <script>
     import PriorityBadge from './PriorityBadge';
+    import {mapGetters} from "vuex";
 
     export default {
         name: "NewTask",
@@ -73,7 +74,7 @@
             return {
                 tasks: [],
                 form: new Form({
-                    member_id: this.$user.member.id,
+                    member_id: 0,
                     project_id: '',
                     task_id: '',
                     description: '',
@@ -81,6 +82,10 @@
                     priority: ''
                 })
             }
+        },
+
+        created() {
+            this.form.member_id = this.authUser.member.id
         },
 
         watch: {
@@ -94,6 +99,10 @@
             }
         },
 
+        computed: {
+            ...mapGetters(['authUser'])
+        },
+
         methods: {
             /**
              * Creates new to do task
@@ -103,7 +112,7 @@
                     this.$emit('task-created', response.data);
                     this.$awn.success('New todo task created successfully');
                     this.form.reset();
-                    this.form.member_id = this.$user.member.id;
+                    this.form.member_id = this.authUser.member.id;
                     this.form.finished = false;
                     $('#new').modal('hide');
                 }).catch(error => {

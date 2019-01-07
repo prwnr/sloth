@@ -22,6 +22,7 @@
     import Report from '../../components/DataTable/Report';
     import Filters from '../../components/Report/Filters';
     import DateRange from '../../components/Report/DateRange';
+    import {mapGetters} from 'vuex';
 
     export default {
         components: {
@@ -34,7 +35,7 @@
                 reportData: [],
                 filters: {
                     range: 'week',
-                    members: [this.$user.member.id],
+                    members: [],
                     clients: [],
                     projects: [],
                     billable: [],
@@ -53,7 +54,12 @@
         },
 
         created() {
+            this.filters.members.push(this.authUser.member.id);
             this.fetchData();
+        },
+
+        computed: {
+            ...mapGetters(['authUser'])
         },
 
         methods: {
@@ -82,7 +88,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.post('/api/reports/' + this.$user.member.id, {
+                axios.post('/api/reports/' + this.authUser.member.id, {
                     filters: this.filters
                 }).then(response => {
                     this.reportData = response.data;

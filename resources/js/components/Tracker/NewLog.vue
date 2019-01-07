@@ -72,6 +72,7 @@
     import Timer from "../../utilities/Timer";
     import DatePicker from "vuejs-datepicker";
     import TimeInput from "./TimeInput";
+    import {mapGetters} from "vuex";
 
     export default {
         props: ['projects', 'day'],
@@ -86,7 +87,7 @@
                 duration: null,
                 timer: new Timer(),
                 form: new Form({
-                    member: this.$user.member.id,
+                    member: 0,
                     project: '',
                     task: '',
                     description: '',
@@ -100,9 +101,12 @@
             EventHub.listen('new_current_day', day => {
                 this.form.created_at = day;
             })
+
+            this.form.member = this.authUser.member.id
         },
 
         computed: {
+            ...mapGetters(['authUser']),
             buttonText: function () {
                 return this.duration ? 'Create' : 'Start';
             },
@@ -152,7 +156,7 @@
                     EventHub.fire('log_created', response.data);
                     this.form.reset();
                     this.form.created_at = created_at;
-                    this.form.member = this.$user.member.id;
+                    this.form.member = this.authUser.member.id;
                     this.duration = null;
                     this.$awn.success('New time log created');
                     $('#newLog').modal('hide');

@@ -26,7 +26,7 @@
                     <button v-if="!startTime && editing" class="btn btn-primary btn-flat" @click="update" title="Update">
                         <i class="fa fa-check"></i>
                     </button>
-                    <button v-if="!startTime" :disabled="!editing && !$user.can('edit_time')" class="btn btn-default btn-flat"
+                    <button v-if="!startTime" :disabled="!editing && !authUser.can('edit_time')" class="btn btn-default btn-flat"
                             :title="editTitle"
                             @click="editing = !editing">
                         <i v-if="!editing" class="fa fa-edit" title="Edit"></i>
@@ -49,6 +49,7 @@
 <script>
     import Timer from "../../utilities/Timer";
     import TimeInput from "./TimeInput";
+    import {mapGetters} from "vuex";
 
     export default {
         props: ['time'],
@@ -78,6 +79,7 @@
         },
 
         computed: {
+            ...mapGetters(['authUser']),
             description: function () {
                 return this.time.description ? this.time.description : '(empty)';
             },
