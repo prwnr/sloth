@@ -13,12 +13,11 @@
         data() {
             return {
                 teams: [],
-                currentTeam: 0
+                currentTeam: this.$store.getters.authUser.team.id
             }
         },
 
         created() {
-            this.currentTeam = this.authUser.team.id;
             this.fetchTeams();
         },
 

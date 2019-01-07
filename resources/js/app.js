@@ -65,6 +65,8 @@ const app = new Vue({
         }
 
         this.$store.commit('setAuthToken', this.$cookie.get('auth-token'))
+        axios.defaults.baseURL = process.env.MIX_APP_URL
+        axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.getters.authToken}`
         this.mountInterpreters()
     },
 
@@ -72,13 +74,6 @@ const app = new Vue({
         mountInterpreters() {
             let self = this;
             axios.interceptors.request.use(function (config) {
-                if (self.$store.getters.authToken) {
-                    config.headers = {
-                        Authorization: `Bearer ${self.$store.getters.authToken}`,
-                        Accept: 'application/json'
-                    };
-                }
-
                 return config;
             }, function (error) {
                 return Promise.reject(error);
