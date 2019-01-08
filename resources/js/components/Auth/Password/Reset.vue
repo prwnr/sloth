@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2 class="text-center">Reset password</h2>
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" @keydown="form.errors.clear($event.target.name)">
             <div class="text-center mt-4 mb-3">
                 <h4>Forgot your password?</h4>
                 <p>Enter your email address and we will send you instructions on how to reset your password.</p>

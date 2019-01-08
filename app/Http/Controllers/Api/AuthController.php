@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\User as UserResource;
 use App\Models\Team\Creator;
 use App\Models\User;
-use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
@@ -23,20 +22,6 @@ class AuthController extends Controller
 {
 
     use SendsPasswordResetEmails;
-
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    /**
-     * AuthController constructor.
-     * @param UserRepository $userRepository
-     */
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
 
     /**
      * @param Request $request
@@ -56,9 +41,7 @@ class AuthController extends Controller
             $teamCreator = new Creator($request->all());
             $teamCreator->make();
         } catch (\Exception $ex) {
-            return response()->json([
-                'message' => 'Cannot create account. Please contact website administrator'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Cannot create account. Please contact website administrator'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json(['message' => 'Account successfully created'], Response::HTTP_CREATED);
@@ -72,7 +55,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required|string',
+            'password' => 'required|string|min:6',
             'remember_me' => 'boolean'
         ]);
 
@@ -97,9 +80,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
-            'expires_at' => Carbon::parse(
-                $tokenResult->token->expires_at
-            )->toDateTimeString()
+            'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
         ]);
     }
 

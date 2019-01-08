@@ -40,15 +40,18 @@ Vue.component('blank-layout', BlankLayout);
 Vue.component('app-layout', AppLayout);
 Vue.use(VueCookie);
 
-const default_layout = 'app';
 const app = new Vue({
     el: '#app',
     store,
     router,
 
+    data: {
+        defaultLayout: 'app'
+    },
+
     computed: {
         layout() {
-            return (this.$route.meta.layout || default_layout) + '-layout';
+            return (this.$route.meta.layout || this.defaultLayout) + '-layout';
         },
 
         layoutClass() {
@@ -57,11 +60,6 @@ const app = new Vue({
     },
 
     created() {
-        if (!this.$cookie.get('auth-token')) {
-            this.$router.push({ name: 'login' });
-            return;
-        }
-
         this.$store.commit('setAuthToken', this.$cookie.get('auth-token'))
         axios.defaults.baseURL = process.env.MIX_APP_URL
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.getters.authToken}`
@@ -87,8 +85,8 @@ const app = new Vue({
                 if (error.response.status == 401) {
                     if (self.$cookie.get('auth-token')) {
                         self.$cookie.delete('auth-token')
-                        self.$router.push({ name: 'login' });
                     }
+                    self.$router.push({ name: 'login' });
                     return Promise.reject(error);
                 }
 

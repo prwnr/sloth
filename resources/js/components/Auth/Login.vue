@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2 class="text-center">Sign in!</h2>
-        <form @submit.prevent="submit" class="login-form">
+        <form @submit.prevent="submit" class="login-form" @keydown="form.errors.clear($event.target.name)">
             <div class="form-group">
                 <input id="email" type="email" class="form-control" :class="{ 'is-invalid': form.errors.has('email')}"
                        name="email" v-model="form.email" autofocus placeholder="E-mail">
@@ -59,8 +59,14 @@
                     await this.loadAuthUser
                     this.$router.push('/')
                 }).catch(error => {
+                    if (error.response.status === 422) {
+                        this.form.onFail(error.response.data.errors)
+                    }
 
-                })
+                    if (error.response.status === 401) {
+                        this.$awn.alert(error.response.data.message)
+                    }
+                });
             }
         }
     }
