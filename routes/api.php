@@ -5,6 +5,7 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
         Route::post('login', 'AuthController@login');
         Route::post('signup', 'AuthController@signup');
         Route::post('password/reset', 'AuthController@passwordReset');
+        Route::post('password/change', 'AuthController@passwordChange');
 
         Route::group(['middleware' => 'auth:api'], function() {
             Route::get('logout', 'AuthController@logout');

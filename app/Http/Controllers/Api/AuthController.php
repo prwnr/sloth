@@ -7,12 +7,10 @@ use App\Http\Resources\User as UserResource;
 use App\Models\Team\Creator;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\PasswordBroker;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\{JsonResponse, Request, Response};
+use Illuminate\Support\{Facades\Auth, Facades\Hash, Facades\Password, Str};
 
 /**
  * Class AuthController
@@ -20,8 +18,6 @@ use Illuminate\Support\Facades\Auth;
  */
 class AuthController extends Controller
 {
-
-    use SendsPasswordResetEmails;
 
     /**
      * @param Request $request
@@ -118,10 +114,53 @@ class AuthController extends Controller
 
     /**
      * @param Request $request
+     * @return JsonResponse
+     */
+    public function passwordChange(Request $request): JsonResponse
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        $response = $this->broker()->reset(
+            $request->all(), function ($user, $password) {
+                $user->password = Hash::make($password);
+                $user->setRememberToken(Str::random(60));
+                $user->save();
+
+                event(new PasswordReset($user));
+        });
+
+        if ($response !== Password::PASSWORD_RESET) {
+            if ($response === Password::INVALID_TOKEN) {
+                return response()->json([
+                    'message' => 'Password reset token is invalid. Re-check your email for valid token or contact administrator'
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return response()->json(['message' => 'We can\'t change your user password. Please contact administrator'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @param Request $request
      * @return UserResource
      */
     public function user(Request $request): UserResource
     {
         return new UserResource($request->user());
+    }
+
+    /**
+     * Get the broker to be used during password reset.
+     * @return \Illuminate\Contracts\Auth\PasswordBroker
+     */
+    public function broker(): PasswordBroker
+    {
+        return Password::broker();
     }
 }
