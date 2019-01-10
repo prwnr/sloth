@@ -28,7 +28,7 @@
                 <router-link class="mt-3" :to="{ name: 'signup' }" tag="a">Dont have account yet?</router-link>
             </div>
             <div class="d-block">
-                <router-link class="mt-3" :to="{ name: 'password_reset' }" tag="a">Forgot Password?</router-link>
+                <router-link class="mt-3" :to="{ name: 'password_forgot' }" tag="a">Forgot Password?</router-link>
             </div>
         </div>
     </div>

@@ -20,6 +20,20 @@ class AuthController extends Controller
 {
 
     /**
+     * @var Creator
+     */
+    private $teamCreator;
+
+    /**
+     * AuthController constructor.
+     * @param Creator $creator
+     */
+    public function __construct(Creator $creator)
+    {
+        $this->teamCreator = $creator;
+    }
+
+    /**
      * @param Request $request
      * @return JsonResponse
      */
@@ -34,8 +48,7 @@ class AuthController extends Controller
         ]);
 
         try {
-            $teamCreator = new Creator($request->all());
-            $teamCreator->make();
+            $this->teamCreator->make($request->all());
         } catch (\Exception $ex) {
             return response()->json(['message' => 'Cannot create account. Please contact website administrator'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -95,7 +108,7 @@ class AuthController extends Controller
      * @param Request $request
      * @return mixed
      */
-    public function passwordReset(Request $request)
+    public function forgotPassword(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email'
@@ -116,7 +129,7 @@ class AuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function passwordChange(Request $request): JsonResponse
+    public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
             'token' => 'required',
@@ -134,13 +147,40 @@ class AuthController extends Controller
         });
 
         if ($response !== Password::PASSWORD_RESET) {
+            $message = 'We can\'t change your user password. Please contact administrator';
             if ($response === Password::INVALID_TOKEN) {
-                return response()->json([
-                    'message' => 'Password reset token is invalid. Re-check your email for valid token or contact administrator'
-                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                $message = 'Password reset token is invalid. Re-check your email for valid token or contact administrator';
             }
 
-            return response()->json(['message' => 'We can\'t change your user password. Please contact administrator'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => $message], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'password' => 'required|string|min:6',
+        ]);
+
+        /** @var User $user */
+        $user = $request->user();
+        if (!$user->first_login) {
+            return response()->json(['message' => 'This is not your first login. You cannot change password this way.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $user->update([
+                'first_login' => false,
+                'password' => Hash::make($request->input('password'))
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json(['message' => 'Something went wrong when changing password.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json([], Response::HTTP_NO_CONTENT);
@@ -159,7 +199,7 @@ class AuthController extends Controller
      * Get the broker to be used during password reset.
      * @return \Illuminate\Contracts\Auth\PasswordBroker
      */
-    public function broker(): PasswordBroker
+    private function broker(): PasswordBroker
     {
         return Password::broker();
     }

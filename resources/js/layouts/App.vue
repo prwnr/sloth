@@ -75,6 +75,9 @@
 
         async created() {
             await this.$store.dispatch('loadAuthUser')
+            if (this.authUser.get('first_login')) {
+                this.showPasswordAlert();
+            }
         },
 
         computed: {
@@ -95,6 +98,40 @@
                 }).catch(error => {
                     this.$awn.alert(error.message)
                 })
+            },
+
+            showPasswordAlert() {
+                this.$swal({
+                    title: 'Change your password!',
+                    type: 'warning',
+                    html: 'You are using auto generated password. <br/>Change your password to be secure',
+                    input: 'password',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocomplete: 'off'
+                    },
+                    showCancelButton: false,
+                    confirmButtonText: 'Change',
+                    confirmButtonColor: '#28a745',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (password) => {
+                        return axios.put('/api/auth/password/change', {
+                            password: password
+                        }).then(response => {
+                            return Promise.resolve();
+                        }).catch(error => {
+                            if (error.response.status === 422) {
+                                this.$swal.showValidationMessage(_.first(error.response.data.errors.password));
+                                return;
+                            }
+
+                            this.$swal.showValidationMessage(error.response.data.message);
+                        })
+                    },
+                    allowOutsideClick: () => false
+                }).then(() => {
+                    this.$awn.success('Password changed')
+                });
             }
         }
     }
