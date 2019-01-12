@@ -17,7 +17,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <!-- Google Font: Source Sans Pro -->
 </head>
-<body class="hold-transition">
+<body class="hold-transition sidebar-mini">
 <div id="app" :class="layoutClass">
     <component :is="layout">
         <transition name="fade" mode="out-in">
