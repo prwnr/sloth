@@ -8,14 +8,13 @@
                     </div>
                     <div class="col-sm-2">
                         <router-link :to="{ name: 'roles.create' }" class="btn btn-success btn-block">Create new</router-link>
-
                     </div>
                 </div>
             </div>
         </section>
         <section class="content">
             <div class="card card-table">
-                <card-header>Roles list</card-header>
+                <card-header :minimizable="false">Roles list</card-header>
                 <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 

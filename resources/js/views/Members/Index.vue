@@ -14,7 +14,7 @@
         </section>
         <section class="content">
             <div class="card card-table">
-                <card-header>Members list</card-header>
+                <card-header :minimizable="false">Members list</card-header>
                 <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 

@@ -13,7 +13,7 @@
                 </div>
             </div>
         </section>
-        <section class="content pb-5">
+        <section class="content">
             <div class="card mb-4">
                 <div class="card-header">
                     <h3 class="d-inline">Logs from: {{ currentDayText }}</h3>

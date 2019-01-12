@@ -15,10 +15,10 @@
                     <div class="col-12">
                         <h2>Personal charts</h2>
                     </div>
-                    <div class="col-6 mb-5">
+                    <div class="col-6">
                         <total-hours :key="authUser.member.id"></total-hours>
                     </div>
-                    <div class="col-6 mb-5">
+                    <div class="col-6 ">
                         <projects-hours :key="authUser.member.id"></projects-hours>
                     </div>
                 </div>

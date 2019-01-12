@@ -55,7 +55,7 @@ const app = new Vue({
         },
 
         layoutClass() {
-            return this.$route.meta.layout ? 'background-blank' : 'sidebar-mini sticky-footer';
+            return this.$route.meta.layout ? 'background-blank' : 'sidebar-mini';
         }
     },
 

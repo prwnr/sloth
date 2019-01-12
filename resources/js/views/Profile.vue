@@ -8,7 +8,7 @@
             </div>
         </section>
         <loading v-if="loading"></loading>
-        <section class="content mb-6">
+        <section class="content">
             <div class="row" v-if="!loading">
                 <div class="col-md-3">
                     <div class="card card-primary card-outline">
@@ -32,7 +32,7 @@
                     </div>
 
                 </div>
-                <div class="col-md-9 mb-3">
+                <div class="col-md-9">
                     <div class="card">
                         <div class="card-header p-2">
                             <ul class="nav nav-pills">

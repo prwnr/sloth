@@ -13,7 +13,7 @@
                 </div>
             </div>
         </section>
-        <section class="content pb-5">
+        <section class="content">
             <loading v-if="loading"></loading>
             <div v-else class="card mb-4">
                 <div>
