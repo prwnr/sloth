@@ -54,7 +54,7 @@
 <script>
     import Timer from "../../utilities/Timer";
     import DatePicker from "vuejs-datepicker";
-    import {mapGetters} from "vuex";
+    import {mapGetters, mapActions} from "vuex";
 
     export default {
         props: ['time', 'projects', 'day'],
@@ -100,6 +100,9 @@
         },
 
         methods: {
+            ...mapActions('timelogs', {
+                updateLog: 'update'
+            }),
             /**
              * Fill tasks variable with array of tasks for current project
              */
@@ -114,12 +117,20 @@
             save() {
                 this.form.created_at = moment(this.form.created_at).format('YYYY-MM-DD');
                 this.form.put('/api/time/' + this.time.id).then(response => {
-                    this.$emit('log-updated', response.data);
+                    let project = this.projects.find(item => item.id === this.form.project);
+                    this.updateLog({
+                        id: this.time.id,
+                        data: {
+                            project: project,
+                            task: project.tasks.find(item => item.id === this.form.task),
+                            description: this.form.description
+                        }
+                    })
+
                     $('#editRow').modal('hide');
 
                     if (this.day !== this.form.created_at) {
                         this.$emit('date-changed');
-                        EventHub.fire('log_updated', this.time);
                     }
 
                     this.$awn.success('Log successfully updated');

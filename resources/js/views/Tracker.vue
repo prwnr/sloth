@@ -48,9 +48,6 @@
                                 :key="time.id"
                                 :time="time"
                                 :projects="projects"
-                                @log-deleted="deleteLog"
-                                @worked-time-changed="addToTotalTime"
-                                @minute-tick="totalTime++"
                                 @time-edit="handleEditDialog"></time-log>
                     </div>
                     <div v-if="timeLogs.length != 0" class="text-right p-2 d-block">
@@ -66,7 +63,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-log :projects="projects" :day="currentDay" @log-added="addLog"></new-log>
+                            <new-log :projects="projects" :day="currentDay"></new-log>
                         </div>
                     </div>
                 </div>
@@ -84,7 +81,6 @@
                                     :time="editedTime"
                                     :projects="projects"
                                     :day="currentDay"
-                                    @log-updated="updateLog"
                                     @date-changed="fetchTimeLogs"
                             ></edit-log>
                         </div>
@@ -101,7 +97,7 @@
     import EditLog from '../components/Tracker/EditLog.vue';
     import DatePicker from "vuejs-datepicker";
     import Timer from "../utilities/Timer";
-    import {mapGetters} from 'vuex'
+    import {mapGetters, mapActions} from 'vuex'
 
     export default {
         components: {
@@ -118,10 +114,8 @@
                 previousDay: '',
                 nextDay: '',
                 today: '',
-                timeLogs: [],
                 projects: [],
                 editedTime: null,
-                totalTime: 0,
                 timer: new Timer()
             }
         },
@@ -141,7 +135,11 @@
         },
 
         computed: {
-            ...mapGetters(['authUser']),
+            ...mapGetters({
+                authUser: 'authUser',
+                totalTime: 'timelogs/totalTime',
+                timeLogs: 'timelogs/all'
+            }),
             currentDayText: function () {
                 return moment(this.currentDay).format('LL');
             },
@@ -151,6 +149,11 @@
         },
 
         methods: {
+            ...mapActions('timelogs', {
+                fetchDay: 'fetchDay',
+                removeLog: 'remove',
+                updateLog: 'update'
+            }),
             /**
              * Reset date filter to todays day
              */
@@ -186,54 +189,11 @@
              * @param currentDay
              */
             changeDays(currentDay) {
-                this.totalTime = 0;
                 this.currentDay = currentDay;
                 this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
                 this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
                 EventHub.fire('new_current_day', this.currentDay);
-                this.fetchTimeLogs();
-            },
-
-            /**
-             * Add new log to logs array
-             * @param log
-             */
-            addLog(log) {
-                this.timeLogs.push(log)  ;
-                this.totalTime += log.duration;
-            },
-
-            /**
-             * Delete log by ID
-             * @param logId
-             */
-            deleteLog(logId) {
-                axios.delete('/api/time/' + logId).then(response => {
-                    this.timeLogs = this.timeLogs.filter(item => {
-                        if (item.id !== logId) {
-                            return true;
-                        }
-
-                        this.totalTime -= item.duration;
-                        return false;
-                    });
-                    EventHub.fire('log_deleted', logId);
-                    this.$awn.success('Log succesfully deleted.');
-                }).catch(error => {
-                    this.$awn.alert(error.message);
-                })
-            },
-
-            /**
-             * Update log based on given data
-             */
-            updateLog(data) {
-                let index = this.timeLogs.findIndex(item => item.id === data.id);
-
-                let project = this.projects.find(item => item.id === data.project_id);
-                this.timeLogs[index].project = project;
-                this.timeLogs[index].task = project.tasks.find(item => item.id === data.task_id);
-                this.timeLogs[index].description = data.description;
+                this.fetchTimeLogs()
             },
 
             /**
@@ -248,22 +208,6 @@
             },
 
             /**
-             * Sum total time duration of all logs from given day
-             */
-            sumTotalTime() {
-                for (let log of this.timeLogs) {
-                    this.totalTime += log.duration;
-                }
-            },
-
-            /**
-             * Add fixed time to current total time
-             */
-            addToTotalTime(minutes) {
-                this.totalTime += minutes;
-            },
-
-            /**
              * Fetch tracker data
              */
             fetchData() {
@@ -274,7 +218,7 @@
                         this.$awn.alert(error.message);
                     });
 
-                    this.fetchTimeLogs();
+                    this.fetchTimeLogs()
                     return;
                 }
 
@@ -283,22 +227,12 @@
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
-                this.fetchTimeLogs();
+                this.fetchTimeLogs()
             },
 
-            /**
-             * Fetch logs for given user
-             */
             fetchTimeLogs() {
-                axios.get('/api/users/' + this.authUser.get('id') + '/logs', {
-                    params: {
-                        date: this.currentDay
-                    }
-                }).then(response => {
-                    this.timeLogs = response.data.data;
-                    this.sumTotalTime();
-                }).catch(error => {
-                    this.$awn.alert(error.message);
+                this.fetchDay(this.currentDay).catch(error => {
+                    this.$awn.alert(error.message)
                 });
             }
         }

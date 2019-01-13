@@ -49,7 +49,7 @@
 <script>
     import Timer from "../../utilities/Timer";
     import TimeInput from "./TimeInput";
-    import {mapGetters} from "vuex";
+    import {mapGetters, mapActions} from "vuex";
 
     export default {
         props: ['time'],
@@ -66,7 +66,7 @@
                 startTime: this.time.start,
                 workedTime: null,
                 duration: null,
-                timer: new Timer()
+                timer: new Timer(),
             }
         },
 
@@ -105,17 +105,24 @@
         },
 
         methods: {
+            ...mapActions('timelogs', {
+                updateLog: 'update',
+                startLog: 'start',
+                stopLog: 'stop',
+                updateLogTime: 'updateTime',
+                removeLog: 'remove'
+            }),
+
             /**
              * Start stopped time (current time is taken as new start time)
              */
             start() {
-                axios.put('/api/time/' + this.time.id + '/duration', {
-                    duration: this.time.duration,
-                    time: 'start'
+                this.startLog({
+                    id: this.time.id,
+                    duration: this.time.duration
                 }).then(response => {
                     this.firstTick = true;
-                    this.startTime = response.data.data.start.date;
-                    EventHub.fire('log_updated', this.time);
+                    this.startTime = response.start.date;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
@@ -126,14 +133,12 @@
              */
             stop() {
                 this.stopCounter();
-                axios.put('/api/time/' + this.time.id + '/duration', {
-                    duration: this.time.duration,
-                    time: 'stop'
-                }).then(response => {
-                    EventHub.fire('log_updated', this.time);
+                this.stopLog({
+                    id: this.time.id,
+                    duration: this.time.duration
                 }).catch(error => {
-                    this.$awn.alert(error.message);
-                });
+                    this.$awn.alert(error.message)
+                })
             },
 
             stopCounter() {
@@ -149,15 +154,14 @@
             update() {
                 let seconds = this.timer.revert(this.duration);
                 let newDuration = this.timer.secondsToMinutes(seconds);
-                axios.put('/api/time/' + this.time.id + '/duration', {
-                    duration: newDuration,
+                this.updateLogTime({
+                    id: this.time.id,
+                    duration: newDuration
                 }).then(response => {
-                    let timeDiff = this.timer.secondsToMinutes(seconds) - this.timer.secondsToMinutes(this.workedTime);
                     this.editing = false;
                     this.workedTime = seconds;
                     this.time.duration = newDuration;
                     this.duration = this.timer.format(seconds);
-                    this.$emit('worked-time-changed', timeDiff);
                     this.$awn.success('Time log successfully updated');
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -189,7 +193,13 @@
                         if (this.startTime) {
                             this.stopCounter();
                         }
-                        this.$emit('log-deleted', this.time.id);
+
+                        axios.delete('/api/time/' + this.time.id).then(response => {
+                            this.removeLog(this.time.id)
+                            this.$awn.success('Log succesfully deleted.');
+                        }).catch(error => {
+                            this.$awn.alert(error.message);
+                        })
                     }
                 })
             },
@@ -198,17 +208,14 @@
              * Start tracking time from current 'startTime' value
              */
             track() {
-                this.updateWorkedTime(true);
+                this.updateWorkedTime();
 
                 setInterval(() => {
                     if (!this.startTime) {
                         return;
                     }
 
-                    this.updateWorkedTime(false);
-                    if (!this.firstTick && this.workedTime % 60 == 0) {
-                        this.$emit('minute-tick');
-                    }
+                    this.updateWorkedTime();
                     this.firstTick = false;
                 }, 1000);
             },
@@ -216,17 +223,12 @@
             /**
              * Updates worked time with a diff from moment
              */
-            updateWorkedTime(emitEvent) {
+            updateWorkedTime() {
                 let start = moment(this.startTime);
                 let workedTime = moment().diff(start, 'seconds') + this.timer.minutesToSeconds(this.time.duration);
                 if (!workedTime) {
                     this.workedTime = 0;
                     return;
-                }
-
-                if (emitEvent) {
-                    let diff = this.timer.secondsToMinutes(workedTime) - this.time.duration;
-                    this.$emit('worked-time-changed', diff);
                 }
 
                 this.workedTime = workedTime;

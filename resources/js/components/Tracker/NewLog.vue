@@ -72,7 +72,7 @@
     import Timer from "../../utilities/Timer";
     import DatePicker from "vuejs-datepicker";
     import TimeInput from "./TimeInput";
-    import {mapGetters} from "vuex";
+    import {mapGetters, mapActions} from "vuex";
 
     export default {
         props: ['projects', 'day'],
@@ -132,6 +132,9 @@
         },
 
         methods: {
+            ...mapActions('timelogs', {
+                addLog: 'add',
+            }),
             /**
              * Creates new tracking time row
              */
@@ -150,10 +153,9 @@
 
                     let created_at = this.form.created_at;
                     if (this.day === created_at) {
-                        this.$emit('log-added', response.data);
+                        this.addLog(response.data)
                     }
 
-                    EventHub.fire('log_created', response.data);
                     this.form.reset();
                     this.form.created_at = created_at;
                     this.form.member = this.authUser.member.id;
