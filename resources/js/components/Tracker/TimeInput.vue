@@ -16,6 +16,12 @@
             }
         },
 
+        watch: {
+            value: function () {
+                this.content = this.value ? this.value : ''
+            }
+        },
+
         methods: {
             update(e) {
                 if ((this.content.match(/:/g) || []).length >= 2) {
