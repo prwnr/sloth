@@ -92,7 +92,7 @@
 
         methods: {
             fetchData(id) {
-                axios.get('/api/roles/' + id).then(response => {
+                axios.get('roles/' + id).then(response => {
                     this.role = response.data.data;
                 }).catch(error => {
                     let message = error.message;
@@ -103,7 +103,7 @@
                     this.$awn.alert(message);
                 });
 
-                axios.get('/api/perms').then(response => {
+                axios.get('perms').then(response => {
                     this.permissions = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);

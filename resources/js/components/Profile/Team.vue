@@ -75,7 +75,7 @@
              * Fetch all members for current Admin
              */
             fetchMembers() {
-                axios.get('/api/members').then(response => {
+                axios.get('members').then(response => {
                     this.items = response.data.data;
                     this.items.map(item => {
                         item.fullname = item.user.fullname;
@@ -92,7 +92,7 @@
              */
             onSubmit() {
                 this.$awn.async(
-                    this.form.put('/api/teams/' + this.teamId).then(response => {
+                    this.form.put('teams/' + this.teamId).then(response => {
                         this.$emit('team-updated', response.data);
                         this.$awn.success('Your team name has been updated.');
                         this.form.updateOriginalData();

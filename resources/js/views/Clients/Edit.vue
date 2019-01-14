@@ -171,7 +171,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.put('/api/clients/' + this.$route.params.id).then(response => {
+                    this.form.put('clients/' + this.$route.params.id).then(response => {
                         this.$awn.success('Client updated successfully.');
                     }).catch(error => {
                         this.$awn.alert(error.message);
@@ -182,7 +182,7 @@
              * Load current client
              */
             fetchData() {
-                axios.get('/api/clients/' + this.$route.params.id).then(response => {
+                axios.get('clients/' + this.$route.params.id).then(response => {
                     this.client = response.data.data;
                     this.form.company_name = this.client.company_name;
                     this.form.vat = this.client.street;
@@ -203,7 +203,7 @@
              * Load billing data
              */
             fetchBillingData() {
-                axios.get('/api/billings/data').then(response => {
+                axios.get('billings/data').then(response => {
                     this.currencies = response.data.currencies;
                     this.billingTypes = response.data.billing_types;
                 }).catch(error => {

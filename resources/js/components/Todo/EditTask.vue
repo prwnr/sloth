@@ -107,7 +107,7 @@
              * Save task update
              */
             save() {
-                this.form.put(`/api/todos/${this.item.id}`).then(response => {
+                this.form.put(`todos/${this.item.id}`).then(response => {
                     this.$emit('task-updated', response.data);
                     this.$awn.success('Todo task successfully updated');
                     this.form.reset();

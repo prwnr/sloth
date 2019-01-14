@@ -85,7 +85,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.get('/api/clients').then(response => {
+                axios.get('clients').then(response => {
                     this.items = response.data.data
                     this.loading = false;
                 }).catch(error => {
@@ -101,7 +101,7 @@
              */
             destroyData(id) {
                 this.$awn.async(
-                    axios.delete('/api/clients/' + id).then(response => {
+                    axios.delete('clients/' + id).then(response => {
                         this.items = this.items.filter((item) => {
                             return item.id != id
                         });

@@ -212,7 +212,7 @@
              */
             fetchData() {
                 if (!this.authUser.member) {
-                    axios.get('/api/projects').then(response => {
+                    axios.get('projects').then(response => {
                         this.projects = response.data.data;
                     }).catch(error => {
                         this.$awn.alert(error.message);
@@ -222,7 +222,7 @@
                     return;
                 }
 
-                axios.get('/api/members/' + this.authUser.member.id + '/projects').then(response => {
+                axios.get('members/' + this.authUser.member.id + '/projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

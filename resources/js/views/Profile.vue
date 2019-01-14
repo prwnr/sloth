@@ -116,7 +116,7 @@
         methods: {
             fetchUser() {
                 this.loading = true;
-                axios.get(`/api/users/${this.authUser.get('id')}`).then(response => {
+                axios.get(`users/${this.authUser.get('id')}`).then(response => {
                     this.user = new User(response.data);
                     this.teams = response.data.teams;
                 }).catch(error => {

@@ -144,7 +144,7 @@
                 }
 
                 this.form.created_at = moment(this.form.created_at).format('YYYY-MM-DD');
-                this.form.post('/api/time').then(response => {
+                this.form.post('time').then(response => {
                     if (response.data.start) {
                         response.data.start = response.data.start.date;
                     } else {

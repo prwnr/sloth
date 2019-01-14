@@ -116,7 +116,7 @@
              */
             save() {
                 this.form.created_at = moment(this.form.created_at).format('YYYY-MM-DD');
-                this.form.put('/api/time/' + this.time.id).then(response => {
+                this.form.put('time/' + this.time.id).then(response => {
                     let project = this.projects.find(item => item.id === this.form.project);
                     this.updateLog({
                         id: this.time.id,

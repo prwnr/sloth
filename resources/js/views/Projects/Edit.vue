@@ -224,7 +224,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.put('/api/projects/' + this.$route.params.id).then(response => {
+                    this.form.put('projects/' + this.$route.params.id).then(response => {
                         this.$awn.success('Project updated successfully.');
                     }).catch(error => {
                         this.$awn.alert(error.message);
@@ -269,7 +269,7 @@
                     reverseButtons: true
                 }).then(result => {
                     if (result.value) {
-                        axios.get('/api/projects/task-types').then(response => {
+                        axios.get('projects/task-types').then(response => {
                             this.tasks = response.data;
                             this.showTasks = true;
                         }).catch(error => {
@@ -299,7 +299,7 @@
              * Load current project data
              */
             fetchProject() {
-                axios.get('/api/projects/' + this.$route.params.id).then(response => {
+                axios.get('projects/' + this.$route.params.id).then(response => {
                     this.project = response.data.data;
                     this.form.name = this.project.name;
                     this.form.code = this.project.code;
@@ -323,7 +323,7 @@
              * Load clients 
              */
             fetchClients() {
-                axios.get('/api/clients').then(response => {
+                axios.get('clients').then(response => {
                     this.clients = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -333,7 +333,7 @@
              * Load members 
              */
             fetchMembers() {
-                axios.get('/api/members').then(response => {
+                axios.get('members').then(response => {
                     this.members = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -344,7 +344,7 @@
              * Load currencies and budget periods 
              */
             fetchBudgetData() {
-                axios.get('/api/billings/data').then(response => {
+                axios.get('billings/data').then(response => {
                     this.currencies = response.data.currencies;
                     this.budgetPeriods = response.data.budget_periods;
                     this.billingTypes = response.data.billing_types;

@@ -83,7 +83,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.get('/api/members').then(response => {
+                axios.get('members').then(response => {
                     this.items = response.data.data
                     this.items.map(item => {
                         item.fullname = item.user.fullname;
@@ -107,7 +107,7 @@
              */
             destroyData(id) {
                 this.$awn.async(
-                    axios.delete('/api/members/' + id).then(response => {
+                    axios.delete('members/' + id).then(response => {
                         this.items = this.items.filter((item) => {
                             return item.id != id
                         });

@@ -53,7 +53,7 @@
 
         methods: {
             finish() {
-                axios.patch(`/api/todos/${this.item.id}/status`, {
+                axios.patch(`todos/${this.item.id}/status`, {
                     finished: !this.item.finished
                 }).then(response => {
                     this.item.finished = !this.item.finished;

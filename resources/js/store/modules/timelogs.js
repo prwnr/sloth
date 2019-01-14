@@ -27,7 +27,7 @@ export default {
     actions: {
         fetchDay({commit, rootState}, day) {
             return new Promise((resolve, reject) => {
-                axios.get(`/api/users/${rootState.authUser.get('id')}/logs`, {
+                axios.get(`users/${rootState.authUser.get('id')}/logs`, {
                     params: {
                         date: day
                     }
@@ -42,7 +42,7 @@ export default {
 
         fetchActive({commit, rootState}) {
             return new Promise((resolve, reject) => {
-                axios.get(`/api/users/${rootState.authUser.get('id')}/logs`, {
+                axios.get(`users/${rootState.authUser.get('id')}/logs`, {
                     params: {
                         active: true
                     }
@@ -57,7 +57,7 @@ export default {
 
         start({state, commit, dispatch}, {id, duration}) {
             return new Promise((resolve, reject) => {
-                axios.put(`/api/time/${id}/duration`, {
+                axios.put(`time/${id}/duration`, {
                     duration: duration,
                     time: 'start'
                 }).then(response => {
@@ -77,7 +77,7 @@ export default {
 
         stop({state, commit, dispatch}, {id, duration}) {
             return new Promise((resolve, reject) => {
-                axios.put(`/api/time/${id}/duration`, {
+                axios.put(`time/${id}/duration`, {
                     duration: duration,
                     time: 'stop'
                 }).then(response => {
@@ -99,7 +99,7 @@ export default {
 
         updateTime({dispatch}, {id, duration}) {
             return new Promise((resolve, reject) => {
-                axios.put(`/api/time/${id}/duration`, {
+                axios.put(`time/${id}/duration`, {
                     duration: duration,
                 }).then(response => {
                     dispatch("update", {

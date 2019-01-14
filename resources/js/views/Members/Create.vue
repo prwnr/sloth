@@ -131,7 +131,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.post('/api/members').then(response => {
+                    this.form.post('members').then(response => {
                         this.$router.push({name: 'members.show', params: { id: response.data.id }})
                         if (response.warning) {
                             this.$awn.warning(response.warning);
@@ -157,7 +157,7 @@
              * Load roles to use in component
              */
             fetchRoles() {
-                axios.get('/api/roles').then(response => {
+                axios.get('roles').then(response => {
                     this.roles = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -168,7 +168,7 @@
              * Load projects to use in component
              */
             fetchProjects() {
-                axios.get('/api/projects').then(response => {
+                axios.get('projects').then(response => {
                     this.projects = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -179,13 +179,13 @@
              * Load billing data
              */
             fetchBillingData() {
-                axios.get('/api/currencies').then(response => {
+                axios.get('currencies').then(response => {
                     this.currencies = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
 
-                axios.get('/api/billings/types').then(response => {
+                axios.get('billings/types').then(response => {
                     this.billingTypes = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

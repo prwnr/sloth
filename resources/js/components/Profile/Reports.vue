@@ -88,7 +88,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.post('/api/reports/' + this.authUser.member.id, {
+                axios.post('reports/' + this.authUser.member.id, {
                     filters: this.filters
                 }).then(response => {
                     this.reportData = response.data;

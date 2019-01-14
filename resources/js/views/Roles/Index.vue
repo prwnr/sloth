@@ -83,7 +83,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.get('/api/roles').then(response => {
+                axios.get('roles').then(response => {
                     this.items = response.data.data
                     this.loading = false;
                 }).catch(error => {
@@ -99,7 +99,7 @@
              */
             destroyData(id) {
                 this.$awn.async(
-                    axios.delete('/api/roles/' + id).then(response => {
+                    axios.delete('roles/' + id).then(response => {
                         this.items = this.items.filter((item) => {
                             return item.id != id
                         });

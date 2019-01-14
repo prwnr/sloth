@@ -97,7 +97,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.post('/api/roles').then(response => {
+                    this.form.post('roles').then(response => {
                         this.$router.push({name: 'roles.show', params: { id: response.data.id }})
                         this.$awn.success('Created new role');
                     }).catch(error => {
@@ -118,7 +118,7 @@
              * Load users to use in component
              */
             fetchMembers() {
-                axios.get('/api/users').then(response => {
+                axios.get('users').then(response => {
                     this.users = response.data.data
                 }).catch(error => {
                     let message = error.message || error.response.data.message;
@@ -130,7 +130,7 @@
              * Load Permissions to use in component
              */
             fetchPerms() {
-                axios.get('/api/perms').then(response => {
+                axios.get('perms').then(response => {
                     this.permissions = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);

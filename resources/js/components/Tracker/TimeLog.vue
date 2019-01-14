@@ -194,7 +194,7 @@
                             this.stopCounter();
                         }
 
-                        axios.delete('/api/time/' + this.time.id).then(response => {
+                        axios.delete('time/' + this.time.id).then(response => {
                             this.removeLog(this.time.id)
                             this.$awn.success('Log succesfully deleted.');
                         }).catch(error => {

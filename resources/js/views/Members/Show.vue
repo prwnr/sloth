@@ -105,7 +105,7 @@
         },
 
         created() {
-            axios.get('/api/members/' + this.$route.params.id).then(response => {
+            axios.get('members/' + this.$route.params.id).then(response => {
                 this.member = response.data.data;
                 let report = response.data.report;
                 this.reportItems = [

@@ -117,7 +117,7 @@
              * Load data for component
              */
             fetchData() {
-                axios.get('/api/projects/' + this.$route.params.id).then(response => {
+                axios.get('projects/' + this.$route.params.id).then(response => {
                     this.project = response.data.data;
                     let report = response.data.report;
                     this.reportItems = [

@@ -37,7 +37,7 @@ export default new Vuex.Store({
     actions: {
         logIn({commit}, user) {
             return new Promise((resolve, reject) => {
-                axios.post('api/auth/login', {
+                axios.post('auth/login', {
                     email: user.email,
                     password: user.password,
                     remember_me: user.remember_me
@@ -53,7 +53,7 @@ export default new Vuex.Store({
 
         logOut({commit}) {
             return new Promise((resolve, reject) => {
-                axios.get('api/auth/logout').then(response => {
+                axios.get('auth/logout').then(response => {
                     commit('setAuthToken', '')
                     commit('setAuthUser', {})
                     resolve()
@@ -64,7 +64,7 @@ export default new Vuex.Store({
         },
 
         async loadAuthUser({commit}) {
-            return await axios.get('api/auth/user').then(response => {
+            return await axios.get('/auth/user').then(response => {
                 let user = new User(response.data)
                 commit('setAuthUser', user)
                 return Promise.resolve()

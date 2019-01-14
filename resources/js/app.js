@@ -61,7 +61,7 @@ const app = new Vue({
 
     created() {
         this.$store.commit('setAuthToken', this.$cookie.get('auth-token'))
-        axios.defaults.baseURL = process.env.MIX_APP_URL
+        axios.defaults.baseURL = `${process.env.MIX_APP_URL}/api/`
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.getters.authToken}`
         this.mountInterpreters()
     },

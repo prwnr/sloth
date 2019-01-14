@@ -73,7 +73,7 @@
              */
             onSubmit() {
                 this.$awn.async(
-                    this.form.put('/api/users/' + this.user.id).then(response => {
+                    this.form.put('users/' + this.user.id).then(response => {
                         this.$emit('user-updated', response.data);
                         this.form.updateOriginalData();
                         this.resetPasswordData();

@@ -57,7 +57,7 @@
             fetchData() {
                 let color = new Color();
                 this.chartData = null;
-                axios.get('api/reports/' + this.authUser.member.id + '/projects/' + this.period).then(response => {
+                axios.get('reports/' + this.authUser.member.id + '/projects/' + this.period).then(response => {
                     let labelsNum = response.data.labels.length;
                     if (labelsNum === 0) {
                         return;

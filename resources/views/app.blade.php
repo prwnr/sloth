@@ -20,7 +20,7 @@
 <body class="hold-transition sidebar-mini">
 <div id="app" :class="layoutClass">
     <component :is="layout">
-        <transition name="fade" mode="out-in">
+        <transition name="fade" mode="out-in" :duration="{ enter: 500, leave: 150}">
             <router-view :key="$route.fullPath"></router-view>
         </transition>
     </component>

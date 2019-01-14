@@ -39,7 +39,7 @@
 
         methods: {
             submit() {
-                this.form.post('/api/auth/password/forgot').then(response => {
+                this.form.post('auth/password/forgot').then(response => {
                     this.$router.push({ name: 'login' });
                     this.$awn.success('Password reset email has been sent to your address');
                 }).catch(error => {

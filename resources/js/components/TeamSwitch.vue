@@ -33,7 +33,7 @@
 
         methods: {
             fetchTeams() {
-                axios.get(`/api/users/${this.authUser.get('id')}`).then(response => {
+                axios.get(`users/${this.authUser.get('id')}`).then(response => {
                     response.data.teams.forEach(team => {
                         this.teams.push(team);
                     });
@@ -46,7 +46,7 @@
              * Switch team and reloads user data
              */
             switchTeam() {
-                axios.put(`/api/users/${this.authUser.get('id')}/switch`, {
+                axios.put(`users/${this.authUser.get('id')}/switch`, {
                     team: this.currentTeam
                 }).then(response => {
                     this.$emit('change', response.data);

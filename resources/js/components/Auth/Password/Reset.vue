@@ -50,7 +50,7 @@
         methods: {
             submit() {
                 this.form.token = this.$route.query.token;
-                this.form.post('/api/auth/password/reset').then(response => {
+                this.form.post('auth/password/reset').then(response => {
                     this.$router.push({ name: 'login' });
                     this.$awn.success('Password has been changed. You can now log in!');
                 }).catch(error => {

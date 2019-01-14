@@ -116,7 +116,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.put('/api/roles/' + this.$route.params.id).then(response => {
+                    this.form.put('roles/' + this.$route.params.id).then(response => {
                         this.$awn.success('Role updated successfully.');
                     }).catch(error => {
                         this.$awn.alert(error.message);
@@ -137,7 +137,7 @@
              * Load current role
              */
             fetchRole() {
-                axios.get('/api/roles/' + this.$route.params.id).then(response => {
+                axios.get('roles/' + this.$route.params.id).then(response => {
                     this.role = response.data.data;
                     this.form.display_name = this.role.display_name;
                     this.form.description = this.role.description;
@@ -152,7 +152,7 @@
              * Load users to use in component
              */
             fetchMembers() {
-                axios.get('/api/members').then(response => {
+                axios.get('members').then(response => {
                     this.members = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -163,7 +163,7 @@
              * Load Permissions to use in component
              */
             fetchPerms() {
-                axios.get('/api/perms').then(response => {
+                axios.get('perms').then(response => {
                     this.permissions = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);

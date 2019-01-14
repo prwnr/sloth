@@ -108,7 +108,7 @@
              * Creates new to do task
              */
             create() {
-                this.form.post('/api/todos').then(response => {
+                this.form.post('todos').then(response => {
                     this.$emit('task-created', response.data);
                     this.$awn.success('New todo task created successfully');
                     this.form.reset();

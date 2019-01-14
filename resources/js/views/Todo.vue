@@ -135,7 +135,7 @@
              * @param id
              */
             deleteTask(id) {
-                axios.delete(`/api/todos/${id}`).then(response => {
+                axios.delete(`todos/${id}`).then(response => {
                     this.items = this.items.filter(item => {
                         if (item.id !== id) {
                             return true;
@@ -163,7 +163,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.get('/api/todos').then(response => {
+                axios.get('todos').then(response => {
                     let items = response.data.data;
                     items = items.map(item => {
                         item.project_name = item.project.name;
@@ -177,7 +177,7 @@
                     this.loading = false;
                 })
 
-                axios.get('/api/projects').then(response => {
+                axios.get('projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

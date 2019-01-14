@@ -183,7 +183,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.put('/api/members/' + this.$route.params.id).then(response => {
+                    this.form.put('members/' + this.$route.params.id).then(response => {
                         this.$awn.success('Member updated successfully.');
                     }).catch(error => {
                         this.$awn.alert(error.message);
@@ -207,7 +207,7 @@
                 }).then(result => {
                     if (result.value) {
                         this.$awn.async(
-                            this.formPassword.put('/api/users/' + this.member.user.id + '/password').then(response => {
+                            this.formPassword.put('users/' + this.member.user.id + '/password').then(response => {
                                 this.$awn.success('Member password updated successfully.');
                             }).catch(error => {
                                 this.$awn.alert(error.message);
@@ -231,7 +231,7 @@
              * Load member data
              */
             fetchMember() {
-                axios.get('/api/members/' + this.$route.params.id).then(response => {
+                axios.get('members/' + this.$route.params.id).then(response => {
                     this.member = response.data.data;
                     this.form.email = this.member.user.email;
                     this.form.roles = this.member.roles.map(item => item.id);
@@ -248,7 +248,7 @@
              * Load roles
              */
             fetchRoles() {
-                axios.get('/api/roles').then(response => {
+                axios.get('roles').then(response => {
                     this.roles = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -259,7 +259,7 @@
              * Load projects
              */
             fetchProjects() {
-                axios.get('/api/projects').then(response => {
+                axios.get('projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -270,13 +270,13 @@
              * Load billing data
              */
             fetchBillingData() {
-                axios.get('/api/currencies').then(response => {
+                axios.get('currencies').then(response => {
                     this.currencies = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
 
-                axios.get('/api/billings/types').then(response => {
+                axios.get('billings/types').then(response => {
                     this.billingTypes = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

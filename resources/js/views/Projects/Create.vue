@@ -228,7 +228,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.post('/api/projects').then(response => {
+                    this.form.post('projects').then(response => {
                         this.$router.push({name: 'projects.show', params: { id: response.data.id }})
                         this.$awn.success('Created new project');
                     }).catch(error => {
@@ -279,7 +279,7 @@
              * Load clients 
              */
             fetchClients() {
-                axios.get('/api/clients').then(response => {
+                axios.get('clients').then(response => {
                     this.clients = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -289,7 +289,7 @@
              * Load members 
              */
             fetchMembers() {
-                axios.get('/api/members').then(response => {
+                axios.get('members').then(response => {
                     this.members = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -300,7 +300,7 @@
              * Load currencies and budget periods 
              */
             fetchBillingData() {
-                axios.get('/api/billings/data').then(response => {
+                axios.get('billings/data').then(response => {
                     this.currencies = response.data.currencies;
                     this.budgetPeriods = response.data.budget_periods;
                     this.billingTypes = response.data.billing_types;
@@ -312,7 +312,7 @@
              * Load default tasks for project
              */
             fetchTasks() {
-                axios.get('/api/projects/task-types').then(response => {
+                axios.get('projects/task-types').then(response => {
                     this.tasks = response.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

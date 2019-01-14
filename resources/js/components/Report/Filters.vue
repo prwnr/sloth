@@ -183,7 +183,7 @@
              * Load clients
              */
             fetchClients() {
-                axios.get('/api/clients').then(response => {
+                axios.get('clients').then(response => {
                     this.clients = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -193,7 +193,7 @@
              * Load members
              */
             fetchMembers() {
-                axios.get('/api/members').then(response => {
+                axios.get('members').then(response => {
                     this.members = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -204,7 +204,7 @@
              * Load projects
              */
             fetchProjects() {
-                axios.get('/api/projects').then(response => {
+                axios.get('projects').then(response => {
                     this.projects = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);

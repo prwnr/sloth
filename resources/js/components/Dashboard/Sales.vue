@@ -71,7 +71,7 @@
                 let color = new Color();
                 this.chartData = null;
 
-                axios.get('api/reports/sales/' + this.period).then(response => {
+                axios.get('reports/sales/' + this.period).then(response => {
                     let datasets = [];
                     for (let index in response.data.sales) {
                         let project = response.data.sales[index];

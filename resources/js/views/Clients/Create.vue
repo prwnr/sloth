@@ -172,7 +172,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.post('/api/clients').then(response => {
+                    this.form.post('clients').then(response => {
                         if (this.isModal) {
                             EventHub.fire('client_created', response.data);
                         }
@@ -192,7 +192,7 @@
              * Load billing data
              */
             fetchBillingData() {
-                axios.get('/api/billings/data').then(response => {
+                axios.get('billings/data').then(response => {
                     this.currencies = response.data.currencies;
                     this.billingTypes = response.data.billing_types;
                 }).catch(error => {

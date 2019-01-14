@@ -115,7 +115,7 @@
                     confirmButtonColor: '#28a745',
                     showLoaderOnConfirm: true,
                     preConfirm: (password) => {
-                        return axios.put('/api/auth/password/change', {
+                        return axios.put('auth/password/change', {
                             password: password
                         }).then(response => {
                             return Promise.resolve();

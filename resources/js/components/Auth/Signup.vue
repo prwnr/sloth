@@ -79,7 +79,7 @@
             ...mapActions(['logIn']),
             async submit() {
                 this.form.password_confirmation = this.form.password
-                await this.form.post('/api/auth/signup').then(async (response) => {
+                await this.form.post('auth/signup').then(async (response) => {
                     await this.logIn(this.form.data()).then(async (token) => {
                         this.$cookie.set('auth-token', token.access_token, { expires:  token.expires_at})
                         axios.defaults.headers.common['Authorization'] = `Bearer ${token.access_token}`
