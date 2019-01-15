@@ -10,6 +10,7 @@
     import {mapGetters} from 'vuex';
 
     export default {
+        name: 'TeamSwitch',
         data() {
             return {
                 teams: [],

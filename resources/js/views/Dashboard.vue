@@ -34,6 +34,7 @@
     import {mapGetters} from 'vuex'
 
     export default {
+        name: 'Dashboard',
         components: {
             TotalHours, ProjectsHours, Sales
         },

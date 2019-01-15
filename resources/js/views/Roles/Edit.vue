@@ -74,6 +74,7 @@
 
 <script>
     export default {
+        name: 'RolesEdit',
         data() {
             return {
                 role: {},

@@ -75,6 +75,7 @@
     import {mapGetters} from 'vuex';
 
     export default {
+        name: 'Profile',
         components: {
             Team,
             Settings,

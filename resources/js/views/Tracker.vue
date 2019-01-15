@@ -100,6 +100,7 @@
     import {mapGetters, mapActions} from 'vuex'
 
     export default {
+        name: 'Tracker',
         components: {
             EditLog,
             TimeLog,

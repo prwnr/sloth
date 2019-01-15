@@ -50,8 +50,13 @@
 
 <script>
     export default {
-        name: "Settings",
-        props: ['user'],
+        name: 'ProfileSettings',
+        props: {
+            user: {
+                type: Object,
+                required: true
+            }
+        },
 
         data() {
             return {

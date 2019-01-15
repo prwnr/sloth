@@ -39,6 +39,7 @@
     import DatatableActions from '../../components/DataTable/Actions'
 
     export default {
+        name: 'ClientsIndex',
         data() {
             return {
                 loading: true,

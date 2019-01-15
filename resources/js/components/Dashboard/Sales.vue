@@ -19,6 +19,7 @@
     import Color from '../../utilities/Color';
 
     export default {
+        name: 'Sales',
         components: {
             LineChart, DateRange
         },

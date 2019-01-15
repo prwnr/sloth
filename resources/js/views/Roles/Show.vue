@@ -79,6 +79,7 @@
 
 <script>
     export default {
+        name: 'RolesShow',
         data() {
             return {
                 role: {},

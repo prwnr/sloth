@@ -2,8 +2,8 @@
     <tr :class="{ deleted: task.is_deleted }">
         <td>
             <span v-if="task.is_deleted">{{ task.name }}</span>
-            <input v-if="!task.is_deleted" type="text" class="form-control" v-model="task.name" :class="{ 'is-invalid': error != '' }">
-            <form-error :text="error" :show="error"></form-error>
+            <input v-if="!task.is_deleted" type="text" class="form-control" v-model="task.name" :class="{ 'is-invalid': showError }">
+            <form-error :text="error" :show="showError"></form-error>
         </td>
         <td v-if="!task.is_deleted">
             <bootstrap-toggle v-model="task.billable" :options="{
@@ -43,11 +43,21 @@
     import String from '../../utilities/String.js';
 
     export default {
-        props: ['task', 'currencies'],
+        name: 'TaskRow',
+        props: {
+            task: {
+                type: Object,
+                required: true,
+            },
+            currencies: {
+                type: Array,
+                required: true,
+            },
+        },
 
         data() {
             return {
-                error: ''
+                error: null
             }
         },
 
@@ -80,6 +90,12 @@
             },
         },
 
+        computed: {
+            showError() {
+                return this.error ? true : false;
+            }
+        },
+
         methods: {
             /**
              * Marks task as deleted or destroy it if it is a new one
@@ -104,7 +120,7 @@
              * Clears task duplicated name error and notifys other components about that
              */
             clearError() {
-                this.error = '';
+                this.error = null;
                 EventHub.fire('task_error', false);
             },
 

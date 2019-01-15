@@ -36,7 +36,13 @@
 
 <script>
     export default {
-        props: ['tasks']
+        name: 'TasksShow',
+        props: {
+            tasks: {
+                type: Object|Array,
+                required: true
+            }
+        }
     }
 </script>
 

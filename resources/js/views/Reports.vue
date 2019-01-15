@@ -37,6 +37,7 @@
     import DateRange from '../components/Report/DateRange';
 
     export default {
+        name: 'Reports',
         components: {
             DateRange, Filters, Report
         },

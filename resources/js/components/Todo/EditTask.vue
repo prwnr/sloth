@@ -69,6 +69,20 @@
         },
 
         props: ['item', 'projects', 'priorities'],
+        props: {
+            item: {
+                type: Object,
+                required: true
+            },
+            projects: {
+                type: Array,
+                required: true
+            },
+            priorities: {
+                type: Object,
+                required: true
+            }
+        },
 
         data() {
             return {

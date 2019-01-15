@@ -70,6 +70,7 @@
     import {mapGetters, mapMutations} from 'vuex';
 
     export default {
+        name: 'Sidebar',
         components: {
             TeamSwitch
         },

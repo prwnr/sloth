@@ -15,6 +15,7 @@
     import {mapGetters, mapActions} from 'vuex';
 
     export default {
+        name: 'ControlSidebar',
         data() {
             return {
                 logs: []

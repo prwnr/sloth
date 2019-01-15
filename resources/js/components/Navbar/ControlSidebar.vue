@@ -9,6 +9,7 @@
     import {mapGetters} from 'vuex'
 
     export default {
+        name: 'NavarControlSidebar',
         computed: {
             ...mapGetters({
                 activeLogs: 'timelogs/active'

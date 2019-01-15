@@ -38,6 +38,7 @@
     import DatatableActions from '../../components/DataTable/Actions'
 
     export default {
+        name: 'ProjectsIndex',
         data() {
             return {
                 loading: true,

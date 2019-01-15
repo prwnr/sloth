@@ -63,9 +63,11 @@
 
 <script>
     export default {
+        name: 'ReportFilters',
         props: {
             disableFilters: {
                 type: Array,
+                required: false,
                 default: () => []
             }
         },

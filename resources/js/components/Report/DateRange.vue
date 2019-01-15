@@ -52,6 +52,7 @@
     import DatePicker from "vuejs-datepicker";
 
     export default {
+        name: 'DateRange',
         components: {
             DatePicker
         },
@@ -59,6 +60,7 @@
         props: {
             allowCustom: {
                 type: Boolean,
+                required: false,
                 default: true
             }
         },

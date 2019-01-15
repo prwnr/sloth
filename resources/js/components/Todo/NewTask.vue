@@ -68,7 +68,16 @@
             PriorityBadge
         },
 
-        props: ['projects', 'priorities'],
+        props: {
+            projects: {
+                type: Array,
+                required: true
+            },
+            priorities: {
+                type: Object,
+                required: true
+            }
+        },
 
         data() {
             return {

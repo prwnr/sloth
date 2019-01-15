@@ -121,6 +121,7 @@
     import BillingsForm from '../../components/Billings/Form.vue';
 
     export default {
+        name: 'MembersEdit',
         components: {
             BillingsForm
         },

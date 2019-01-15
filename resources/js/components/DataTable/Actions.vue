@@ -28,7 +28,18 @@
 
 <script>
 export default {
-    props: ['row', 'xprops'],
+    name: 'TableActions',
+    props: {
+        row: {
+            type: Object,
+            required: true
+        },
+        xprops: {
+            type: Object,
+            required: false,
+            default: () => {}
+        }
+    },
     methods: {
         destroyData(id) {
             this.$swal({

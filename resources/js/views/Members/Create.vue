@@ -82,6 +82,7 @@
     import BillingsForm from '../../components/Billings/Form.vue';
 
     export default {
+        name: 'MembersCreate',
         components: {
             'BillingsForm': BillingsForm
         },

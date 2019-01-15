@@ -18,12 +18,12 @@
 
 <script>
     export default {
+        name: 'ReportView',
         props: {
             items: {
                 type: Array,
-                default: () => {
-                    return []
-                }
+                required: false,
+                default: () => []
             },
 
             budget: {

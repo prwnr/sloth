@@ -24,6 +24,16 @@
 
 <script>
     export default {
-        props: ['currencies', 'billingTypes'],
+        name: 'BillingForm',
+        props: {
+            currencies: {
+                type: Array,
+                required: true
+            },
+            billingTypes: {
+                type: Object|Array,
+                required: true
+            }
+        }
     }
 </script>

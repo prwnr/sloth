@@ -137,6 +137,7 @@
     import BillingsForm from '../../components/Billings/Form.vue';
 
     export default {
+        name: 'ProjectsEdit',
         components: {
             BillingsForm,
             TasksForm

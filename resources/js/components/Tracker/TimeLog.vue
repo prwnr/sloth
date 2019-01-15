@@ -52,8 +52,13 @@
     import {mapGetters, mapActions} from "vuex";
 
     export default {
-        props: ['time'],
-
+        name: 'TimeLog',
+        props: {
+            time: {
+                type: Object,
+                required: true
+            }
+        },
         components: {
             TimeInput
         },

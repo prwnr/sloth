@@ -25,6 +25,7 @@
     import {mapGetters} from 'vuex';
 
     export default {
+        name: 'ProfileReports',
         components: {
             DateRange, Filters, Report
         },

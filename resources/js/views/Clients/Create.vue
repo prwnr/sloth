@@ -133,11 +133,18 @@
     import BillingsForm from '../../components/Billings/Form.vue';
 
     export default {
+        name: 'ClientsCreate',
         components: {
             BillingsForm
         },
 
-        props: ['isModal'],
+        props: {
+            isModal: {
+                type: Boolean,
+                required: false,
+                default: false
+            }
+        },
 
         data() {
             return {

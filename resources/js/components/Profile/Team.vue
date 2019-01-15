@@ -37,7 +37,13 @@
 
 <script>
     export default {
-        props: ['team'],
+        name: 'ProfileTeam',
+        props: {
+            team: {
+                type: Object,
+                required: true
+            }
+        },
 
         data() {
             return {

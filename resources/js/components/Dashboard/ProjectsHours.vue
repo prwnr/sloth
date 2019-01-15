@@ -20,6 +20,7 @@
     import {mapGetters} from 'vuex';
 
     export default {
+        name: 'ProjectsHours',
         components: {
             PieChart, DateRange
         },

@@ -25,7 +25,7 @@
             <div class="col-4">
                 <input id="task_name" type="text" class="form-control" v-model="newTask.name" @keydown="taskError = ''"
                     name="task_name" value="" placeholder="Name" :class="{ 'is-invalid': taskError != '' }">
-                    <form-error :text="taskError" :show="taskError"></form-error>
+                    <form-error :text="taskError" :show="showTaskError"></form-error>
             </div>
             <div class="col-2 pl-1">
                 <bootstrap-toggle v-model="newTask.billable" :options="{
@@ -59,7 +59,21 @@
     import String from '../../utilities/String.js';
 
     export default {
-        props: ['tasks', 'currencies', 'billingTypes'],
+        name: 'TasksForm',
+        props: {
+            tasks: {
+                type: Array,
+                required: true,
+            },
+            currencies: {
+                type: Array,
+                required: true,
+            },
+            billingTypes: {
+                type: Object,
+                required: true,
+            },
+        },
         components: {
             TaskRow
         },
@@ -88,6 +102,12 @@
                     this.newTask.billing_rate = '';
                     this.newTask.currency = 0;
                 }
+            }
+        },
+
+        computed: {
+            showTaskError() {
+                return this.taskError ? true : false;
             }
         },
 

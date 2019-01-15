@@ -57,7 +57,21 @@
     import {mapGetters, mapActions} from "vuex";
 
     export default {
-        props: ['time', 'projects', 'day'],
+        name: 'EditLog',
+        props: {
+            time: {
+                type: Object,
+                required: true
+            },
+            projects: {
+                type: Array,
+                required: true
+            },
+            day: {
+                type: String,
+                required: true
+            }
+        },
 
         components: {
             DatePicker

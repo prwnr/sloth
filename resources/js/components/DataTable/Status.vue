@@ -6,8 +6,13 @@
 
 <script>
     export default {
-        props: ['row'],
-
+        props: {
+            row: {
+                type: Object,
+                required: true
+            }
+        },
+        
         computed: {
             statusText: function () {
                 return this.row.in_progress ? 'In progress' : 'Finished'

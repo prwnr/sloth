@@ -86,6 +86,7 @@
     import ReportView from '../../components/Report/ReportView.vue';
 
     export default {
+        name: 'ClientsShow',
         components: {
             BillingsShow,
             ReportView

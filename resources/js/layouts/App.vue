@@ -66,7 +66,7 @@
     import {mapActions, mapGetters} from 'vuex'
 
     export default {
-        name: "dashboard",
+        name: "App",
         data() {
             return {
                 loaded: false

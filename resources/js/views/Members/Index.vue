@@ -37,6 +37,7 @@
     import DatatableActions from '../../components/DataTable/Actions'
 
     export default {
+        name: 'MembersIndex',
         data() {
             return {
                 loading: true,

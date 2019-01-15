@@ -75,8 +75,17 @@
     import {mapGetters, mapActions} from "vuex";
 
     export default {
-        props: ['projects', 'day'],
-
+        name: 'NewLog',
+        props: {
+            projects: {
+                type: Array,
+                required: true
+            },
+            day: {
+                type: String,
+                required: true
+            }
+        },
         components: {
             DatePicker, TimeInput
         },

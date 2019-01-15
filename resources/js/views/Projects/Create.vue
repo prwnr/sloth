@@ -130,7 +130,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <create-client isModal="true"></create-client>
+                            <create-client :isModal="true"></create-client>
                         </div>
                     </div>
                 </div>
@@ -146,6 +146,7 @@
     import CreateClient from '../Clients/Create';
 
     export default {
+        name: 'ProjectsCreate',
         components: {
             CreateClient,
             TasksForm,
