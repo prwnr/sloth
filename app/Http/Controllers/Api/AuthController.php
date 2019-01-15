@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Http\Requests\Auth\SignupRequest;
 use App\Http\Resources\User as UserResource;
 use App\Models\Team\Creator;
 use App\Models\User;
@@ -34,19 +38,11 @@ class AuthController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param SignupRequest $request
      * @return JsonResponse
      */
-    public function signup(Request $request): JsonResponse
+    public function signup(SignupRequest $request): JsonResponse
     {
-        $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'team_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
         try {
             $this->teamCreator->make($request->all());
         } catch (\Exception $ex) {
@@ -57,19 +53,12 @@ class AuthController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param LoginRequest $request
      * @return JsonResponse
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string|min:6',
-            'remember_me' => 'boolean'
-        ]);
-
         $credentials = request(['email', 'password']);
-
         if(!Auth::attempt($credentials)) {
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
@@ -105,15 +94,11 @@ class AuthController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param ForgotPasswordRequest $request
      * @return mixed
      */
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        $request->validate([
-            'email' => 'required|string|email'
-        ]);
-
         $response = $this->broker()->sendResetLink(
             $request->only('email')
         );
@@ -126,17 +111,11 @@ class AuthController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param ResetPasswordRequest $request
      * @return JsonResponse
      */
-    public function resetPassword(Request $request): JsonResponse
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|confirmed|min:6',
-        ]);
-
         $response = $this->broker()->reset(
             $request->all(), function ($user, $password) {
                 $user->password = Hash::make($password);
@@ -164,10 +143,6 @@ class AuthController extends Controller
      */
     public function changePassword(Request $request): JsonResponse
     {
-        $request->validate([
-            'password' => 'required|string|min:6',
-        ]);
-
         /** @var User $user */
         $user = $request->user();
         if (!$user->first_login) {
