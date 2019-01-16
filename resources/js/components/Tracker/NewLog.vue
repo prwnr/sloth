@@ -107,15 +107,15 @@
         },
 
         created() {
-            EventHub.listen('new_current_day', day => {
-                this.form.created_at = day;
-            })
-
+            this.form.created_at = this.currentDay
             this.form.member = this.authUser.member.id
         },
 
         computed: {
-            ...mapGetters(['authUser']),
+            ...mapGetters({
+                authUser: 'authUser',
+                currentDay: 'timelogs/currentDay'
+            }),
             buttonText: function () {
                 return this.duration ? 'Create' : 'Start';
             },
@@ -137,6 +137,9 @@
                     this.tasks = project.tasks.filter(item => item.is_deleted == false);
                     this.form.task = null;
                 }
+            },
+            currentDay: function () {
+                this.form.created_at = this.currentDay
             }
         },
 

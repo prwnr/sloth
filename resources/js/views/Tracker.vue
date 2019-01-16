@@ -80,8 +80,7 @@
                                     v-if="editedTime"
                                     :time="editedTime"
                                     :projects="projects"
-                                    :day="currentDay"
-                                    @date-changed="fetchTimeLogs"
+                                    @date-changed="reload"
                             ></edit-log>
                         </div>
                     </div>
@@ -110,10 +109,7 @@
 
         data() {
             return {
-                currentDay: '',
                 calendarDay: null,
-                previousDay: '',
-                nextDay: '',
                 today: '',
                 projects: [],
                 editedTime: null,
@@ -122,11 +118,11 @@
         },
 
         created() {
-            this.today = moment().format('YYYY-MM-DD');
-            this.currentDay = moment().format('YYYY-MM-DD');
-            this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
-            this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
-            this.fetchData();
+            this.today = moment().format('YYYY-MM-DD')
+            this.current(this.today).catch(error => {
+                this.$awn.alert(error.message)
+            })
+            this.fetchProjects()
         },
 
         watch: {
@@ -139,41 +135,39 @@
             ...mapGetters({
                 authUser: 'authUser',
                 totalTime: 'timelogs/totalTime',
-                timeLogs: 'timelogs/all'
+                timeLogs: 'timelogs/all',
+                currentDay: 'timelogs/currentDay'
             }),
             currentDayText: function () {
                 return moment(this.currentDay).format('LL');
             },
             totalTimeWorked: function () {
                 return this.timer.format(this.timer.minutesToSeconds(this.totalTime));
-            }
+            },
         },
 
         methods: {
             ...mapActions('timelogs', {
-                fetchDay: 'fetchDay',
+                fetch: 'fetch',
                 removeLog: 'remove',
-                updateLog: 'update'
+                updateLog: 'update',
+                next: 'nextDay',
+                previous: 'previousDay',
+                current: 'currentDay',
             }),
+
             /**
-             * Reset date filter to todays day
+             * Reset to today
              */
             reset() {
-                this.changeDays(this.today);
+                this.current(this.today)
             },
 
             /**
-             * Change date filter to previous day
+             * Reload logs for current day
              */
-            previous() {
-                this.changeDays(this.previousDay);
-            },
-
-            /**
-             * Change date filter to next day
-             */
-            next() {
-                this.changeDays(this.nextDay);
+            reload() {
+                this.current(this.currentDay)
             },
 
             /**
@@ -182,19 +176,7 @@
              */
             calendarChange(date) {
                 let pickedDate = moment(date).format('YYYY-MM-DD');
-                this.changeDays(pickedDate);
-            },
-
-            /**
-             * Change days according to current date filter
-             * @param currentDay
-             */
-            changeDays(currentDay) {
-                this.currentDay = currentDay;
-                this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
-                this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
-                EventHub.fire('new_current_day', this.currentDay);
-                this.fetchTimeLogs()
+                this.current(pickedDate);
             },
 
             /**
@@ -211,31 +193,13 @@
             /**
              * Fetch tracker data
              */
-            fetchData() {
-                if (!this.authUser.member) {
-                    axios.get('projects').then(response => {
-                        this.projects = response.data.data;
-                    }).catch(error => {
-                        this.$awn.alert(error.message);
-                    });
-
-                    this.fetchTimeLogs()
-                    return;
-                }
-
+            fetchProjects() {
                 axios.get('members/' + this.authUser.member.id + '/projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
-                this.fetchTimeLogs()
             },
-
-            fetchTimeLogs() {
-                this.fetchDay(this.currentDay).catch(error => {
-                    this.$awn.alert(error.message)
-                });
-            }
         }
 
     }

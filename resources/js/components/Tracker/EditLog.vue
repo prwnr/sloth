@@ -66,10 +66,6 @@
             projects: {
                 type: Array,
                 required: true
-            },
-            day: {
-                type: String,
-                required: true
             }
         },
 
@@ -87,16 +83,13 @@
                     project: this.time.project.id,
                     task: this.time.task ? this.time.task.id : null,
                     description: this.time.description ? this.time.description : '',
-                    created_at: this.day
+                    created_at: this.time.created_at
                 })
             }
         },
 
         created() {
             this.fillTasks();
-            EventHub.listen('new_current_day', day => {
-                this.form.created_at = day;
-            });
             this.form.member = this.authUser.member.id
         },
 
@@ -106,7 +99,7 @@
                     this.fillTasks();
                     this.form.task = null
                 }
-            }
+            },
         },
 
         computed: {

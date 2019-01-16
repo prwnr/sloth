@@ -2,7 +2,8 @@ export default {
     namespaced: true,
     state: {
         items: [],
-        active: []
+        active: [],
+        day: ''
     },
 
     getters: {
@@ -21,11 +22,50 @@ export default {
             }
 
             return total
-        }
+        },
+
+        currentDay(state) {
+            return state.day
+        },
     },
 
     actions: {
-        fetchDay({commit, rootState}, day) {
+        nextDay({state, commit, dispatch}) {
+            return new Promise((resolve, reject) => {
+                let next = moment(state.day).add(1, 'days').format('YYYY-MM-DD')
+                commit("setDay", next)
+                dispatch("fetch", next).then(response => {
+                    resolve(response)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+
+        previousDay({state, commit, dispatch}) {
+            return new Promise((resolve, reject) => {
+                let previous = moment(state.day).subtract(1, 'days').format('YYYY-MM-DD')
+                commit("setDay", previous)
+                dispatch("fetch", previous).then(response => {
+                    resolve(response)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+
+        currentDay({state, commit, dispatch}, day) {
+            return new Promise((resolve, reject) => {
+                commit("setDay", day)
+                dispatch("fetch", day).then(response => {
+                    resolve(response)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+
+        fetch({commit, rootState}, day) {
             return new Promise((resolve, reject) => {
                 axios.get(`users/${rootState.authUser.get('id')}/logs`, {
                     params: {
@@ -139,6 +179,10 @@ export default {
     },
 
     mutations: {
+        setDay(state, day) {
+            state.day = day
+        },
+
         setLogs(state, logs) {
             state.items = logs
         },
