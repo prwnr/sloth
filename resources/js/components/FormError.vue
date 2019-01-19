@@ -7,6 +7,17 @@
 
 <script>
     export default {
-        props: ['text', 'show'],
+        name: 'FormError',
+        props: {
+            text: {
+                type: String,
+                required: false,
+            },
+            show: {
+                type: Boolean,
+                required: false,
+                default: false
+            }
+        },
     }
 </script>

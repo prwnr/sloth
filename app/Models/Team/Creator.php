@@ -65,22 +65,25 @@ class Creator
 
     /**
      * Creator constructor.
-     * @param array $data
+     * @param MemberRepository $memberRepository
+     * @param PermissionRepository $permissionRepository
+     * @param CurrencyRepository $currencyRepository
      */
-    public function __construct(array $data)
+    public function __construct(MemberRepository $memberRepository, PermissionRepository $permissionRepository, CurrencyRepository $currencyRepository)
     {
-        $this->memberRepository = app()->make(MemberRepository::class);
-        $this->permissionRepository = app()->make(PermissionRepository::class);
-        $this->currencyRepository = app()->make(CurrencyRepository::class);
-        $this->data = $data;
+        $this->memberRepository = $memberRepository;
+        $this->permissionRepository = $permissionRepository;
+        $this->currencyRepository = $currencyRepository;
     }
 
     /**
      * Execute the console command.
+     * @param array $data
      * @throws TeamCreatorException
      */
-    public function make(): void
+    public function make(array $data): void
     {
+        $this->data = $data;
         $this->loadDataFiles();
 
         try {

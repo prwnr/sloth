@@ -10,7 +10,17 @@
 
 <script>
     export default {
-        props: ['row', 'nested'],
+        name: 'TableOperations',
+        props: {
+            row: {
+                type: Object,
+                required: true
+            },
+            nested: {
+                type: Object,
+                required: true,
+            }
+        },
 
         data() {
             return {

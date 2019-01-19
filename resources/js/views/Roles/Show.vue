@@ -41,8 +41,11 @@
 
                     <div v-if="role.members" class="card" :class="{ 'border-bottom-0': role.members.length > 0}">
                         <card-header>Assigned members</card-header>
-                        <div class="card-body" :class="{ 'p-0': role.members.length > 0}">
-                            <ul v-if="role.members.length > 0" class="list-group">
+                        <div class="card-body"
+                             :class="{ 'p-0': role.members.length > 0}">
+
+                            <ul class="list-group"
+                                v-if="role.members.length > 0">
                                 <router-link
                                         v-if="member"
                                         v-for="(member, index) in role.members"
@@ -52,7 +55,11 @@
                                         :class="{ 'border-top-0': index === 0}">
                                     {{ member.user.fullname }}
                                 </router-link>
-                                <span v-else class="list-group-item border-right-0 border-left-0" :class="{ 'border-top-0': index === 0}">{{ member.user.fullname }}</span>
+                                <span v-else
+                                      class="list-group-item border-right-0 border-left-0"
+                                      :class="{ 'border-top-0': index === 0}">
+                                    {{ member.user.fullname }}
+                                </span>
                             </ul>
                             <span v-if="role.members.length == 0">No members assigned</span>
                         </div>
@@ -64,8 +71,10 @@
                         <card-header>Permissions</card-header>
                         <div class="card-body p-0">
                             <ul class="list-group">
-                                <li v-for="(permission, index) in permissions" :key="permission.id" class="list-group-item border-right-0 border-left-0 @endif"
-                                    :class="[hasPermission(permission) ? 'text-success' : 'disabled', {'border-top-0' : index == 0} ]">
+                                <li :class="[hasPermission(permission) ? 'text-success' : 'disabled', {'border-top-0' : index == 0} ]"
+                                    :key="permission.id"
+                                    class="list-group-item border-right-0 border-left-0 @endif"
+                                    v-for="(permission, index) in permissions">
                                     {{ permission.display_name }}
                                 </li>
                             </ul>
@@ -79,6 +88,7 @@
 
 <script>
     export default {
+        name: 'RolesShow',
         data() {
             return {
                 role: {},
@@ -92,7 +102,7 @@
 
         methods: {
             fetchData(id) {
-                axios.get('/api/roles/' + id).then(response => {
+                axios.get('roles/' + id).then(response => {
                     this.role = response.data.data;
                 }).catch(error => {
                     let message = error.message;
@@ -103,7 +113,7 @@
                     this.$awn.alert(message);
                 });
 
-                axios.get('/api/perms').then(response => {
+                axios.get('perms').then(response => {
                     this.permissions = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);

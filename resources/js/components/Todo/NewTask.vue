@@ -6,47 +6,97 @@
             <div class="form-group">
                 <label for="name">Write what you want to do</label>
                 <div class="input-group">
-                    <textarea id="description" type="text" class="form-control"
-                              name="description" value="" placeholder="Description" v-model="form.description" :maxlength="500"></textarea>
+                    <textarea :maxlength="500"
+                              class="form-control"
+                              id="description"
+                              name="description"
+                              placeholder="Description"
+                              type="text"
+                              v-model="form.description">
+                    </textarea>
                     <div class="input-group-append">
                         <span class="input-group-text" v-text="(500 - form.description.length)"></span>
                     </div>
                 </div>
-                <form-error :text="form.errors.get('description')" :show="form.errors.has('description')"></form-error>
+                <form-error
+                        :text="form.errors.get('description')"
+                        :show="form.errors.has('description')">
+                </form-error>
             </div>
 
             <div class="form-group">
                 <label for="project_id">Choose associated project</label>
-                <select id="project_id" class="form-control" name="project_id" v-model="form.project_id" :class="{ 'is-invalid': form.errors.has('project_id')}">
-                    <option v-if="projects.length == 0" value="''" disabled selected="false">There are no projects that you could choose</option>
-                    <option v-for="project in projects" :value="project.id">{{ project.name }}</option>
+                <select :class="{ 'is-invalid': form.errors.has('project_id')}"
+                        class="form-control"
+                        id="project_id"
+                        name="project_id"
+                        v-model="form.project_id">
+                    <option disabled
+                            selected="false"
+                            v-if="projects.length == 0"
+                            value="''">
+                        There are no projects that you could choose
+                    </option>
+                    <option
+                            :value="project.id"
+                            v-for="project in projects">
+                        {{ project.name }}
+                    </option>
                 </select>
-                <form-error :text="form.errors.get('project_id')" :show="form.errors.has('project_id')"></form-error>
+                <form-error
+                        :text="form.errors.get('project_id')"
+                        :show="form.errors.has('project_id')">
+                </form-error>
             </div>
 
             <div class="form-group">
                 <label for="task_id">Pick your task</label>
-                <select id="task_id" class="form-control" name="task_id" v-model="form.task_id" :class="{ 'is-invalid': form.errors.has('task_id')}">
-                    <option v-if="tasks.length == 0" value="''" disabled selected="false">There are no tasks that you could pick</option>
-                    <option v-for="task in tasks" :value="task.id">{{ task.name }}</option>
+                <select :class="{ 'is-invalid': form.errors.has('task_id')}"
+                        class="form-control"
+                        id="task_id"
+                        name="task_id"
+                        v-model="form.task_id">
+                    <option
+                            disabled
+                            selected="false"
+                            v-if="tasks.length == 0"
+                            value="''">
+                        There are no tasks that you could pick
+                    </option>
+                    <option
+                            v-for="task in tasks"
+                            :value="task.id">
+                        {{ task.name }}
+                    </option>
                 </select>
-                <form-error :text="form.errors.get('task_id')" :show="form.errors.has('task_id')"></form-error>
+                <form-error
+                        :text="form.errors.get('task_id')"
+                        :show="form.errors.has('task_id')">
+                </form-error>
             </div>
 
             <div class="form-group">
                 <label class="">Priority of your task</label>
                 <div class="form-group">
-                    <div v-for="(priority, index) in priorities" class="form-check form-check-inline">
-                        <label class="form-check-label" :for="'new_'+priority">
-                            <input name="priority" :id="'new_'+priority" type="radio" class="form-check-input"
-                                   v-model="form.priority"
+                    <div class="form-check form-check-inline"
+                         v-for="(priority, index) in priorities">
+                        <label class="form-check-label"
+                               :for="'new_'+priority">
+                            <input :class="{ 'is-invalid': form.errors.has('priority')}"
+                                   :id="'new_'+priority"
                                    :value="index"
-                                   :class="{ 'is-invalid': form.errors.has('priority')}">
+                                   class="form-check-input"
+                                   name="priority"
+                                   type="radio"
+                                   v-model="form.priority">
                             <priority-badge :priority="index">{{ priority }}</priority-badge>
                         </label>
                     </div>
                 </div>
-                <form-error :text="form.errors.get('priority')" :show="form.errors.has('priority')"></form-error>
+                <form-error
+                        :text="form.errors.get('priority')"
+                        :show="form.errors.has('priority')">
+                </form-error>
             </div>
 
             <div class="col-lg-12 p-0">
@@ -59,6 +109,7 @@
 
 <script>
     import PriorityBadge from './PriorityBadge';
+    import {mapGetters} from "vuex";
 
     export default {
         name: "NewTask",
@@ -67,13 +118,22 @@
             PriorityBadge
         },
 
-        props: ['projects', 'priorities'],
+        props: {
+            projects: {
+                type: Array,
+                required: true
+            },
+            priorities: {
+                type: Object,
+                required: true
+            }
+        },
 
         data() {
             return {
                 tasks: [],
                 form: new Form({
-                    member_id: this.$user.member.id,
+                    member_id: 0,
                     project_id: '',
                     task_id: '',
                     description: '',
@@ -81,6 +141,10 @@
                     priority: ''
                 })
             }
+        },
+
+        created() {
+            this.form.member_id = this.authUser.member.id
         },
 
         watch: {
@@ -94,16 +158,20 @@
             }
         },
 
+        computed: {
+            ...mapGetters(['authUser'])
+        },
+
         methods: {
             /**
              * Creates new to do task
              */
             create() {
-                this.form.post('/api/todos').then(response => {
+                this.form.post('todos').then(response => {
                     this.$emit('task-created', response.data);
                     this.$awn.success('New todo task created successfully');
                     this.form.reset();
-                    this.form.member_id = this.$user.member.id;
+                    this.form.member_id = this.authUser.member.id;
                     this.form.finished = false;
                     $('#new').modal('hide');
                 }).catch(error => {

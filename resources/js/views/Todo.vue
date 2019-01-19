@@ -7,19 +7,31 @@
                         <h1>Personal to do list</h1>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-success btn-block" type="button" data-toggle="modal"
-                                data-target="#new">Add new task <i class="fa fa-fw fa-plus"></i></button>
+                        <button class="btn btn-success btn-block"
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#new">
+                            Add new task <i class="fa fa-fw fa-plus"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         </section>
-        <section class="content pb-5">
+        <section class="content">
             <loading v-if="loading"></loading>
             <div v-else class="card mb-4">
                 <div>
-                    <div class="p-3" v-if="items.length == 0">Too slothful to make a list?</div>
+                    <div class="p-3"
+                         v-if="items.length == 0">Too slothful to make a list?
+                    </div>
                     <div class="list-group list-group-flush">
-                        <task v-for="item in todoList" :key="item.id" :item="item" @task-deleted="deleteTask" @updating-task="handleTaskUpdate"></task>
+                        <task
+                                :item="item"
+                                :key="item.id"
+                                @task-deleted="deleteTask"
+                                @updating-task="handleTaskUpdate"
+                                v-for="item in todoList">
+                        </task>
                     </div>
                 </div>
             </div>
@@ -31,7 +43,11 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-task :projects="projects" :priorities="priorities" @task-created="createTask"></new-task>
+                            <new-task
+                                    :projects="projects"
+                                    :priorities="priorities"
+                                    @task-created="createTask">
+                            </new-task>
                         </div>
                     </div>
                 </div>
@@ -44,11 +60,13 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeEditDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <edit-task v-if="editedTask"
-                                       :projects="projects"
-                                       :priorities="priorities"
-                                       :item="editedTask"
-                                       @task-updated="updateTask"></edit-task>
+                            <edit-task
+                                    v-if="editedTask"
+                                    :projects="projects"
+                                    :priorities="priorities"
+                                    :item="editedTask"
+                                    @task-updated="updateTask">
+                            </edit-task>
                         </div>
                     </div>
                 </div>
@@ -135,7 +153,7 @@
              * @param id
              */
             deleteTask(id) {
-                axios.delete(`/api/todos/${id}`).then(response => {
+                axios.delete(`todos/${id}`).then(response => {
                     this.items = this.items.filter(item => {
                         if (item.id !== id) {
                             return true;
@@ -163,7 +181,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.get('/api/todos').then(response => {
+                axios.get('todos').then(response => {
                     let items = response.data.data;
                     items = items.map(item => {
                         item.project_name = item.project.name;
@@ -177,7 +195,7 @@
                     this.loading = false;
                 })
 
-                axios.get('/api/projects').then(response => {
+                axios.get('projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

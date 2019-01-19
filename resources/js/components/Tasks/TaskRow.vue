@@ -2,39 +2,64 @@
     <tr :class="{ deleted: task.is_deleted }">
         <td>
             <span v-if="task.is_deleted">{{ task.name }}</span>
-            <input v-if="!task.is_deleted" type="text" class="form-control" v-model="task.name" :class="{ 'is-invalid': error != '' }">
-            <form-error :text="error" :show="error"></form-error>
+            <input :class="{ 'is-invalid': showError }"
+                   class="form-control"
+                   type="text"
+                   v-if="!task.is_deleted"
+                   v-model="task.name">
+            <form-error
+                    :text="error"
+                    :show="showError">
+            </form-error>
         </td>
         <td v-if="!task.is_deleted">
-            <bootstrap-toggle v-model="task.billable" :options="{
-                    on: 'Yes',
-                    off: 'No',
-                    onstyle: 'success',
-                    offstyle: 'danger' }"/>
+            <bootstrap-toggle
+                    :options="{
+                        on: 'Yes',
+                        off: 'No',
+                        onstyle: 'success',
+                        offstyle: 'danger' }"
+                    v-model="task.billable"/>
         </td>
         <td v-if="!task.is_deleted">
-            <input :disabled="!task.billable"
-                :class="{ 'disabled' : !task.billable }"
-                class="form-control" 
-                type="number" 
-                step=".01" 
-                min="0" 
-                placeholder="Rate" 
-                v-model="task.billing_rate"></td>
+            <input :class="{ 'disabled' : !task.billable }"
+                   :disabled="!task.billable"
+                   class="form-control"
+                   min="0"
+                   placeholder="Rate"
+                   step=".01"
+                   type="number"
+                   v-model="task.billing_rate"></td>
         <td v-if="!task.is_deleted">
-            <select :disabled="!task.billable" :class="{ 'disabled' : !task.billable }" class="form-control" v-model="task.currency">
+            <select :class="{ 'disabled' : !task.billable }"
+                    :disabled="!task.billable"
+                    class="form-control"
+                    v-model="task.currency">
                 <option :value="0" selected disabled>Currency</option>
-                <option v-for="currency in currencies" :key="currency.id" :value="currency.id">
+                <option
+                        :key="currency.id"
+                        :value="currency.id"
+                        v-for="currency in currencies">
                     {{ currency.symbol }} - {{ currency.name }}
                 </option>
             </select>
         </td>
-        <td v-if="task.is_deleted" colspan="3" class="text-center">
+        <td class="text-center"
+            colspan="3"
+            v-if="task.is_deleted">
             task deleted
         </td>
         <td>
-            <i v-if="!task.is_deleted" class="fa fa-fw fa-trash text-danger" @click="destroy" title="Delete task"></i>
-            <i v-if="task.is_deleted" class="fa fa-fw fa-undo text-primary" @click="restore" title="Restore task"></i>
+            <i @click="destroy"
+               class="fa fa-fw fa-trash text-danger"
+               title="Delete task"
+               v-if="!task.is_deleted">
+            </i>
+            <i @click="restore"
+               class="fa fa-fw fa-undo text-primary"
+               title="Restore task"
+               v-if="task.is_deleted">
+            </i>
         </td>
     </tr>
 </template>
@@ -43,11 +68,21 @@
     import String from '../../utilities/String.js';
 
     export default {
-        props: ['task', 'currencies'],
+        name: 'TaskRow',
+        props: {
+            task: {
+                type: Object,
+                required: true,
+            },
+            currencies: {
+                type: Array,
+                required: true,
+            },
+        },
 
         data() {
             return {
-                error: ''
+                error: null
             }
         },
 
@@ -80,6 +115,12 @@
             },
         },
 
+        computed: {
+            showError() {
+                return this.error ? true : false;
+            }
+        },
+
         methods: {
             /**
              * Marks task as deleted or destroy it if it is a new one
@@ -104,7 +145,7 @@
              * Clears task duplicated name error and notifys other components about that
              */
             clearError() {
-                this.error = '';
+                this.error = null;
                 EventHub.fire('task_error', false);
             },
 

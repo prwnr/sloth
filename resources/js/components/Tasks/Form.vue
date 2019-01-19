@@ -12,10 +12,11 @@
             </tr>
             </thead>
             <tbody>
-                <task-row v-for="task in $parent.form.tasks"
-                    :key="task.id"
-                    :task="task"
-                    :currencies="currencies">
+                <task-row
+                        v-for="task in $parent.form.tasks"
+                        :key="task.id"
+                        :task="task"
+                        :currencies="currencies">
                 </task-row>
             </tbody>
         </table>
@@ -23,31 +24,63 @@
         <hr class="block mt-5">
         <div class="row">
             <div class="col-4">
-                <input id="task_name" type="text" class="form-control" v-model="newTask.name" @keydown="taskError = ''"
-                    name="task_name" value="" placeholder="Name" :class="{ 'is-invalid': taskError != '' }">
-                    <form-error :text="taskError" :show="taskError"></form-error>
+                <input :class="{ 'is-invalid': taskError != '' }"
+                       @keydown="taskError = ''"
+                       class="form-control"
+                       id="task_name"
+                       name="task_name"
+                       placeholder="Name"
+                       type="text"
+                       v-model="newTask.name">
+                    <form-error
+                            :text="taskError"
+                            :show="showTaskError">
+                    </form-error>
             </div>
             <div class="col-2 pl-1">
-                <bootstrap-toggle v-model="newTask.billable" :options="{
-                    on: 'Billable',
-                    off: 'Non-billable',
-                    onstyle: 'success',
-                    offstyle: 'danger' }"/>
+                <bootstrap-toggle
+                        :options="{
+                            on: 'Billable',
+                            off: 'Non-billable',
+                            onstyle: 'success',
+                            offstyle: 'danger' }"
+                        v-model="newTask.billable"/>
             </div>
             <div class="col-2">
-                <input :disabled="!newTask.billable" :class="{ 'disabled' : !newTask.billable }"  
-                    id="task_billing_rate" type="number" step=".01" class="form-control" v-model="newTask.billing_rate"
-                    name="task_billing_rate" value="" placeholder="Rate">
-                <form-error :text="$parent.form.errors.get('billing_type')" :show="$parent.form.errors.has('billing_type')"></form-error>
+                <input :class="{ 'disabled' : !newTask.billable }"
+                       :disabled="!newTask.billable"
+                       class="form-control"
+                       id="task_billing_rate"
+                       name="task_billing_rate"
+                       placeholder="Rate"
+                       step=".01"
+                       type="number"
+                       v-model="newTask.billing_rate">
+                <form-error
+                        :text="$parent.form.errors.get('billing_type')"
+                        :show="$parent.form.errors.has('billing_type')">
+                </form-error>
             </div>
             <div class="col-3">
-                <select :disabled="!newTask.billable" :class="{ 'disabled' : !newTask.billable }" class="form-control" name="task_billing_rate" v-model="newTask.currency">
+                <select :class="{ 'disabled' : !newTask.billable }"
+                        :disabled="!newTask.billable"
+                        class="form-control"
+                        name="task_billing_rate"
+                        v-model="newTask.currency">
                     <option :value="0" selected disabled>Currency</option>
-                    <option v-for="currency in currencies" :value="currency.id" :key="currency.id">{{ currency.symbol }} {{ currency.name }}</option>
+                    <option
+                            :key="currency.id"
+                            :value="currency.id"
+                            v-for="currency in currencies">
+                        {{ currency.symbol }} {{ currency.name }}
+                    </option>
                 </select>
             </div>
             <div class="col-1">
-                <i class="fa fa-fw fa-plus-circle text-success" @click="addTask" title="Add new task"></i>
+                <i @click="addTask"
+                   class="fa fa-fw fa-plus-circle text-success"
+                   title="Add new task">
+                </i>
             </div>
         </div>
         <span class="small">* - optional fields. If task is billable and wont be configured, default project Billing will be used for it</span>
@@ -59,7 +92,21 @@
     import String from '../../utilities/String.js';
 
     export default {
-        props: ['tasks', 'currencies', 'billingTypes'],
+        name: 'TasksForm',
+        props: {
+            tasks: {
+                type: Array,
+                required: true,
+            },
+            currencies: {
+                type: Array,
+                required: true,
+            },
+            billingTypes: {
+                type: Object,
+                required: true,
+            },
+        },
         components: {
             TaskRow
         },
@@ -91,11 +138,17 @@
             }
         },
 
+        computed: {
+            showTaskError() {
+                return this.taskError ? true : false;
+            }
+        },
+
         created() {
             EventHub.listen('destroy_task', this.removeTask);
             this.allTasks = this.tasks;
             if (this.allTasks.length == 0) {
-                axios.get('/api/projects/task-types').then(response => {
+                axios.get('projects/task-types').then(response => {
                     this.allTasks = response.data;
                     this.prepareTasksForm();
                 }).catch(error => {

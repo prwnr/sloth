@@ -26,20 +26,36 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="firstname">First name</label>
-                                    <input id="firstname" type="text" class="form-control" disabled v-model="member.user.firstname"
-                                           name="firstname" value="" placeholder="First name" required>
+                                    <input id="firstname"
+                                           type="text"
+                                           class="form-control"
+                                           disabled
+                                           v-model="member.user.firstname"
+                                           name="firstname"
+                                           placeholder="First name" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="lastname">Last name</label>
-                                    <input id="lastname" type="text" class="form-control" disabled v-model="member.user.lastname"
-                                           name="lastname" value="" placeholder="Last name" required>
+                                    <input id="lastname"
+                                           type="text"
+                                           class="form-control"
+                                           disabled
+                                           v-model="member.user.lastname"
+                                           name="lastname"
+                                           placeholder="Last name"
+                                           required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input id="email" type="email" class="form-control disabled" disabled v-model="member.user.email"
-                                           name="email" placeholder="Email">
+                                    <input id="email"
+                                           type="email"
+                                           class="form-control disabled"
+                                           disabled
+                                           v-model="member.user.email"
+                                           name="email"
+                                           placeholder="Email">
                                 </div>
                             </div>
                         </div>
@@ -48,10 +64,17 @@
                             <card-header>Roles</card-header>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <Select2 v-model="form.roles" :options="rolesSelectOptions" :settings="{ multiple: true }"
-                                             @change="form.errors.clear('roles')"></Select2>
+                                    <Select2
+                                            v-model="form.roles"
+                                            :options="rolesSelectOptions"
+                                            :settings="{ multiple: true }"
+                                            @change="form.errors.clear('roles')">
+                                    </Select2>
                                 </div>
-                                <form-error :text="form.errors.get('roles')" :show="form.errors.has('roles')"></form-error>
+                                <form-error
+                                        :text="form.errors.get('roles')"
+                                        :show="form.errors.has('roles')">
+                                </form-error>
                             </div>
                         </div>
                         <button class="mt-3 btn btn-success w-25">Save</button>
@@ -61,9 +84,11 @@
                         <div class="card mb-3">
                             <card-header>Billings</card-header>
                             <div class="card-body">
-                                <billings-form v-if="currencies.length > 0 && billingTypes"
-                                               :currencies="currencies"
-                                               :billingTypes="billingTypes">
+                                <billings-form
+                                        v-if="currencies.length > 0 && billingTypes"
+                                        :form="form"
+                                        :currencies="currencies"
+                                        :billingTypes="billingTypes">
                                 </billings-form>
                             </div>
                         </div>
@@ -72,7 +97,11 @@
                             <card-header>Projects</card-header>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <Select2 v-model="form.projects" :options="projectsSelectOptions" :settings="{ multiple: true }"></Select2>
+                                    <Select2
+                                            v-model="form.projects"
+                                            :options="projectsSelectOptions"
+                                            :settings="{ multiple: true }">
+                                    </Select2>
                                 </div>
                             </div>
                         </div>
@@ -82,28 +111,41 @@
 
             <hr>
             <div class="row">
-                <div class="col-lg-6 mb-foot">
+                <div class="col-lg-6">
                     <form @submit.prevent="changePassword" @keydown="formPassword.errors.clear($event.target.name)">
                         <div class="card mt-3">
                             <card-header>Member password</card-header>
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="password">Password</label>
-                                    <input id="password" v-model="formPassword.password" type="password" required
-                                           class="form-control" autocomplete="off"
+                                    <input id="password"
+                                           v-model="formPassword.password"
+                                           type="password"
+                                           required
+                                           class="form-control"
+                                           autocomplete="off"
                                            name="password">
-                                    <span class="help-block text-danger"
-                                          v-html="formPassword.errors.get('password')" v-show="formPassword.errors.has('password')"></span>
+                                    <span
+                                            class="help-block text-danger"
+                                            v-html="formPassword.errors.get('password')"
+                                            v-show="formPassword.errors.has('password')">
+                                    </span>
                                 </div>
                                 <div class="form-group">
                                     <label for="password-confirm">Confirm password</label>
-                                    <input id="password-confirm" v-model="formPassword.password_confirmation" type="password" required
-                                           class="form-control" autocomplete="off"
+                                    <input id="password-confirm"
+                                           v-model="formPassword.password_confirmation"
+                                           type="password"
+                                           required
+                                           class="form-control"
+                                           autocomplete="off"
                                            name="password_confirmation"
                                            @keydown="formPassword.errors.clear('password')">
+
                                     <span class="help-block text-danger"
                                           v-html="formPassword.errors.get('password_confirmation')"
-                                          v-show="formPassword.errors.has('password_confirmation')"></span>
+                                          v-show="formPassword.errors.has('password_confirmation')">
+                                    </span>
                                 </div>
                                 <div class="form-group">
                                     <button class="btn btn-success">Change password</button>
@@ -121,6 +163,7 @@
     import BillingsForm from '../../components/Billings/Form.vue';
 
     export default {
+        name: 'MembersEdit',
         components: {
             BillingsForm
         },
@@ -183,7 +226,7 @@
         methods: {
             submitForm() {
                 this.$awn.async(
-                    this.form.put('/api/members/' + this.$route.params.id).then(response => {
+                    this.form.put('members/' + this.$route.params.id).then(response => {
                         this.$awn.success('Member updated successfully.');
                     }).catch(error => {
                         this.$awn.alert(error.message);
@@ -207,7 +250,7 @@
                 }).then(result => {
                     if (result.value) {
                         this.$awn.async(
-                            this.formPassword.put('/api/users/' + this.member.user.id + '/password').then(response => {
+                            this.formPassword.put('users/' + this.member.user.id + '/password').then(response => {
                                 this.$awn.success('Member password updated successfully.');
                             }).catch(error => {
                                 this.$awn.alert(error.message);
@@ -231,7 +274,7 @@
              * Load member data
              */
             fetchMember() {
-                axios.get('/api/members/' + this.$route.params.id).then(response => {
+                axios.get('members/' + this.$route.params.id).then(response => {
                     this.member = response.data.data;
                     this.form.email = this.member.user.email;
                     this.form.roles = this.member.roles.map(item => item.id);
@@ -248,7 +291,7 @@
              * Load roles
              */
             fetchRoles() {
-                axios.get('/api/roles').then(response => {
+                axios.get('roles').then(response => {
                     this.roles = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -259,7 +302,7 @@
              * Load projects
              */
             fetchProjects() {
-                axios.get('/api/projects').then(response => {
+                axios.get('projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -270,13 +313,13 @@
              * Load billing data
              */
             fetchBillingData() {
-                axios.get('/api/currencies').then(response => {
+                axios.get('currencies').then(response => {
                     this.currencies = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
 
-                axios.get('/api/billings/types').then(response => {
+                axios.get('billings/types').then(response => {
                     this.billingTypes = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);

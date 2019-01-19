@@ -7,8 +7,13 @@
 
 <script>
     export default {
-        name: "Billing_Show",
-        props: ['billing']
+        name: "BillingShow",
+        props: {
+            billing: {
+                type: Object,
+                required: true
+            }
+        }
     }
 </script>
 

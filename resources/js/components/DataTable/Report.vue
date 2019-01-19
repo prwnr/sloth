@@ -19,7 +19,9 @@
             </span>
             <div v-if="showSalary">
                 <div class="text-bold">Total salary: <span v-if="totals.salary.length == 0">none</span></div>
-                <span v-if="totals.salary" v-for="(total, currency) in totals.salary" :key="currency">
+                <span :key="currency"
+                      v-for="(total, currency) in totals.salary"
+                      v-if="totals.salary">
                     <strong class="pl-1">{{ currency }}</strong>: {{ total }};
                 </span>
             </div>

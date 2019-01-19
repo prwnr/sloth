@@ -17,20 +17,13 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <!-- Google Font: Source Sans Pro -->
 </head>
-<body class="hold-transition sidebar-mini sticky-footer">
-<div id="app">
-    <auth-user :user="{{ json_encode($activeUser) }}"></auth-user>
-    <div class="wrapper">
-        @include('blocks/navbar')
-        @include('blocks/sidebar')
-
-        <div class="content-wrapper">
+<body class="hold-transition sidebar-mini">
+<div id="app" :class="layoutClass">
+    <component :is="layout">
+        <transition name="fade" mode="out-in" :duration="{ enter: 500, leave: 150}">
             <router-view :key="$route.fullPath"></router-view>
-        </div>
-
-        @include('blocks/footer')
-        @include('blocks/control-sidebar')
-    </div>
+        </transition>
+    </component>
 </div>
 <script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('js/adminlte.js') }}"></script>

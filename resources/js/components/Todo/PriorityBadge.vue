@@ -1,14 +1,21 @@
 <template>
-    <small title="Task priority" class="badge" :class="badge"><slot></slot></small>
+    <small title="Task priority"
+           class="badge"
+           :class="badge">
+        <slot></slot>
+    </small>
 </template>
 
 <script>
     export default {
         name: "PriorityBadge",
 
-        props: [
-            'priority'
-        ],
+        props: {
+            priority: {
+                type: String|Number,
+                required: true
+            }
+        },
 
         data() {
             return {

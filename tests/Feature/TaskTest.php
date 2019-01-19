@@ -44,7 +44,7 @@ class TaskTest extends FeatureTestCase
 
     public function testTasksAreNotListedForGuest(): void
     {
-        $response = $this->json(Request::METHOD_GET, '/api/tasks');
+        $response = $this->json(Request::METHOD_GET, '/api/projects/task-types');
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
         $response->assertJson([
             'message' => 'Unauthenticated.'

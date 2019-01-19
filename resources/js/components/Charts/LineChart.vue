@@ -2,8 +2,19 @@
     import { Line } from 'vue-chartjs'
 
     export default {
+        name: 'LineChart',
         extends: Line,
-        props: ['data', 'options'],
+        props: {
+            data: {
+                type: Object,
+                required: true,
+            },
+            options: {
+                type: Object,
+                required: false,
+                default: () => {}
+            }
+        },
         mounted () {
             this.renderChart(this.data, this.options)
         }

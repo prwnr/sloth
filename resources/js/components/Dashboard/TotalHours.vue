@@ -3,11 +3,18 @@
         <div class="card-header">
             <h3 class="d-inline">Total hours worked this {{ this.period }}</h3>
             <div class="card-tools">
-                <date-range :allow-custom="false" @change="applyRangeFilter"></date-range>
+                <date-range
+                        :allow-custom="false"
+                        @change="applyRangeFilter">
+                </date-range>
             </div>
         </div>
         <div class="card-body">
-            <bar-chart v-if="chartData" :data="chartData" :options="chartOptions"></bar-chart>
+            <bar-chart
+                    v-if="chartData"
+                    :data="chartData"
+                    :options="chartOptions">
+            </bar-chart>
         </div>
     </div>
 </template>
@@ -16,8 +23,10 @@
     import BarChart from '../Charts/BarChart';
     import DateRange from '../Report/DateRange';
     import Color from '../../utilities/Color';
+    import {mapGetters} from 'vuex';
 
     export default {
+        name: 'TotalHours',
         components: {
             BarChart, DateRange
         },
@@ -43,6 +52,10 @@
             this.fetchData();
         },
 
+        computed: {
+            ...mapGetters(['authUser'])
+        },
+
         methods: {
             /**
              * @param range
@@ -59,7 +72,7 @@
                 this.chartData = null;
                 let color = new Color();
                 let background = color.random();
-                axios.get('api/reports/' + this.$user.member.id + '/hours/' + this.period).then(response => {
+                axios.get('reports/' + this.authUser.member.id + '/hours/' + this.period).then(response => {
                     this.chartData = {
                         labels: response.data.labels,
                         datasets: [

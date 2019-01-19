@@ -7,7 +7,11 @@
                         <h1>Projects</h1>
                     </div>
                     <div class="col-sm-2">
-                        <router-link :to="{ name: 'projects.create' }" class="btn btn-success btn-block">Create new</router-link>
+                        <router-link
+                                :to="{ name: 'projects.create' }"
+                                class="btn btn-success btn-block">
+                            Create new
+                        </router-link>
 
                     </div>
                 </div>
@@ -15,7 +19,7 @@
         </section>
         <section class="content">
             <div class="card card-table">
-                <card-header>Projects list</card-header>
+                <card-header :minimizable="false">Projects list</card-header>
                 <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 
@@ -38,6 +42,7 @@
     import DatatableActions from '../../components/DataTable/Actions'
 
     export default {
+        name: 'ProjectsIndex',
         data() {
             return {
                 loading: true,
@@ -84,7 +89,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.get('/api/projects').then(response => {
+                axios.get('projects').then(response => {
                     this.items = response.data.data
                     this.loading = false;
                 }).catch(error => {
@@ -100,7 +105,7 @@
              */
             destroyData(id) {
                 this.$awn.async(
-                    axios.delete('/api/projects/' + id).then(response => {
+                    axios.delete('projects/' + id).then(response => {
                         this.items = this.items.filter((item) => {
                             return item.id != id
                         });

@@ -1,27 +1,51 @@
 <template>
-    <div class="list-group-item pb-2" :class="{ 'bg-muted': item.finished}">
+    <div class="list-group-item pb-2"
+         :class="{ 'bg-muted': item.finished}">
         <div class="row">
             <div class="col-lg-10">
                 <div class="col-lg-12 p-0">
-                    <small title="Project" class="badge badge-success"><i class="fa fa-briefcase"></i> {{ item.project.name }}</small>
-                    <small title="Task type" v-if="item.task" class="badge badge-info"><i class="fa fa-tasks"></i> {{ item.task.name }}</small>
-                    <priority-badge :priority="item.priority"><i class="fa fa-signal"></i> Priority: {{ itemPriority }} </priority-badge>
+                    <small title="Project" class="badge badge-success">
+                        <i class="fa fa-briefcase"></i> {{ item.project.name }}
+                    </small>
+                    <small title="Task type" v-if="item.task" class="badge badge-info">
+                        <i class="fa fa-tasks"></i> {{ item.task.name }}
+                    </small>
+                    <priority-badge :priority="item.priority">
+                        <i class="fa fa-signal"></i> Priority: {{ itemPriority }}
+                    </priority-badge>
                 </div>
                 <div class="col-lg-12 mt-1 pl-0 pt-2 pb-0">
                     <h5>{{ item.description }}</h5>
                 </div>
             </div>
             <div class="col-lg-2 todo-buttons text-right">
-                <i v-if="!item.finished" class="fa fa-check text-success btn" @click="finish" title="Mark as finished"></i>
-                <i v-if="item.finished" class="fa fa-close text-danger btn" @click="finish" title="Mark as unfinished"></i>
+                <i @click="finish"
+                   class="fa fa-check text-success btn"
+                   title="Mark as finished"
+                   v-if="!item.finished">
+                </i>
+                <i @click="finish"
+                   class="fa fa-close text-danger btn"
+                   title="Mark as unfinished"
+                   v-if="item.finished">
+                </i>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12 item-action-buttons">
-                <a v-if="!item.finished" href="" @click.prevent="edit" class="small text-primary" data-toggle="modal" data-target="#edit">
+                <a @click.prevent="edit"
+                   class="small text-primary"
+                   data-target="#edit"
+                   data-toggle="modal"
+                   href=""
+                   v-if="!item.finished">
                     <i class="fa fa-edit" title="Edit"></i> edit
                 </a>
-                <a href="" @click.prevent="remove" class="small text-danger"><i class="fa fa-trash" title="Delete"></i> delete</a>
+                <a @click.prevent="remove"
+                   class="small text-danger"
+                   href="">
+                    <i class="fa fa-trash" title="Delete"></i> delete
+                </a>
             </div>
         </div>
     </div>
@@ -37,7 +61,12 @@
             PriorityBadge
         },
 
-        props: ['item'],
+        props: {
+            item: {
+                type: Object,
+                required: true
+            }
+        },
 
         computed: {
             itemPriority() {
@@ -53,7 +82,7 @@
 
         methods: {
             finish() {
-                axios.patch(`/api/todos/${this.item.id}/status`, {
+                axios.patch(`todos/${this.item.id}/status`, {
                     finished: !this.item.finished
                 }).then(response => {
                     this.item.finished = !this.item.finished;

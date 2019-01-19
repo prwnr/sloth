@@ -2,17 +2,26 @@
     <div class="p-3">
         <h5>Your active work logs</h5>
         <hr class="mb-2">
-        <span v-if="logs.length == 0">You are too slothful to work on anything right now</span>
-        <div class="mb-4" v-for="log in logs" :key="log.id">
-            <h5 class="mb-1">{{ log.created_at | formatDateTo('LL') }}</h5>
-            <div>Active since: {{ log.start | formatDateTo('LT') }}</div>
+        <span v-if="activeLogs.length == 0">You are too slothful to work on anything right now</span>
+        <div :key="log.id"
+             class="mb-4"
+             v-for="log in activeLogs">
+            <h5 class="mb-1">
+                {{ log.created_at | formatDateTo('LL') }}
+            </h5>
+            <div>
+                Active since: {{ log.start | formatDateTo('LT') }}
+            </div>
             {{ log.project.name }} <span v-if="log.description">- {{ log.description }}</span>
         </div>
     </div>
 </template>
 
 <script>
+    import {mapGetters, mapActions} from 'vuex';
+
     export default {
+        name: 'ControlSidebar',
         data() {
             return {
                 logs: []
@@ -20,11 +29,9 @@
         },
 
         created() {
-            EventHub.listen('log_updated', this.updateLogs);
-            EventHub.listen('log_deleted', this.removeLog);
-            EventHub.listen('log_created', this.addLog);
-            EventHub.listen('user_change', this.fetchTimeLogs);
-            this.fetchTimeLogs();
+            this.fetchActive().catch(error => {
+                this.$awn.alert(error.message)
+            });
         },
 
         filters: {
@@ -33,50 +40,17 @@
             }
         },
 
+        computed: {
+            ...mapGetters({
+                authUser: 'authUser',
+                activeLogs: 'timelogs/active'
+            })
+        },
+
         methods: {
-            /**
-             * Update logs
-             * @param log
-             */
-            updateLogs(log) {
-                this.fetchTimeLogs();
-            },
-
-            /**
-             * Add log to list
-             * @param log
-             */
-            addLog(log) {
-                if (!log.start) {
-                    return;
-                }
-
-                this.logs.push(log);
-            },
-
-            /**
-             * Remove log from list
-             * @param id
-             */
-            removeLog(id) {
-                this.logs = this.logs.filter(item => item.id !== id);
-            },
-
-            /**
-             * Fetch logs
-             */
-            fetchTimeLogs() {
-                axios.get('/api/users/' + this.$user.data.id + '/logs', {
-                    params: {
-                        active: true
-                    }
-                }).then(response => {
-                    this.logs = response.data.data;
-                    EventHub.fire('sidebar_logs_loaded', this.logs);
-                }).catch(error => {
-                    this.$awn.alert(error.message);
-                });
-            }
+            ...mapActions('timelogs', [
+                'fetchActive'
+            ]),
         }
     }
 </script>

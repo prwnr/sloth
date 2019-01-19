@@ -37,6 +37,7 @@
     import DateRange from '../components/Report/DateRange';
 
     export default {
+        name: 'Reports',
         components: {
             DateRange, Filters, Report
         },
@@ -86,7 +87,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.post('/api/reports', {
+                axios.post('reports', {
                     filters: this.filters
                 }).then(response => {
                     this.reportData = response.data;

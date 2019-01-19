@@ -51,14 +51,19 @@
                         </div>
                     </div>
 
-                    <report-view v-if="reportItems" :items="reportItems" :budget="reportBudget"></report-view>
+                    <report-view
+                            v-if="reportItems"
+                            :items="reportItems"
+                            :budget="reportBudget">
+                    </report-view>
 
                 </div>
 
                 <div class="col-lg-6">
                     <div class="card mb-3">
                         <card-header>Assigned members</card-header>
-                        <ul v-if="project.members.length > 0" class="list-group list-group-flush">
+                        <ul class="list-group list-group-flush"
+                            v-if="project.members.length > 0">
                             <router-link
                                     v-for="member in project.members"
                                     :key="member.id"
@@ -73,10 +78,17 @@
                     <div class="card mb-3">
                         <card-header>Billings</card-header>
                         <div class="card-body">
-                            <billings-show v-if="project.billing" :billing="project.billing"></billings-show>
+                            <billings-show
+                                    v-if="project.billing"
+                                    :billing="project.billing">
+                            </billings-show>
 
                             <hr v-if="project.tasks.length > 0">
-                            <tasks-show v-if="project.tasks.length > 0" :tasks="project.tasks"></tasks-show>
+                            <tasks-show
+                                    v-if="project.tasks.length > 0"
+                                    :tasks="project.tasks">
+
+                            </tasks-show>
                         </div>
                     </div>
                 </div>
@@ -91,6 +103,7 @@
     import ReportView from '../../components/Report/ReportView.vue';
 
     export default {
+        name: 'ProjectsShow',
         components: {
             BillingsShow,
             TasksShow,
@@ -117,7 +130,7 @@
              * Load data for component
              */
             fetchData() {
-                axios.get('/api/projects/' + this.$route.params.id).then(response => {
+                axios.get('projects/' + this.$route.params.id).then(response => {
                     this.project = response.data.data;
                     let report = response.data.report;
                     this.reportItems = [

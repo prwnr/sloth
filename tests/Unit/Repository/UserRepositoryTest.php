@@ -30,6 +30,13 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
     }
 
+    public function testFindsModelByEmail(): void
+    {
+        $expected = factory(User::class)->create();
+        $actual = $this->repository->findByEmail($expected->email);
+        $this->assertEquals($expected->attributesToArray(), $actual->attributesToArray());
+    }
+
     public function testFindsModelWithRelation(): void
     {
         $expected = factory(User::class)->create();
@@ -43,6 +50,12 @@ class UserRepositoryTest extends TestCase
     {
         $this->expectException(ModelNotFoundException::class);
         $this->repository->find(0);
+    }
+
+    public function testThrowsModelNotFoundExceptionOnFindByEmail(): void
+    {
+        $this->expectException(ModelNotFoundException::class);
+        $this->repository->findByEmail('foo@bar.com');
     }
 
     public function testThrowsModelNotFoundExceptionOnFindWithRelation(): void

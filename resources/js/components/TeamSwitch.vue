@@ -1,17 +1,27 @@
 <template>
     <div class="user-panel form-group mt-3 pb-3 mb-3 d-flex">
-        <select name="switcher" v-model="currentTeam" class="form-control">
-            <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
+        <select name="switcher"
+                v-model="currentTeam"
+                class="form-control">
+            <option
+                    :key="team.id"
+                    :value="team.id"
+                    v-for="team in teams">
+                {{ team.name }}
+            </option>
         </select>
     </div>
 </template>
 
 <script>
+    import {mapGetters} from 'vuex';
+
     export default {
+        name: 'TeamSwitch',
         data() {
             return {
                 teams: [],
-                currentTeam: this.$user.team.id
+                currentTeam: this.$store.getters.authUser.team.id
             }
         },
 
@@ -25,9 +35,13 @@
             }
         },
 
+        computed: {
+            ...mapGetters(['authUser'])
+        },
+
         methods: {
             fetchTeams() {
-                axios.get(`/api/users/${this.$user.get('id')}`).then(response => {
+                axios.get(`users/${this.authUser.get('id')}`).then(response => {
                     response.data.teams.forEach(team => {
                         this.teams.push(team);
                     });
@@ -40,7 +54,7 @@
              * Switch team and reloads user data
              */
             switchTeam() {
-                axios.put(`/api/users/${this.$user.get('id')}/switch`, {
+                axios.put(`users/${this.authUser.get('id')}/switch`, {
                     team: this.currentTeam
                 }).then(response => {
                     this.$emit('change', response.data);

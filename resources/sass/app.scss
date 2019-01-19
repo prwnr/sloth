@@ -10,20 +10,6 @@ body {
   font-family: $font-family-sans-serif;
 }
 
-body.sticky-footer .content-wrapper {
-  min-height: calc(100vh - 57px) !important;
-}
-
-footer.sticky-footer {
-  padding: 0 0 0 15px;
-  position: absolute;
-  bottom: 0;
-  height: 56px;
-  line-height: 55px;
-  z-index: 800;
-  width: 100%;
-}
-
 .main-sidebar {
   z-index: 1000;
 }
@@ -38,10 +24,6 @@ footer.sticky-footer {
 
 .modal {
   z-index: 1050;
-}
-
-.card-table, .mb-foot {
-  margin-bottom: 5rem !important;
 }
 
 .card-table [name='Datatable'] .row {
@@ -117,10 +99,8 @@ footer.sticky-footer {
   }
 }
 
-/*
- * Authorization pages
- */
-.auth-page {
+
+.background-blank {
   background: $login-primary-color;
   background: -webkit-linear-gradient(to bottom, $login-secondary-color, $login-primary-color);
   background: linear-gradient(to bottom, $login-secondary-color, $login-primary-color);
@@ -130,8 +110,17 @@ footer.sticky-footer {
   width: 100%;
   height: 100%;
   padding: 50px 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
 }
 
+/*
+ * Authorization pages
+ */
 .login-block {
   margin-top: 5%;
 

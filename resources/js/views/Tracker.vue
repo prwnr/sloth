@@ -7,22 +7,35 @@
                         <h1>Time tracker</h1>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-success btn-block" type="button" data-toggle="modal"
-                                data-target="#newLog">Add time <i class="fa fa-fw fa-plus"></i></button>
+                        <button class="btn btn-success btn-block"
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#newLog">
+                            Add time <i class="fa fa-fw fa-plus"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         </section>
-        <section class="content pb-5">
+        <section class="content">
             <div class="card mb-4">
                 <div class="card-header">
                     <h3 class="d-inline">Logs from: {{ currentDayText }}</h3>
                     <div class="card-tools">
                         <div class="d-inline ">
                             <div class="btn-group">
-                                <button class="btn btn-default" @click="previous"><i class="fa fa-angle-left"></i></button>
-                                <button class="btn btn-default" @click="reset">today</button>
-                                <button class="btn btn-default" @click="next"><i class="fa fa-angle-right"></i></button>
+                                <button class="btn btn-default"
+                                        @click="previous">
+                                    <i class="fa fa-angle-left"></i>
+                                </button>
+                                <button class="btn btn-default"
+                                        @click="reset">
+                                    today
+                                </button>
+                                <button class="btn btn-default"
+                                        @click="next">
+                                    <i class="fa fa-angle-right"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="d-inline ml-2 calendar-icon">
@@ -48,12 +61,11 @@
                                 :key="time.id"
                                 :time="time"
                                 :projects="projects"
-                                @log-deleted="deleteLog"
-                                @worked-time-changed="addToTotalTime"
-                                @minute-tick="totalTime++"
-                                @time-edit="handleEditDialog"></time-log>
+                                @time-edit="handleEditDialog">
+                        </time-log>
                     </div>
-                    <div v-if="timeLogs.length != 0" class="text-right p-2 d-block">
+                    <div class="text-right p-2 d-block"
+                         v-if="timeLogs.length != 0">
                         <span class="pr-4">This day you worked for {{ totalTimeWorked }}</span>
                     </div>
                 </div>
@@ -66,7 +78,10 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-log :projects="projects" :day="currentDay" @log-added="addLog"></new-log>
+                            <new-log
+                                    :projects="projects"
+                                    :day="currentDay">
+                            </new-log>
                         </div>
                     </div>
                 </div>
@@ -83,10 +98,8 @@
                                     v-if="editedTime"
                                     :time="editedTime"
                                     :projects="projects"
-                                    :day="currentDay"
-                                    @log-updated="updateLog"
-                                    @date-changed="fetchTimeLogs"
-                            ></edit-log>
+                                    @date-changed="reload">
+                            </edit-log>
                         </div>
                     </div>
                 </div>
@@ -101,8 +114,10 @@
     import EditLog from '../components/Tracker/EditLog.vue';
     import DatePicker from "vuejs-datepicker";
     import Timer from "../utilities/Timer";
+    import {mapGetters, mapActions} from 'vuex'
 
     export default {
+        name: 'Tracker',
         components: {
             EditLog,
             TimeLog,
@@ -112,25 +127,21 @@
 
         data() {
             return {
-                currentDay: '',
                 calendarDay: null,
-                previousDay: '',
-                nextDay: '',
                 today: '',
-                timeLogs: [],
                 projects: [],
                 editedTime: null,
-                totalTime: 0,
                 timer: new Timer()
             }
         },
 
         created() {
-            this.today = moment().format('YYYY-MM-DD');
-            this.currentDay = moment().format('YYYY-MM-DD');
-            this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
-            this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
-            this.fetchData();
+            this.today = moment().format('YYYY-MM-DD')
+            this.current(this.today).catch(error => {
+                this.$awn.alert(error.message)
+            })
+            this.calendarDay = this.currentDay
+            this.fetchProjects()
         },
 
         watch: {
@@ -140,34 +151,42 @@
         },
 
         computed: {
+            ...mapGetters({
+                authUser: 'authUser',
+                totalTime: 'timelogs/totalTime',
+                timeLogs: 'timelogs/all',
+                currentDay: 'timelogs/currentDay'
+            }),
             currentDayText: function () {
                 return moment(this.currentDay).format('LL');
             },
             totalTimeWorked: function () {
                 return this.timer.format(this.timer.minutesToSeconds(this.totalTime));
-            }
+            },
         },
 
         methods: {
+            ...mapActions('timelogs', {
+                fetch: 'fetch',
+                removeLog: 'remove',
+                updateLog: 'update',
+                next: 'nextDay',
+                previous: 'previousDay',
+                current: 'currentDay',
+            }),
+
             /**
-             * Reset date filter to todays day
+             * Reset to today
              */
             reset() {
-                this.changeDays(this.today);
+                this.current(this.today)
             },
 
             /**
-             * Change date filter to previous day
+             * Reload logs for current day
              */
-            previous() {
-                this.changeDays(this.previousDay);
-            },
-
-            /**
-             * Change date filter to next day
-             */
-            next() {
-                this.changeDays(this.nextDay);
+            reload() {
+                this.current(this.currentDay)
             },
 
             /**
@@ -176,62 +195,7 @@
              */
             calendarChange(date) {
                 let pickedDate = moment(date).format('YYYY-MM-DD');
-                this.changeDays(pickedDate);
-            },
-
-            /**
-             * Change days according to current date filter
-             * @param currentDay
-             */
-            changeDays(currentDay) {
-                this.totalTime = 0;
-                this.currentDay = currentDay;
-                this.previousDay = moment(this.currentDay).subtract(1, 'days').format('YYYY-MM-DD');
-                this.nextDay = moment(this.currentDay).add(1, 'days').format('YYYY-MM-DD');
-                EventHub.fire('new_current_day', this.currentDay);
-                this.fetchTimeLogs();
-            },
-
-            /**
-             * Add new log to logs array
-             * @param log
-             */
-            addLog(log) {
-                this.timeLogs.push(log)  ;
-                this.totalTime += log.duration;
-            },
-
-            /**
-             * Delete log by ID
-             * @param logId
-             */
-            deleteLog(logId) {
-                axios.delete('/api/time/' + logId).then(response => {
-                    this.timeLogs = this.timeLogs.filter(item => {
-                        if (item.id !== logId) {
-                            return true;
-                        }
-
-                        this.totalTime -= item.duration;
-                        return false;
-                    });
-                    EventHub.fire('log_deleted', logId);
-                    this.$awn.success('Log succesfully deleted.');
-                }).catch(error => {
-                    this.$awn.alert(error.message);
-                })
-            },
-
-            /**
-             * Update log based on given data
-             */
-            updateLog(data) {
-                let index = this.timeLogs.findIndex(item => item.id === data.id);
-
-                let project = this.projects.find(item => item.id === data.project_id);
-                this.timeLogs[index].project = project;
-                this.timeLogs[index].task = project.tasks.find(item => item.id === data.task_id);
-                this.timeLogs[index].description = data.description;
+                this.current(pickedDate);
             },
 
             /**
@@ -246,59 +210,15 @@
             },
 
             /**
-             * Sum total time duration of all logs from given day
-             */
-            sumTotalTime() {
-                for (let log of this.timeLogs) {
-                    this.totalTime += log.duration;
-                }
-            },
-
-            /**
-             * Add fixed time to current total time
-             */
-            addToTotalTime(minutes) {
-                this.totalTime += minutes;
-            },
-
-            /**
              * Fetch tracker data
              */
-            fetchData() {
-                if (!this.$user.member) {
-                    axios.get('/api/projects').then(response => {
-                        this.projects = response.data.data;
-                    }).catch(error => {
-                        this.$awn.alert(error.message);
-                    });
-
-                    this.fetchTimeLogs();
-                    return;
-                }
-
-                axios.get('/api/members/' + this.$user.member.id + '/projects').then(response => {
+            fetchProjects() {
+                axios.get('members/' + this.authUser.member.id + '/projects').then(response => {
                     this.projects = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 });
-                this.fetchTimeLogs();
             },
-
-            /**
-             * Fetch logs for given user
-             */
-            fetchTimeLogs() {
-                axios.get('/api/users/' + this.$user.data.id + '/logs', {
-                    params: {
-                        date: this.currentDay
-                    }
-                }).then(response => {
-                    this.timeLogs = response.data.data;
-                    this.sumTotalTime();
-                }).catch(error => {
-                    this.$awn.alert(error.message);
-                });
-            }
         }
 
     }

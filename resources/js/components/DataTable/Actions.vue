@@ -16,9 +16,11 @@
             </router-link>
         </div>
         <div class="p-1">
-            <button @click="destroyData(row.id)" type="button"
+            <button
                     :disabled="!isDeletable()"
-                    class="btn btn-danger btn-sm btn-block">
+                    @click="destroyData(row.id)"
+                    class="btn btn-danger btn-sm btn-block"
+                    type="button">
                 Delete
             </button>
         </div>
@@ -28,7 +30,18 @@
 
 <script>
 export default {
-    props: ['row', 'xprops'],
+    name: 'TableActions',
+    props: {
+        row: {
+            type: Object,
+            required: true
+        },
+        xprops: {
+            type: Object,
+            required: false,
+            default: () => {}
+        }
+    },
     methods: {
         destroyData(id) {
             this.$swal({

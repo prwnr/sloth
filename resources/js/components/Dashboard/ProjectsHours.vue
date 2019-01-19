@@ -3,11 +3,18 @@
         <div class="card-header">
             <h3 class="d-inline">Hours per project worked this {{ this.period }}</h3>
             <div class="card-tools">
-                <date-range :allow-custom="false" @change="applyRangeFilter"></date-range>
+                <date-range
+                        :allow-custom="false"
+                        @change="applyRangeFilter">
+                </date-range>
             </div>
         </div>
         <div class="card-body">
-            <pie-chart v-if="chartData" :data="chartData" :options="chartOptions"></pie-chart>
+            <pie-chart
+                    :data="chartData"
+                    :options="chartOptions"
+                    v-if="chartData">
+            </pie-chart>
             <p class="text-center mb-0 " v-else>No data</p>
         </div>
     </div>
@@ -17,8 +24,10 @@
     import PieChart from '../Charts/PieChart';
     import DateRange from '../Report/DateRange';
     import Color from '../../utilities/Color';
+    import {mapGetters} from 'vuex';
 
     export default {
+        name: 'ProjectsHours',
         components: {
             PieChart, DateRange
         },
@@ -37,6 +46,10 @@
             this.fetchData();
         },
 
+        computed: {
+            ...mapGetters(['authUser'])
+        },
+
         methods: {
             /**
              * @param range
@@ -52,7 +65,7 @@
             fetchData() {
                 let color = new Color();
                 this.chartData = null;
-                axios.get('api/reports/' + this.$user.member.id + '/projects/' + this.period).then(response => {
+                axios.get('reports/' + this.authUser.member.id + '/projects/' + this.period).then(response => {
                     let labelsNum = response.data.labels.length;
                     if (labelsNum === 0) {
                         return;

@@ -1,5 +1,7 @@
 <template>
-    <input type="text" class="form-control flat text-right" name="time"
+    <input type="text"
+           class="form-control flat text-right"
+           name="time"
            v-model="content"
            @input="update"
            placeholder="00:00"
@@ -8,11 +10,22 @@
 
 <script>
     export default {
-        props: ['value'],
+        props: {
+            value: {
+                type: String,
+                required: false
+            }
+        },
 
         data() {
             return {
                 content: this.value ? this.value : ''
+            }
+        },
+
+        watch: {
+            value: function () {
+                this.content = this.value ? this.value : ''
             }
         },
 

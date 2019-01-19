@@ -6,55 +6,96 @@
         <ul class="dropdown-menu dropdown-menu-right dropdown-filters" x-placement="top-start">
             <form id="filters" class="px-4 py-3">
                 <div class="row">
-                    <div v-if="!disabled('members')" class="form-group" :class="[disabled('clients') ? 'col-12' : 'col-6']">
+                    <div :class="[disabled('clients') ? 'col-12' : 'col-6']"
+                         class="form-group"
+                         v-if="!disabled('members')">
+
                         <label>Members</label>
-                        <Select2 v-model="applied.members"
-                                 :options="membersOptions"
-                                 :settings="{ multiple: true }"
-                        ></Select2>
+                        <Select2
+                                v-model="applied.members"
+                                :options="membersOptions"
+                                :settings="{ multiple: true }">
+                        </Select2>
                     </div>
-                    <div v-if="!disabled('clients')" class="form-group" :class="[disabled('members') ? 'col-12' : 'col-6']">
+                    <div :class="[disabled('members') ? 'col-12' : 'col-6']"
+                         class="form-group"
+                         v-if="!disabled('clients')">
+
                         <label>Clients</label>
-                        <Select2 v-model="applied.clients"
-                                 :options="clientsOptions"
-                                 :settings="{ multiple: true }"
-                        ></Select2>
+                        <Select2
+                                v-model="applied.clients"
+                                :options="clientsOptions"
+                                :settings="{ multiple: true }">
+                        </Select2>
                     </div>
                 </div>
-                <div v-if="!disabled('projects')" class="form-group">
+                <div class="form-group"
+                     v-if="!disabled('projects')">
+
                     <label>Projects</label>
-                    <Select2 v-model="applied.projects"
-                             :options="projectsOptions"
-                             :settings="{ multiple: true }"
-                    ></Select2>
+                    <Select2
+                            v-model="applied.projects"
+                            :options="projectsOptions"
+                            :settings="{ multiple: true }">
+                    </Select2>
                 </div>
                 <div class="row">
-                    <div v-if="!disabled('billable')" class="form-group col-lg-6">
+                    <div class="form-group col-lg-6"
+                         v-if="!disabled('billable')">
+
                         <label>Bilable?</label>
                         <div class="form-check">
-                            <input type="checkbox" v-model="applied.billable" :disabled="shouldDisableBillabe('yes')" value="yes" class="form-check-input" id="billableCheck">
+                            <input :disabled="shouldDisableBillabe('yes')"
+                                   class="form-check-input"
+                                   id="billableCheck"
+                                   type="checkbox"
+                                   v-model="applied.billable"
+                                   value="yes">
                             <label class="form-check-label" for="billableCheck">
                                 Yes
                             </label>
                         </div>
                         <div class="form-check">
-                            <input type="checkbox" v-model="applied.billable" :disabled="shouldDisableBillabe('no')" value="no" class="form-check-input" id="nonBillableCheck">
+                            <input :disabled="shouldDisableBillabe('no')"
+                                   class="form-check-input"
+                                   id="nonBillableCheck"
+                                   type="checkbox"
+                                   v-model="applied.billable"
+                                   value="no">
                             <label class="form-check-label" for="nonBillableCheck">
                                 No
                             </label>
                         </div>
                     </div>
-                    <div v-if="!disabled('status')" class="form-group col-lg-6">
+                    <div class="form-group col-lg-6"
+                         v-if="!disabled('status')">
+
                         <label>Status</label>
-                        <select name="status" id="status" class="form-control" v-model="applied.status">
-                            <option v-for="(status, index) in statuses" :key="index" :value="index">{{ status }}</option>
+                        <select class="form-control"
+                                id="status"
+                                name="status"
+                                v-model="applied.status">
+                            <option
+                                    :key="index"
+                                    :value="index"
+                                    v-for="(status, index) in statuses">
+                                {{ status }}
+                            </option>
                         </select>
                     </div>
                 </div>
                 <div class="dropdown-divider"></div>
                 <div class="text-right">
-                    <button type="button" class="btn btn-secondary" @click="reset">Reset</button>
-                    <button type="button" class="btn btn-success pr-2" @click="apply">Apply</button>
+                    <button @click="reset"
+                            class="btn btn-secondary"
+                            type="button">
+                        Reset
+                    </button>
+                    <button @click="apply"
+                            class="btn btn-success pr-2"
+                            type="button">
+                        Apply
+                    </button>
                 </div>
             </form>
         </ul>
@@ -63,9 +104,11 @@
 
 <script>
     export default {
+        name: 'ReportFilters',
         props: {
             disableFilters: {
                 type: Array,
+                required: false,
                 default: () => []
             }
         },
@@ -183,7 +226,7 @@
              * Load clients
              */
             fetchClients() {
-                axios.get('/api/clients').then(response => {
+                axios.get('clients').then(response => {
                     this.clients = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -193,7 +236,7 @@
              * Load members
              */
             fetchMembers() {
-                axios.get('/api/members').then(response => {
+                axios.get('members').then(response => {
                     this.members = response.data.data;
                 }).catch(error => {
                     this.$awn.alert(error.message);
@@ -204,7 +247,7 @@
              * Load projects
              */
             fetchProjects() {
-                axios.get('/api/projects').then(response => {
+                axios.get('projects').then(response => {
                     this.projects = response.data.data
                 }).catch(error => {
                     this.$awn.alert(error.message);

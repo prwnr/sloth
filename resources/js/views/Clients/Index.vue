@@ -16,7 +16,7 @@
         </section>
         <section class="content">
             <div class="card card-table">
-                <card-header>Clients list</card-header>
+                <card-header :minimizable="false">Clients list</card-header>
                 <div class="card-body p-0">
                     <loading v-if="loading"></loading>
 
@@ -39,6 +39,7 @@
     import DatatableActions from '../../components/DataTable/Actions'
 
     export default {
+        name: 'ClientsIndex',
         data() {
             return {
                 loading: true,
@@ -85,7 +86,7 @@
              */
             fetchData() {
                 this.loading = true;
-                axios.get('/api/clients').then(response => {
+                axios.get('clients').then(response => {
                     this.items = response.data.data
                     this.loading = false;
                 }).catch(error => {
@@ -101,7 +102,7 @@
              */
             destroyData(id) {
                 this.$awn.async(
-                    axios.delete('/api/clients/' + id).then(response => {
+                    axios.delete('clients/' + id).then(response => {
                         this.items = this.items.filter((item) => {
                             return item.id != id
                         });

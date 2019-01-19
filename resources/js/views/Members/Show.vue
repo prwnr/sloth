@@ -39,14 +39,20 @@
                         </div>
                     </div>
 
-                    <report-view v-if="reportItems" :items="reportItems"></report-view>
+                    <report-view
+                            v-if="reportItems"
+                            :items="reportItems">
+                    </report-view>
                 </div>
 
                 <div class="col-lg-6">
                     <div class="card mb-3">
                         <card-header>Billings</card-header>
                         <div class="card-body">
-                            <BillingsShow v-if="member.billing" :billing="member.billing"></BillingsShow>
+                            <BillingsShow
+                                    v-if="member.billing"
+                                    :billing="member.billing">
+                            </BillingsShow>
                         </div>
                     </div>
 
@@ -62,10 +68,14 @@
                         </div>
                     </div>
 
-                    <div v-if="member.projects" class="card mb-foot" :class="{ 'border-bottom-0': member.projects.length > 0}">
+                    <div class="card"
+                         v-if="member.projects"
+                         :class="{ 'border-bottom-0': member.projects.length > 0}">
                         <card-header>Projects</card-header>
-                        <div class="card-body" :class="{ 'p-0': member.projects.length > 0}">
-                            <ul v-if="member.projects.length > 0" class="list-group">
+                        <div class="card-body"
+                             :class="{ 'p-0': member.projects.length > 0}">
+                            <ul class="list-group"
+                                v-if="member.projects.length > 0">
                                 <router-link
                                         v-for="(project, index) in member.projects"
                                         :key="project.id"
@@ -89,6 +99,7 @@
     import ReportView from '../../components/Report/ReportView.vue';
 
     export default {
+        name: 'MembersShow',
         components: {
             BillingsShow,
             ReportView
@@ -105,7 +116,7 @@
         },
 
         created() {
-            axios.get('/api/members/' + this.$route.params.id).then(response => {
+            axios.get('members/' + this.$route.params.id).then(response => {
                 this.member = response.data.data;
                 let report = response.data.report;
                 this.reportItems = [
