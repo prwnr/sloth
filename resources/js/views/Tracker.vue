@@ -140,6 +140,7 @@
             this.current(this.today).catch(error => {
                 this.$awn.alert(error.message)
             })
+            this.calendarDay = this.currentDay
             this.fetchProjects()
         },
 
