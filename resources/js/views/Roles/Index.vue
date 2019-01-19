@@ -7,7 +7,11 @@
                         <h1>Roles</h1>
                     </div>
                     <div class="col-sm-2">
-                        <router-link :to="{ name: 'roles.create' }" class="btn btn-success btn-block">Create new</router-link>
+                        <router-link
+                                :to="{ name: 'roles.create' }"
+                                class="btn btn-success btn-block">
+                            Create new
+                        </router-link>
                     </div>
                 </div>
             </div>

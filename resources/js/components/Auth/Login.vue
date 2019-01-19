@@ -3,32 +3,61 @@
         <h2 class="text-center">Sign in!</h2>
         <form @submit.prevent="submit" class="login-form" @keydown="form.errors.clear($event.target.name)">
             <div class="form-group">
-                <input id="email" type="email" class="form-control" :class="{ 'is-invalid': form.errors.has('email')}"
-                       name="email" v-model="form.email" autofocus placeholder="E-mail">
-                <form-error :text="form.errors.get('email')" :show="form.errors.has('email')"></form-error>
+                <input id="email"
+                       type="email"
+                       class="form-control"
+                       :class="{ 'is-invalid': form.errors.has('email')}"
+                       name="email"
+                       v-model="form.email"
+                       autofocus
+                       placeholder="E-mail">
+                <form-error
+                        :text="form.errors.get('email')"
+                        :show="form.errors.has('email')">
+                </form-error>
             </div>
             <div class="form-group">
-                <input id="password" type="password" class="form-control" :class="{ 'is-invalid': form.errors.has('password')}"
-                       name="password"  v-model="form.password" placeholder="Password">
-                <form-error :text="form.errors.get('password')" :show="form.errors.has('password')"></form-error>
+                <input id="password"
+                       type="password"
+                       class="form-control"
+                       :class="{ 'is-invalid': form.errors.has('password')}"
+                       name="password"
+                       v-model="form.password"
+                       placeholder="Password">
+                <form-error
+                        :text="form.errors.get('password')"
+                        :show="form.errors.has('password')">
+                </form-error>
             </div>
 
             <div class="form-check mb-3">
                 <label class="form-check-label">
-                    <input type="checkbox" class="form-check-input" name="remember" v-model="form.remember_me">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           name="remember"
+                           v-model="form.remember_me">
                     Remember Me
                 </label>
-                <form-error :text="form.errors.get('remember_me')" :show="form.errors.has('remember_me')"></form-error>
+                <form-error
+                        :text="form.errors.get('remember_me')"
+                        :show="form.errors.has('remember_me')">
+                </form-error>
             </div>
             <button class="btn btn-success btn-block">Login</button>
         </form>
 
         <div class="copy-text">
             <div class="d-block">
-                <router-link class="mt-3" :to="{ name: 'signup' }" tag="a">Dont have account yet?</router-link>
+                <router-link
+                        :to="{ name: 'signup' }"
+                        class="mt-3"
+                        tag="a">Dont have account yet?</router-link>
             </div>
             <div class="d-block">
-                <router-link class="mt-3" :to="{ name: 'password_forgot' }" tag="a">Forgot Password?</router-link>
+                <router-link
+                        :to="{ name: 'password_forgot' }"
+                        class="mt-3"
+                        tag="a">Forgot Password?</router-link>
             </div>
         </div>
     </div>

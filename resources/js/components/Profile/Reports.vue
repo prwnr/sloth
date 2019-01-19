@@ -4,7 +4,11 @@
             <div class="card-header">
                 <h3 class="d-inline">My report</h3>
                 <div class="card-tools">
-                    <filters class="mr-2" :disable-filters="['members']" @applied="applyFilters"></filters>
+                    <filters
+                            :disable-filters="['members']"
+                            @applied="applyFilters"
+                            class="mr-2">
+                    </filters>
                     <date-range @change="applyRangeFilter"></date-range>
                 </div>
             </div>
@@ -12,7 +16,12 @@
                 <loading v-if="loading"></loading>
 
                 <loading v-if="loading"></loading>
-                <report v-if="!loading" :show-salary="false" :data="reportData" :columns="columns"></report>
+                <report
+                        :columns="columns"
+                        :data="reportData"
+                        :show-salary="false"
+                        v-if="!loading">
+                </report>
             </div>
         </div>
     </section>

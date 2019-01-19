@@ -15,32 +15,69 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-clock-o" :class="{ 'tick' : startTime }"></i></span>
                     </div>
-                    <input v-if="!editing" type="text" class="form-control flat text-right" :disabled="true" :value="displayTime"/>
-                    <time-input v-if="editing" v-model="duration" @keyup.enter.native="update"></time-input>
-                    <button v-if="!startTime && !editing" :disabled="disableStartButton" class="btn btn-success btn-flat" @click="start" title="Start">
+                    <input :disabled="true"
+                           :value="displayTime"
+                           class="form-control flat text-right"
+                           type="text"
+                           v-if="!editing"/>
+                    <time-input
+                            @keyup.enter.native="update"
+                            v-if="editing"
+                            v-model="duration">
+                    </time-input>
+                    <button :disabled="disableStartButton"
+                            @click="start"
+                            class="btn btn-success btn-flat"
+                            title="Start"
+                            v-if="!startTime && !editing">
                         <i class="fa fa-play"></i>
                     </button>
-                    <button v-if="startTime" class="btn btn-secondary btn-flat" @click="stop" title="Stop">
+                    <button @click="stop"
+                            class="btn btn-secondary btn-flat"
+                            title="Stop"
+                            v-if="startTime">
                         <i class="fa fa-pause"></i>
                     </button>
-                    <button v-if="!startTime && editing" class="btn btn-primary btn-flat" @click="update" title="Update">
+                    <button
+                            @click="update"
+                            class="btn btn-primary btn-flat"
+                            title="Update"
+                            v-if="!startTime && editing">
                         <i class="fa fa-check"></i>
                     </button>
-                    <button v-if="!startTime" :disabled="!editing && !authUser.can('edit_time')" class="btn btn-default btn-flat"
+                    <button :disabled="!editing && !authUser.can('edit_time')"
                             :title="editTitle"
-                            @click="editing = !editing">
-                        <i v-if="!editing" class="fa fa-edit" title="Edit"></i>
-                        <i v-if="editing" class="fa fa-times" title="Cancel"></i>
+                            @click="editing = !editing"
+                            class="btn btn-default btn-flat"
+                            v-if="!startTime">
+
+                        <i class="fa fa-edit"
+                           title="Edit"
+                           v-if="!editing">
+                        </i>
+
+                        <i class="fa fa-times"
+                           title="Cancel"
+                           v-if="editing">
+                        </i>
                     </button>
                 </div>
             </div>
         </div>
         <div class="row pt-1 pb-0">
             <div class="col-lg-12 item-action-buttons">
-                <a href="" @click.prevent="editLog" class="small text-primary" data-toggle="modal" data-target="#editRow">
+                <a @click.prevent="editLog"
+                   class="small text-primary"
+                   data-target="#editRow"
+                   data-toggle="modal"
+                   href="">
                     <i class="fa fa-edit" title="Edit"></i> edit
                 </a>
-                <a href="" @click.prevent="deleteLog" class="small text-danger"><i class="fa fa-trash" title="Delete"></i> delete</a>
+                <a @click.prevent="deleteLog"
+                   class="small text-danger"
+                   href="">
+                    <i class="fa fa-trash" title="Delete"></i> delete
+                </a>
             </div>
         </div>
     </div>

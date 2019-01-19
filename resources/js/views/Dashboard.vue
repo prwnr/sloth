@@ -3,7 +3,8 @@
         <section class="content-header"></section>
         <section class="content">
             <div class="col-lg-12">
-                <div v-if="authUser.can('view_reports')" class="row">
+                <div class="row"
+                     v-if="authUser.can('view_reports')">
                     <div class="col-12">
                         <h2>Reports charts</h2>
                     </div>

@@ -4,13 +4,33 @@
             {{ range | capitalize }}
         </button>
         <ul class="dropdown-menu dropdown-menu-right" x-placement="top-start">
-            <a href="#" class="dropdown-item text-right" v-for="(option, index) in options" :key="index"
-               @click.prevent="changeRange(option)">{{ option | capitalize }}</a>
-            <div v-if="allowCustom" class="dropdown-divider"></div>
-            <a v-if="allowCustom" href="#" class="dropdown-item text-right" data-toggle="modal" data-target="#customRange">Custom</a>
+            <a :key="index"
+               @click.prevent="changeRange(option)"
+               class="dropdown-item text-right"
+               href="#"
+               v-for="(option, index) in options">
+                {{ option | capitalize }}
+            </a>
+
+            <div class="dropdown-divider"
+                 v-if="allowCustom">
+            </div>
+
+            <a class="dropdown-item text-right"
+               data-target="#customRange"
+               data-toggle="modal"
+               href="#"
+               v-if="allowCustom">
+                Custom
+            </a>
         </ul>
 
-        <div v-if="allowCustom" class="modal fade" id="customRange" tabindex="-1" role="dialog" aria-hidden="true">
+        <div aria-hidden="true"
+             class="modal fade"
+             id="customRange"
+             role="dialog"
+             tabindex="-1"
+             v-if="allowCustom">
             <div class="modal-dialog" role="document">
                 <div class="modal-content card-primary card-outline">
                     <div class="modal-header">
@@ -25,22 +45,42 @@
                         <div class="row">
                             <div class="form-group col-6">
                                 <label>From</label>
-                                <date-picker :disabled-dates="{ from: disableFrom }" :bootstrap-styling="true" format="yyyy-MM-dd" v-model="custom.start" :monday-first="true"></date-picker>
+                                <date-picker
+                                        :disabled-dates="{ from: disableFrom }"
+                                        :bootstrap-styling="true"
+                                        format="yyyy-MM-dd"
+                                        v-model="custom.start"
+                                        :monday-first="true">
+                                </date-picker>
                             </div>
 
                             <div class="form-group col-6">
                                 <label>To</label>
-                                <date-picker :disabled-dates="{ to: disableTo }" :bootstrap-styling="true" format="yyyy-MM-dd" v-model="custom.end" :monday-first="true"></date-picker>
+                                <date-picker
+                                        :disabled-dates="{ to: disableTo }"
+                                        :bootstrap-styling="true"
+                                        format="yyyy-MM-dd"
+                                        v-model="custom.end"
+                                        :monday-first="true">
+                                </date-picker>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        <button :disabled="custom.start == '' || custom.end == ''"
                                 @click="discardCustomRange"
-                                :disabled="custom.start == '' || custom.end == ''">Discard</button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                                type="button">
+                            Discard
+                        </button>
+                        <button :disabled="custom.start == '' || custom.end == ''"
                                 @click="changeCustomRange"
-                                :disabled="custom.start == '' || custom.end == ''">Apply</button>
+                                class="btn btn-success"
+                                data-dismiss="modal"
+                                type="button">
+                            Apply
+                        </button>
                     </div>
                 </div>
             </div>

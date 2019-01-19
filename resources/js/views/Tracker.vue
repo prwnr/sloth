@@ -7,8 +7,12 @@
                         <h1>Time tracker</h1>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-success btn-block" type="button" data-toggle="modal"
-                                data-target="#newLog">Add time <i class="fa fa-fw fa-plus"></i></button>
+                        <button class="btn btn-success btn-block"
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#newLog">
+                            Add time <i class="fa fa-fw fa-plus"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -20,9 +24,18 @@
                     <div class="card-tools">
                         <div class="d-inline ">
                             <div class="btn-group">
-                                <button class="btn btn-default" @click="previous"><i class="fa fa-angle-left"></i></button>
-                                <button class="btn btn-default" @click="reset">today</button>
-                                <button class="btn btn-default" @click="next"><i class="fa fa-angle-right"></i></button>
+                                <button class="btn btn-default"
+                                        @click="previous">
+                                    <i class="fa fa-angle-left"></i>
+                                </button>
+                                <button class="btn btn-default"
+                                        @click="reset">
+                                    today
+                                </button>
+                                <button class="btn btn-default"
+                                        @click="next">
+                                    <i class="fa fa-angle-right"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="d-inline ml-2 calendar-icon">
@@ -48,9 +61,11 @@
                                 :key="time.id"
                                 :time="time"
                                 :projects="projects"
-                                @time-edit="handleEditDialog"></time-log>
+                                @time-edit="handleEditDialog">
+                        </time-log>
                     </div>
-                    <div v-if="timeLogs.length != 0" class="text-right p-2 d-block">
+                    <div class="text-right p-2 d-block"
+                         v-if="timeLogs.length != 0">
                         <span class="pr-4">This day you worked for {{ totalTimeWorked }}</span>
                     </div>
                 </div>
@@ -63,7 +78,10 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDialog">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <new-log :projects="projects" :day="currentDay"></new-log>
+                            <new-log
+                                    :projects="projects"
+                                    :day="currentDay">
+                            </new-log>
                         </div>
                     </div>
                 </div>
@@ -80,8 +98,8 @@
                                     v-if="editedTime"
                                     :time="editedTime"
                                     :projects="projects"
-                                    @date-changed="reload"
-                            ></edit-log>
+                                    @date-changed="reload">
+                            </edit-log>
                         </div>
                     </div>
                 </div>

@@ -64,7 +64,7 @@ export default new Vuex.Store({
         },
 
         async loadAuthUser({commit}) {
-            return await axios.get('/auth/user').then(response => {
+            return await axios.get('auth/user').then(response => {
                 let user = new User(response.data)
                 commit('setAuthUser', user)
                 return Promise.resolve()

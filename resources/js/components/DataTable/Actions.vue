@@ -16,9 +16,11 @@
             </router-link>
         </div>
         <div class="p-1">
-            <button @click="destroyData(row.id)" type="button"
+            <button
                     :disabled="!isDeletable()"
-                    class="btn btn-danger btn-sm btn-block">
+                    @click="destroyData(row.id)"
+                    class="btn btn-danger btn-sm btn-block"
+                    type="button">
                 Delete
             </button>
         </div>

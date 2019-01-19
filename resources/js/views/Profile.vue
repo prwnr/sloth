@@ -37,10 +37,31 @@
                         <div class="card-header p-2">
                             <ul class="nav nav-pills">
                                 <!--<li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab" @click="toggleTab">Activity</a></li>-->
-                                <li class="nav-item"><a class="nav-link active" href="#reports" data-toggle="tab" @click="toggleTab">My reports</a></li>
-                                <li v-if="authUser.hasRole('admin')" class="nav-item">
-                                    <a class="nav-link" href="#team" data-toggle="tab" @click="toggleTab">My team</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab" @click="toggleTab">Settings</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link active"
+                                       href="#reports"
+                                       data-toggle="tab"
+                                       @click="toggleTab">
+                                        My reports
+                                    </a>
+                                </li>
+                                <li class="nav-item"
+                                    v-if="authUser.hasRole('admin')">
+                                    <a class="nav-link"
+                                       href="#team"
+                                       data-toggle="tab"
+                                       @click="toggleTab">
+                                        My team
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       href="#settings"
+                                       data-toggle="tab"
+                                       @click="toggleTab">
+                                        Settings
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <div class="card-body">
@@ -52,10 +73,21 @@
                                     <reports v-if="activeTab == 'reports'"></reports>
                                 </div>
                                 <div class="tab-pane" id="settings">
-                                    <settings v-if="activeTab == 'settings'" @user-updated="updateUser" :user="user.data"></settings>
+                                    <settings
+                                            v-if="activeTab == 'settings'"
+                                            @user-updated="updateUser"
+                                            :user="user.data">
+
+                                    </settings>
                                 </div>
-                                <div v-if="authUser.hasRole('admin')" class="tab-pane" id="team">
-                                    <team v-if="activeTab == 'team'" @team-updated="updateTeam" :team="user.team"></team>
+                                <div class="tab-pane"
+                                     id="team"
+                                     v-if="authUser.hasRole('admin')">
+                                    <team
+                                            v-if="activeTab == 'team'"
+                                            @team-updated="updateTeam"
+                                            :team="user.team">
+                                    </team>
                                 </div>
                             </div>
                         </div>

@@ -12,20 +12,39 @@
             </tr>
             </thead>
             <tbody>
-                <tr :class="{ deleted: task.is_deleted }" v-for="task in tasks" :key="task.id">
-                    <td>{{ task.name }}</td>
+                <tr :class="{ deleted: task.is_deleted }"
+                    :key="task.id"
+                    v-for="task in tasks">
+
+                    <td>
+                        {{ task.name }}
+                    </td>
+
                     <td v-if="!task.is_deleted">
                         {{ task.billable_text }}
                     </td>
+
                     <td v-if="!task.is_deleted">
-                        <span v-if="task.billable">{{ task.billing_rate }}</span>
-                        <span v-if="!task.billable">none</span>
+                        <span v-if="task.billable">
+                            {{ task.billing_rate }}
+                        </span>
+                        <span v-if="!task.billable">
+                            none
+                        </span>
                     </td>
+
                     <td v-if="!task.is_deleted">
-                        <span v-if="task.billable">{{ task.currency.name }} ({{ task.currency.symbol }})</span>
-                        <span v-if="!task.billable">none</span>
+                        <span v-if="task.billable">
+                            {{ task.currency.name }} ({{ task.currency.symbol }})
+                        </span>
+                        <span v-if="!task.billable">
+                            none
+                        </span>
                     </td>
-                    <td v-if="task.is_deleted" colspan="4" class="text-center">
+
+                    <td class="text-center"
+                        colspan="4"
+                        v-if="task.is_deleted">
                         task deleted
                     </td>
                 </tr>

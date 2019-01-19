@@ -50,7 +50,8 @@
 
                     <div class="card" :class="{ 'mb-3 mt-3 border-bottom-0' : client.projects.length > 0}">
                         <card-header>Projects</card-header>
-                        <div class="card-body" :class="{ 'p-0' : client.projects.length > 0}">
+                        <div class="card-body"
+                             :class="{ 'p-0' : client.projects.length > 0}">
                             <ul v-if="client.projects.length > 0" class="list-group">
                                 <router-link
                                         v-for="(project, index) in client.projects"
@@ -70,11 +71,17 @@
                     <div class="card mb-3">
                         <card-header>Billings</card-header>
                         <div class="card-body">
-                            <BillingsShow v-if="client.billing" :billing="client.billing"></BillingsShow>
+                            <BillingsShow
+                                    v-if="client.billing"
+                                    :billing="client.billing">
+                            </BillingsShow>
                         </div>
                     </div>
 
-                    <report-view v-if="reportItems" :items="reportItems"></report-view>
+                    <report-view
+                            v-if="reportItems"
+                            :items="reportItems">
+                    </report-view>
                 </div>
             </div>
         </section>

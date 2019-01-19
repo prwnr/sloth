@@ -3,9 +3,15 @@
         <h5>Your active work logs</h5>
         <hr class="mb-2">
         <span v-if="activeLogs.length == 0">You are too slothful to work on anything right now</span>
-        <div class="mb-4" v-for="log in activeLogs" :key="log.id">
-            <h5 class="mb-1">{{ log.created_at | formatDateTo('LL') }}</h5>
-            <div>Active since: {{ log.start | formatDateTo('LT') }}</div>
+        <div :key="log.id"
+             class="mb-4"
+             v-for="log in activeLogs">
+            <h5 class="mb-1">
+                {{ log.created_at | formatDateTo('LL') }}
+            </h5>
+            <div>
+                Active since: {{ log.start | formatDateTo('LT') }}
+            </div>
             {{ log.project.name }} <span v-if="log.description">- {{ log.description }}</span>
         </div>
     </div>

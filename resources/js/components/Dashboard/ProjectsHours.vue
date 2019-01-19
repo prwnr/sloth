@@ -3,11 +3,18 @@
         <div class="card-header">
             <h3 class="d-inline">Hours per project worked this {{ this.period }}</h3>
             <div class="card-tools">
-                <date-range :allow-custom="false" @change="applyRangeFilter"></date-range>
+                <date-range
+                        :allow-custom="false"
+                        @change="applyRangeFilter">
+                </date-range>
             </div>
         </div>
         <div class="card-body">
-            <pie-chart v-if="chartData" :data="chartData" :options="chartOptions"></pie-chart>
+            <pie-chart
+                    :data="chartData"
+                    :options="chartOptions"
+                    v-if="chartData">
+            </pie-chart>
             <p class="text-center mb-0 " v-else>No data</p>
         </div>
     </div>

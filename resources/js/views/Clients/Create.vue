@@ -59,12 +59,17 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="zip">Zip/Postal Code</label>
-                                            <input id="zip" type="text"
+                                            <input id="zip"
+                                                   type="text"
                                                    v-model="form.zip"
                                                    class="form-control"
                                                    name="zip" value=""
-                                                   placeholder="Zip/Postal Code" required>
-                                            <form-error :text="form.errors.get('zip')" :show="form.errors.has('zip')"></form-error>
+                                                   placeholder="Zip/Postal Code"
+                                                   required>
+                                            <form-error
+                                                    :text="form.errors.get('zip')"
+                                                    :show="form.errors.has('zip')">
+                                            </form-error>
                                         </div>
                                     </div>
                                 </div>
@@ -73,11 +78,18 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="city">City</label>
-                                            <input id="city" type="text"
+                                            <input id="city"
+                                                   type="text"
                                                    v-model="form.city"
                                                    class="form-control"
-                                                   name="city" value="" placeholder="City" required>
-                                            <form-error :text="form.errors.get('city')" :show="form.errors.has('city')"></form-error>
+                                                   name="city"
+                                                   value=""
+                                                   placeholder="City"
+                                                   required>
+                                            <form-error
+                                                    :text="form.errors.get('city')"
+                                                    :show="form.errors.has('city')">
+                                            </form-error>
                                         </div>
                                     </div>
                                 </div>
@@ -97,7 +109,10 @@
                                            class="form-control"
                                            name="fullname" value=""
                                            placeholder="Full Name" required>
-                                    <form-error :text="form.errors.get('fullname')" :show="form.errors.has('fullname')"></form-error>
+                                    <form-error
+                                            :text="form.errors.get('fullname')"
+                                            :show="form.errors.has('fullname')">
+                                    </form-error>
                                 </div>
                                 <div class="form-group">
                                     <label for="email">Contact Email</label>
@@ -106,7 +121,10 @@
                                            class="form-control"
                                            name="email" value=""
                                            placeholder="Contact Email" required>
-                                    <form-error :text="form.errors.get('email')" :show="form.errors.has('email')"></form-error>
+                                    <form-error
+                                            :text="form.errors.get('email')"
+                                            :show="form.errors.has('email')">
+                                    </form-error>
                                 </div>
                             </div>
                         </div>
@@ -114,9 +132,11 @@
                         <div class="card mb-3">
                             <card-header>Billings</card-header>
                             <div class="card-body">
-                                <billings-form v-if="currencies.length > 0 && billingTypes"
-                                               :currencies="currencies"
-                                               :billingTypes="billingTypes">
+                                <billings-form
+                                        v-if="currencies.length > 0 && billingTypes"
+                                        :form="form"
+                                        :currencies="currencies"
+                                        :billingTypes="billingTypes">
                                 </billings-form>
                             </div>
                         </div>

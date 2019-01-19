@@ -3,11 +3,18 @@
         <div class="card-header">
             <h3 class="d-inline">Projects sales this {{ this.period }}</h3>
             <div class="card-tools">
-                <date-range :allow-custom="false" @change="applyRangeFilter"></date-range>
+                <date-range
+                        :allow-custom="false"
+                        @change="applyRangeFilter">
+                </date-range>
             </div>
         </div>
         <div class="card-body">
-            <line-chart v-if="chartData" :data="chartData" :options="chartOptions"></line-chart>
+            <line-chart
+                    :data="chartData"
+                    :options="chartOptions"
+                    v-if="chartData">
+            </line-chart>
             <p class="text-center mb-0 " v-else>No data</p>
         </div>
     </div>

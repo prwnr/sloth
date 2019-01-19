@@ -1,5 +1,7 @@
 <template>
-    <input type="text" class="form-control flat text-right" name="time"
+    <input type="text"
+           class="form-control flat text-right"
+           name="time"
            v-model="content"
            @input="update"
            placeholder="00:00"

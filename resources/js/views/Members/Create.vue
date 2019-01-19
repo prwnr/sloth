@@ -18,23 +18,47 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="firstname">First name</label>
-                                    <input id="firstname" type="text" class="form-control" v-model="form.firstname"
-                                           name="firstname" value="" placeholder="First name" required>
-                                    <form-error :text="form.errors.get('firstname')" :show="form.errors.has('firstname')"></form-error>
+                                    <input id="firstname"
+                                           type="text"
+                                           class="form-control"
+                                           v-model="form.firstname"
+                                           name="firstname"
+                                           placeholder="First name"
+                                           required>
+                                    <form-error
+                                            :text="form.errors.get('firstname')"
+                                            :show="form.errors.has('firstname')">
+                                    </form-error>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="lastname">Last name</label>
-                                    <input id="lastname" type="text" class="form-control" v-model="form.lastname"
-                                           name="lastname" value="" placeholder="Last name" required>
-                                    <form-error :text="form.errors.get('lastname')" :show="form.errors.has('lastname')"></form-error>
+                                    <input id="lastname"
+                                           type="text"
+                                           class="form-control"
+                                           v-model="form.lastname"
+                                           name="lastname"
+                                           placeholder="Last name"
+                                           required>
+                                    <form-error
+                                            :text="form.errors.get('lastname')"
+                                            :show="form.errors.has('lastname')">
+                                    </form-error>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input id="email" type="email" class="form-control" v-model="form.email"
-                                           name="email" placeholder="Email" required>
-                                    <form-error :text="form.errors.get('email')" :show="form.errors.has('email')"></form-error>
+                                    <input id="email"
+                                           type="email"
+                                           class="form-control"
+                                           v-model="form.email"
+                                           name="email"
+                                           placeholder="Email"
+                                           required>
+                                    <form-error
+                                            :text="form.errors.get('email')"
+                                            :show="form.errors.has('email')">
+                                    </form-error>
                                 </div>
                             </div>
                         </div>
@@ -43,10 +67,17 @@
                             <card-header>Roles</card-header>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <Select2 v-model="form.roles" :options="rolesSelectOptions" :settings="{ multiple: true }"
-                                             @change="form.errors.clear('roles')"></Select2>
+                                    <Select2
+                                            v-model="form.roles"
+                                            :options="rolesSelectOptions"
+                                            :settings="{ multiple: true }"
+                                            @change="form.errors.clear('roles')">
+                                    </Select2>
                                 </div>
-                                <form-error :text="form.errors.get('roles')" :show="form.errors.has('roles')"></form-error>
+                                <form-error
+                                        :text="form.errors.get('roles')"
+                                        :show="form.errors.has('roles')">
+                                </form-error>
                             </div>
                         </div>
                         <button class="mt-3 btn btn-success w-25">Create</button>
@@ -56,9 +87,11 @@
                         <div class="card mb-3">
                             <card-header>Billings</card-header>
                             <div class="card-body">
-                                <billings-form v-if="currencies.length > 0 && billingTypes"
-                                               :currencies="currencies"
-                                               :billingTypes="billingTypes">
+                                <billings-form
+                                        v-if="currencies.length > 0 && billingTypes"
+                                        :form="form"
+                                        :currencies="currencies"
+                                        :billingTypes="billingTypes">
                                 </billings-form>
                             </div>
                         </div>
@@ -67,7 +100,11 @@
                             <div class="card-header"><h5><strong>Projects</strong></h5></div>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <Select2 v-model="form.projects" :options="projectsSelectOptions" :settings="{ multiple: true }"></Select2>
+                                    <Select2
+                                            v-model="form.projects"
+                                            :options="projectsSelectOptions"
+                                            :settings="{ multiple: true }">
+                                    </Select2>
                                 </div>
                             </div>
                         </div>

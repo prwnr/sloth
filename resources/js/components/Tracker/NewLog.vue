@@ -7,36 +7,79 @@
                 <div class="col-6">
                     <div class="form-group">
                         <label for="name">Choose your project</label>
-                        <select class="form-control" name="project" v-model="form.project" :class="{ 'is-invalid': form.errors.has('project')}">
-                            <option v-if="projects.length == 0" value="''" disabled selected="false">There are no projects that you could choose</option>
-                            <option v-for="project in projects" :value="project.id">{{ project.name }}</option>
+                        <select class="form-control"
+                                name="project"
+                                v-model="form.project"
+                                :class="{ 'is-invalid': form.errors.has('project')}">
+                            <option
+                                    v-if="projects.length == 0"
+                                    value="''"
+                                    disabled
+                                    selected="false">
+                                There are no projects that you could choose
+                            </option>
+                            <option
+                                    v-for="project in projects"
+                                    :value="project.id">
+                                {{ project.name }}
+                            </option>
                         </select>
-                        <form-error :text="form.errors.get('project')" :show="form.errors.has('project')"></form-error>
+                        <form-error
+                                :text="form.errors.get('project')"
+                                :show="form.errors.has('project')">
+                        </form-error>
                     </div>
                 </div>
 
                 <div class="col-6">
                     <div class="form-group">
                         <label for="name">Select day</label>
-                        <date-picker :bootstrap-styling="true" format="yyyy-MM-dd" v-model="form.created_at" :monday-first="true"></date-picker>
+                        <date-picker
+                                :bootstrap-styling="true"
+                                format="yyyy-MM-dd"
+                                v-model="form.created_at"
+                                :monday-first="true">
+                        </date-picker>
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="name">Pick your task</label>
-                <select class="form-control" name="task" v-model="form.task" :class="{ 'is-invalid': form.errors.has('task')}">
-                    <option v-if="tasks.length == 0" value="''" disabled selected="false">There are no tasks that you could pick</option>
-                    <option v-for="task in tasks" :value="task.id">{{ task.name }} ({{ task.billable_text }})</option>
+                <select class="form-control"
+                        name="task"
+                        v-model="form.task"
+                        :class="{ 'is-invalid': form.errors.has('task')}">
+                    <option
+                            disabled
+                            selected="false"
+                            v-if="tasks.length == 0"
+                            value="''">
+                        There are no tasks that you could pick
+                    </option>
+                    <option
+                            v-for="task in tasks"
+                            :value="task.id">
+                        {{ task.name }} ({{ task.billable_text }})
+                    </option>
                 </select>
-                <form-error :text="form.errors.get('task')" :show="form.errors.has('task')"></form-error>
+                <form-error
+                        :text="form.errors.get('task')"
+                        :show="form.errors.has('task')">
+                </form-error>
             </div>
 
             <div class="form-group">
                 <label for="name">Write description <span class="small">(optional)</span></label>
                 <div class="input-group">
-                    <textarea id="name" type="text" class="form-control"
-                              name="name" value="" placeholder="Description" v-model="form.description" :maxlength="200"></textarea>
+                    <textarea :maxlength="200"
+                              class="form-control"
+                              id="name"
+                              name="name"
+                              placeholder="Description"
+                              type="text"
+                              v-model="form.description">
+                    </textarea>
                     <div class="input-group-append">
                         <span class="input-group-text" v-text="(200 - form.description.length)"></span>
                     </div>
@@ -62,7 +105,10 @@
 
             <div class="col-lg-12 p-0">
                 <button type="button" data-dismiss="modal" aria-label="Close" id="closeDialog" class="btn btn-danger" >Cancel</button>
-                <button :disabled="disableStartButton && !duration" class="btn btn-success float-right">{{ buttonText }}</button>
+                <button :disabled="disableStartButton && !duration"
+                        class="btn btn-success float-right">
+                    {{ buttonText }}
+                </button>
             </div>
         </form>
     </div>

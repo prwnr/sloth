@@ -1,7 +1,14 @@
 <template>
     <div class="user-panel form-group mt-3 pb-3 mb-3 d-flex">
-        <select name="switcher" v-model="currentTeam" class="form-control">
-            <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
+        <select name="switcher"
+                v-model="currentTeam"
+                class="form-control">
+            <option
+                    :key="team.id"
+                    :value="team.id"
+                    v-for="team in teams">
+                {{ team.name }}
+            </option>
         </select>
     </div>
 </template>

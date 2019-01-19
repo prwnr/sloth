@@ -1,7 +1,11 @@
 <template>
     <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
         <i class="fa fa-th-large"></i>
-        <span v-if="activeLogs.length > 0" class="badge badge-success navbar-badge">{{ activeLogs.length }}</span>
+        <span
+                class="badge badge-success navbar-badge"
+                v-if="activeLogs.length > 0">
+            {{ activeLogs.length }}
+        </span>
     </a>
 </template>
 

@@ -26,53 +26,80 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="company_name">Company Name</label>
-                                    <input id="company_name" type="text"
+                                    <input id="company_name"
+                                           type="text"
                                            v-model="form.company_name"
                                            class="form-control"
-                                           name="company_name" value=""
-                                           placeholder="Company Name" required>
-                                    <form-error :text="form.errors.get('company_name')" :show="form.errors.has('company_name')"></form-error>
+                                           name="company_name"
+                                           value=""
+                                           placeholder="Company Name"
+                                           required>
+                                    <form-error
+                                            :text="form.errors.get('company_name')"
+                                            :show="form.errors.has('company_name')">
+                                    </form-error>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="vat">VAT/TAX Number</label>
-                                    <input id="vat" type="text"
+                                    <input id="vat"
+                                           type="text"
                                            v-model="form.vat"
                                            class="form-control"
-                                           name="vat" value="" placeholder="VAT/TAX Number"
+                                           name="vat"
+                                           placeholder="VAT/TAX Number"
                                            required>
-                                    <form-error :text="form.errors.get('vat')" :show="form.errors.has('vat')"></form-error>
+                                    <form-error
+                                            :text="form.errors.get('vat')"
+                                            :show="form.errors.has('vat')">
+                                    </form-error>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="street">Address</label>
-                                    <input id="street" type="text"
+                                    <input id="street"
+                                           type="text"
                                            v-model="form.street"
                                            class="form-control"
-                                           name="street" value="" placeholder="Address"
+                                           name="street"
+                                           placeholder="Address"
                                            required>
-                                    <form-error :text="form.errors.get('street')" :show="form.errors.has('street')"></form-error>
+                                    <form-error
+                                            :text="form.errors.get('street')"
+                                            :show="form.errors.has('street')">
+                                    </form-error>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="country">Country</label>
-                                            <input id="country" type="text"
+                                            <input id="country"
+                                                   type="text"
                                                    v-model="form.country"
                                                    class="form-control"
-                                                   name="country" value="" placeholder="Country"
+                                                   name="country"
+                                                   placeholder="Country"
                                                    required>
-                                            <form-error :text="form.errors.get('country')" :show="form.errors.has('country')"></form-error>
+                                            <form-error
+                                                    :text="form.errors.get('country')"
+                                                    :show="form.errors.has('country')">
+                                            </form-error>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="zip">Zip/Postal Code</label>
-                                            <input id="zip" type="text"
+                                            <input id="zip"
+                                                   type="text"
                                                    v-model="form.zip"
                                                    class="form-control"
-                                                   name="zip" value=""
-                                                   placeholder="Zip/Postal Code" required>
-                                            <form-error :text="form.errors.get('zip')" :show="form.errors.has('zip')"></form-error>
+                                                   name="zip"
+                                                   value=""
+                                                   placeholder="Zip/Postal Code"
+                                                   required>
+                                            <form-error
+                                                    :text="form.errors.get('zip')"
+                                                    :show="form.errors.has('zip')">
+                                            </form-error>
                                         </div>
                                     </div>
                                 </div>
@@ -81,11 +108,17 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="city">City</label>
-                                            <input id="city" type="text"
+                                            <input id="city"
+                                                   type="text"
                                                    v-model="form.city"
                                                    class="form-control"
-                                                   name="city" value="" placeholder="City" required>
-                                            <form-error :text="form.errors.get('city')" :show="form.errors.has('city')"></form-error>
+                                                   name="city"
+                                                   placeholder="City"
+                                                   required>
+                                            <form-error
+                                                    :text="form.errors.get('city')"
+                                                    :show="form.errors.has('city')">
+                                            </form-error>
                                         </div>
                                     </div>
                                 </div>
@@ -100,21 +133,31 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="fullname">Full Name</label>
-                                    <input id="fullname" type="text"
+                                    <input id="fullname"
+                                           type="text"
                                            v-model="form.fullname"
                                            class="form-control"
-                                           name="fullname" value=""
-                                           placeholder="Full Name" required>
-                                    <form-error :text="form.errors.get('fullname')" :show="form.errors.has('fullname')"></form-error>
+                                           name="fullname"
+                                           placeholder="Full Name"
+                                           required>
+                                    <form-error
+                                            :text="form.errors.get('fullname')"
+                                            :show="form.errors.has('fullname')">
+                                    </form-error>
                                 </div>
                                 <div class="form-group">
                                     <label for="email">Contact Email</label>
-                                    <input id="email" type="email"
+                                    <input id="email"
+                                           type="email"
                                            v-model="form.email"
                                            class="form-control"
-                                           name="email" value=""
-                                           placeholder="Contact Email" required>
-                                    <form-error :text="form.errors.get('email')" :show="form.errors.has('email')"></form-error>
+                                           name="email"
+                                           placeholder="Contact Email"
+                                           required>
+                                    <form-error
+                                            :text="form.errors.get('email')"
+                                            :show="form.errors.has('email')">
+                                    </form-error>
                                 </div>
                             </div>
                         </div>
@@ -122,9 +165,11 @@
                         <div class="card mb-3">
                             <card-header>Billings</card-header>
                             <div class="card-body">
-                                <billings-form v-if="currencies.length > 0 && billingTypes"
-                                               :currencies="currencies"
-                                               :billingTypes="billingTypes">
+                                <billings-form
+                                        v-if="currencies.length > 0 && billingTypes"
+                                        :form="form"
+                                        :currencies="currencies"
+                                        :billingTypes="billingTypes">
                                 </billings-form>
                             </div>
                         </div>

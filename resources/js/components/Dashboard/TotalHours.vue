@@ -3,11 +3,18 @@
         <div class="card-header">
             <h3 class="d-inline">Total hours worked this {{ this.period }}</h3>
             <div class="card-tools">
-                <date-range :allow-custom="false" @change="applyRangeFilter"></date-range>
+                <date-range
+                        :allow-custom="false"
+                        @change="applyRangeFilter">
+                </date-range>
             </div>
         </div>
         <div class="card-body">
-            <bar-chart v-if="chartData" :data="chartData" :options="chartOptions"></bar-chart>
+            <bar-chart
+                    v-if="chartData"
+                    :data="chartData"
+                    :options="chartOptions">
+            </bar-chart>
         </div>
     </div>
 </template>

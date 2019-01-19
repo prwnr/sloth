@@ -1,37 +1,46 @@
 <template>
     <div>
         <div class="card mr-0">
-        <div class="card-body">
-            <form @submit.prevent="onSubmit"
-                    @keydown="form.errors.clear($event.target.name)">
-                <div class="form-group">
-                    <div class="form-row">
-                        <label for="name">Team name</label>
-                        <input id="name" v-model="form.name" type="text"
-                                class="form-control"
-                                name="name" required autofocus>
-                        <span v-show="form.errors.has('name')" class="help-block text-danger"
-                                v-html="form.errors.get('name')"></span>
+            <div class="card-body">
+                <form @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <label for="name">Team name</label>
+                            <input autofocus
+                                   class="form-control"
+                                   id="name"
+                                   name="name"
+                                   required
+                                   type="text"
+                                   v-model="form.name">
+                            <span class="help-block text-danger"
+                                  v-html="form.errors.get('name')"
+                                  v-show="form.errors.has('name')">
+                        </span>
+                        </div>
                     </div>
-                </div>
-                <button type="submit" class="btn btn-success" :disabled="form.errors.any()">Save</button>
-            </form>
+                    <button :disabled="form.errors.any()"
+                            class="btn btn-success"
+                            type="submit">
+                        Save
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="card card-table">
-        <div class="card-header">
-            <i class="fa fa-table"></i> Members
-        </div>
-        <div class="card-body p-0">
-            <datatable
-                :columns="columns"
-                :data="itemsData"
-                :total="items.length"
-                :query="query"
-                :HeaderSettings="false"
+        <div class="card card-table">
+            <div class="card-header">
+                <i class="fa fa-table"></i> Members
+            </div>
+            <div class="card-body p-0">
+                <datatable
+                        :columns="columns"
+                        :data="itemsData"
+                        :total="items.length"
+                        :query="query"
+                        :HeaderSettings="false"
                 />
+            </div>
         </div>
-    </div>
     </div>
 </template>
 
@@ -54,9 +63,9 @@
                 }),
                 columns: [
                     {title: '#', field: 'id', sortable: true, colStyle: 'width: 70px;'},
-                    {title: 'Name', field: 'fullname', sortable: true },
-                    {title: 'Email', field: 'email', sortable: true },
-                    {title: 'Active?', field: 'active', sortable: true },
+                    {title: 'Name', field: 'fullname', sortable: true},
+                    {title: 'Email', field: 'email', sortable: true},
+                    {title: 'Active?', field: 'active', sortable: true},
                 ],
                 query: {sort: 'id', order: 'asc'},
             }
@@ -104,7 +113,7 @@
                         this.form.updateOriginalData();
                     }).catch(error => {
                         this.$awn.alert(error.message);
-                    })    
+                    })
                 );
             },
         }
