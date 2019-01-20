@@ -1,5 +1,15 @@
 # Release Notes
 
+## 1.1.1 (2019-01-20)
+
+#### Added
+
+- button to stop active logs from within a control sidebar
+
+#### Fixed
+
+- updated log data not always being reflected in control sidebar
+
 ## 1.1.0 (2019-01-19)
 
 #### Changed

@@ -118,6 +118,16 @@
                 this.workedTime = this.timer.minutesToSeconds(this.time.duration);
                 this.duration = this.timer.format(this.workedTime);
             }
+
+            EventHub.listen('timelog_stopped', (id) => {
+                if (this.time.id === id) {
+                    this.stopCounter()
+                }
+            })
+        },
+
+        destroyed() {
+            EventHub.forget('timelog_stopped')
         },
 
         computed: {

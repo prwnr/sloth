@@ -8,11 +8,19 @@
              v-for="log in activeLogs">
             <h5 class="mb-1">
                 {{ log.created_at | formatDateTo('LL') }}
+                <button class="btn btn-sm pt-0 pb-0 btn-outline-secondary float-right"
+                        @click="stop(log.id)"
+                        title="Stop">
+                    <i data-v-224c29a5="" class="fa fa-pause"></i>
+                </button>
             </h5>
             <div>
                 Active since: {{ log.start | formatDateTo('LT') }}
             </div>
-            {{ log.project.name }} <span v-if="log.description">- {{ log.description }}</span>
+            <div>
+                Project: {{ log.project.name }}
+                <span v-if="log.description"><br>Description: {{ log.description }}</span>
+            </div>
         </div>
     </div>
 </template>
@@ -48,13 +56,32 @@
         },
 
         methods: {
-            ...mapActions('timelogs', [
-                'fetchActive'
-            ]),
+            ...mapActions('timelogs', {
+                fetchActive: 'fetchActive',
+                stopLog: 'stop'
+            }),
+
+            stop(id) {
+                let timeLog = this.activeLogs.find(item => item.id === id)
+                let duration = moment.duration(moment().diff(moment(timeLog.start))).asMinutes()
+
+                this.stopLog({
+                    id: id,
+                    duration: timeLog.duration + Math.floor(duration)
+                }).then(response => {
+                    EventHub.fire('timelog_stopped', id)
+                }).catch(error => {
+                    this.$awn.alert(error.message)
+                })
+            }
         }
     }
 </script>
 
 <style scoped>
-
+    .btn-outline-secondary:hover {
+        color: #f8f9fa;
+        background-color: inherit;
+        border-color: #f8f9fa;
+    }
 </style>
