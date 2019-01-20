@@ -169,12 +169,22 @@ export default {
         },
 
         update({state, commit}, {id, data}) {
+            let logsToUpdate = []
             const log = state.items.find(item => item.id === id)
-            for (let [field, value] of Object.entries(data)) {
-                commit("updateLogDetails", {
-                    log, field, value
-                })
+            logsToUpdate.push(log)
+
+            const activeLog = state.active.find(item => item.id === id)
+            if (!_.isUndefined(activeLog)) {
+                logsToUpdate.push(activeLog)
             }
+
+            logsToUpdate.forEach(item => {
+                for (let [field, value] of Object.entries(data)) {
+                    commit("updateLogDetails", {
+                        log: item, field, value
+                    })
+                }
+            })
         }
     },
 
