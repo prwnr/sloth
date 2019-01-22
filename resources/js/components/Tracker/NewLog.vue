@@ -167,12 +167,7 @@
             },
 
             disableStartButton: function () {
-                let selectedDate = moment(this.form.created_at);
-                if (this.$parent.currentDay != selectedDate.format('YYYY-MM-DD')) {
-                    return true;
-                }
-
-                return false;
+                return moment().format('YYYY-MM-DD') !== moment(this.form.created_at).format('YYYY-MM-DD');
             },
         },
 

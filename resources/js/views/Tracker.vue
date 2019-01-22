@@ -11,7 +11,7 @@
                                 type="button"
                                 data-toggle="modal"
                                 data-target="#newLog">
-                            Add time <i class="fa fa-fw fa-plus"></i>
+                            Create time log <i class="fa fa-fw fa-plus"></i>
                         </button>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div>
-                    <div class="p-3" v-if="timeLogs.length == 0">You haven't worked this day. Slothfully</div>
+                    <div class="p-3" v-if="timeLogs.length === 0">You haven't worked this day. Slothfully</div>
                     <div class="list-group list-group-flush">
                         <time-log
                                 v-for="time in timeLogs"
@@ -65,7 +65,7 @@
                         </time-log>
                     </div>
                     <div class="text-right p-2 d-block"
-                         v-if="timeLogs.length != 0">
+                         v-if="timeLogs.length !== 0">
                         <span class="pr-4">This day you worked for {{ totalTimeWorked }}</span>
                     </div>
                 </div>
