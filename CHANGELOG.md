@@ -1,5 +1,12 @@
 # Release Notes
 
+## 1.1.2 (2019-01-22)
+
+#### Fixed
+
+- ability to start logs from view on day that is not current day removed
+- issue with active log not being added to sidebar from day other than current day
+
 ## 1.1.1 (2019-01-20)
 
 #### Added
