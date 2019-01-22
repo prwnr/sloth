@@ -121,6 +121,8 @@ export default {
                     duration: duration,
                     time: 'stop'
                 }).then(response => {
+                    let logs = state.active.filter(item => item.id !== id);
+                    commit("setActive", logs)
                     dispatch("update", {
                         id: id,
                         data: {
@@ -128,8 +130,6 @@ export default {
                             start: null
                         }
                     })
-                    let logs = state.active.filter(item => item.id !== id);
-                    commit("setActive", logs)
                     resolve(response.data.data)
                 }).catch(error => {
                     reject(error)
@@ -183,7 +183,9 @@ export default {
         update({state, commit}, {id, data}) {
             let logsToUpdate = []
             const log = state.items.find(item => item.id === id)
-            logsToUpdate.push(log)
+            if (!_.isUndefined(log)) {
+                logsToUpdate.push(log)
+            }
 
             const activeLog = state.active.find(item => item.id === id)
             if (!_.isUndefined(activeLog)) {

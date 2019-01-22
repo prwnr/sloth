@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.1.3 (2019-01-22)
+
+#### Fixed
+
+- error on attempt to stop active log started on other day view
+
 ## 1.1.2 (2019-01-22)
 
 #### Fixed
