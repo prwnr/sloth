@@ -155,12 +155,24 @@ export default {
             })
         },
 
-        add({commit}, log) {
+        add({commit, dispatch, state}, log) {
             if (log.start) {
-                commit("addToActive", log)
+                dispatch("addActive", log)
+            }
+
+            if (!_.isUndefined(state.items.find(item => log.id === item.id))) {
+                return
             }
 
             commit("addToLogs", log)
+        },
+
+        addActive({commit, state}, log) {
+            if (!_.isUndefined(state.active.find(item => log.id === item.id))) {
+                return
+            }
+
+            commit("addToActive", log)
         },
 
         remove({state, commit}, id) {

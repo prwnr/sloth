@@ -47,7 +47,7 @@
                     </div>
                     <footer class="main-footer">
                         <strong>Copyright &copy; <a href="https://semicket.com">semicket.com</a>.</strong> All rights reserved.
-                        <small class="float-right pt-1">v1.1.0</small>
+                        <small class="float-right pt-1">v1.1</small>
                     </footer>
                     <aside class="control-sidebar control-sidebar-dark">
                         <control-sidebar></control-sidebar>
