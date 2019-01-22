@@ -12,7 +12,7 @@
                                 v-model="form.project"
                                 :class="{ 'is-invalid': form.errors.has('project')}">
                             <option
-                                    v-if="projects.length == 0"
+                                    v-if="projects.length === 0"
                                     value="''"
                                     disabled
                                     selected="false">
@@ -98,7 +98,7 @@
                 </div>
 
                 <div class="col-7 small pl-0 time-input-example">
-                    exmaple formats for 2.5 hour of work: <br>
+                    example formats for 2.5 hour of work: <br>
                     150 (as minutes) or 2:30 (as hours)
                 </div>
             </div>
@@ -187,6 +187,7 @@
         methods: {
             ...mapActions('timelogs', {
                 addLog: 'add',
+                addActiveLog: 'addActive'
             }),
             /**
              * Creates new tracking time row
@@ -207,6 +208,10 @@
                     let created_at = this.form.created_at;
                     if (this.day === created_at) {
                         this.addLog(response.data)
+                    }
+
+                    if (this.day !== created_at && response.data.start) {
+                        this.addActiveLog(response.data)
                     }
 
                     this.form.reset();
