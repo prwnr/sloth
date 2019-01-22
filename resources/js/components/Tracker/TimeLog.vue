@@ -130,6 +130,12 @@
             EventHub.forget('timelog_stopped')
         },
 
+        watch: {
+            'time.start': function () {
+                this.startTime = this.time.start
+            }
+        },
+
         computed: {
             ...mapGetters(['authUser']),
             description: function () {
