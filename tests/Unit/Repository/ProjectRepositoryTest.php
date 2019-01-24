@@ -211,7 +211,7 @@ class ProjectRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $model = new Project($this->makeClientData());
-        $this->project->shouldReceive('query->findOrFail')
+        $this->project->shouldReceive('newQuery->findOrFail')
             ->withNoArgs()
             ->with(1, ['*'])
             ->andReturn($model);

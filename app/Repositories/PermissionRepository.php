@@ -31,7 +31,7 @@ class PermissionRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->permission->query()->get($columns);
+        return $this->permission->newQuery()->get($columns);
     }
 
     /**
@@ -39,7 +39,7 @@ class PermissionRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->permission->query()->with($relations)->get($columns);
+        return $this->permission->newQuery()->with($relations)->get($columns);
     }
 
     /**
@@ -48,7 +48,7 @@ class PermissionRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): Permission
     {
-        return $this->permission->query()->findOrFail($id, $columns);
+        return $this->permission->newQuery()->findOrFail($id, $columns);
     }
 
     /**
@@ -58,7 +58,7 @@ class PermissionRepository implements RepositoryInterface
      */
     public function findByName(string $name, array $columns = ['*']): Permission
     {
-        return $this->permission->query()->whereName($name)->firstOrFail($columns);
+        return $this->permission->newQuery()->whereName($name)->firstOrFail($columns);
     }
 
     /**
@@ -67,7 +67,7 @@ class PermissionRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Permission
     {
-        return $this->permission->query()->with($relations)->findOrFail($id, $columns);
+        return $this->permission->newQuery()->with($relations)->findOrFail($id, $columns);
     }
 
     /**
@@ -76,7 +76,7 @@ class PermissionRepository implements RepositoryInterface
      */
     public function create(array $data): Permission
     {
-        return $this->permission->query()->create($data);
+        return $this->permission->newQuery()->create($data);
     }
 
     /**
@@ -96,6 +96,6 @@ class PermissionRepository implements RepositoryInterface
      */
     public function delete(int $id): bool
     {
-        return (bool) $this->permission->query()->where('id', $id)->delete();
+        return (bool) $this->permission->newQuery()->where('id', $id)->delete();
     }
 }

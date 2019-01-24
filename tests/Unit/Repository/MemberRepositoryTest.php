@@ -211,7 +211,7 @@ class MemberRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $member = new Member();
-        $this->member->shouldReceive('query->findOrFail')
+        $this->member->shouldReceive('newQuery->findOrFail')
             ->withNoArgs()
             ->with(1, ['*'])
             ->andReturn($member);

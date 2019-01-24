@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.1.3 (2019-01-xx)
+
+#### Added
+
+- filter button to show/hide finished Todo tasks from list
+
 ## 1.1.3 (2019-01-22)
 
 #### Fixed

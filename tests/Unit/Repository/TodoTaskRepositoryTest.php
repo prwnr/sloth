@@ -97,11 +97,11 @@ class TodoTaskRepositoryTest extends TestCase
         }
     }
 
-    public function testReturnsCollectionWithRelationForMemberOfOnlyFinishedTasks(): void
+    public function testReturnsCollectionWithRelationForMemberOfOnlyUnfinishedTasks(): void
     {
         $memberId = factory(Member::class)->create()->id;
-        $expected = factory(TodoTask::class, 3)->create(['member_id' => $memberId, 'finished' => true]);
-        factory(TodoTask::class, 3)->create(['member_id' => $memberId, 'finished' => false]);
+        $expected = factory(TodoTask::class, 3)->create(['member_id' => $memberId, 'finished' => false]);
+        factory(TodoTask::class, 3)->create(['member_id' => $memberId, 'finished' => true]);
 
         $expectedRelations = ['project', 'task', 'timelog', 'member'];
         $actual = $this->repository->allUnfinishedOfMemberWith($memberId, $expectedRelations);

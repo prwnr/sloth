@@ -31,7 +31,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->currency->query()->get($columns);
+        return $this->currency->newQuery()->get($columns);
     }
 
     /**
@@ -39,7 +39,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->currency->query()->with($relations)->get($columns);
+        return $this->currency->newQuery()->with($relations)->get($columns);
     }
 
     /**
@@ -48,7 +48,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function first(array $columns = ['*']): ?Currency
     {
-        return $this->currency->query()->first($columns);
+        return $this->currency->newQuery()->first($columns);
     }
 
     /**
@@ -57,7 +57,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): Currency
     {
-        return $this->currency->query()->findOrFail($id, $columns);
+        return $this->currency->newQuery()->findOrFail($id, $columns);
     }
 
     /**
@@ -67,7 +67,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function findByName(string $name, array $columns = ['*']): Currency
     {
-        return $this->currency->query()->whereName($name)->firstOrFail($columns);
+        return $this->currency->newQuery()->whereName($name)->firstOrFail($columns);
     }
 
     /**
@@ -76,7 +76,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Currency
     {
-        return $this->currency->query()->with($relations)->findOrFail($id, $columns);
+        return $this->currency->newQuery()->with($relations)->findOrFail($id, $columns);
     }
 
     /**
@@ -85,7 +85,7 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function create(array $data): Currency
     {
-        return $this->currency->query()->create($data);
+        return $this->currency->newQuery()->create($data);
     }
 
     /**
@@ -105,6 +105,6 @@ class CurrencyRepository implements RepositoryInterface
      */
     public function delete(int $id): bool
     {
-        return (bool) $this->currency->query()->where('id', $id)->delete();
+        return (bool) $this->currency->newQuery()->where('id', $id)->delete();
     }
 }
