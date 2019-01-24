@@ -31,7 +31,7 @@ class TodoTaskRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->todoTask->query()->get($columns);
+        return $this->todoTask->newQuery()->get($columns);
     }
 
     /**
@@ -39,7 +39,7 @@ class TodoTaskRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->todoTask->query()->with($relations)->get($columns);
+        return $this->todoTask->newQuery()->with($relations)->get($columns);
     }
 
     /**
@@ -50,7 +50,21 @@ class TodoTaskRepository implements RepositoryInterface
      */
     public function allOfMemberWith(int $memberId, array $relations, array $columns = ['*']): Collection
     {
-        return $this->todoTask->query()->where('member_id', $memberId)->with($relations)->get($columns);
+        return $this->todoTask->newQuery()->where('member_id', $memberId)->with($relations)->get($columns);
+    }
+
+    /**
+     * @param int $memberId
+     * @param array $relations
+     * @param array $columns
+     * @return Collection
+     */
+    public function allUnfinishedOfMemberWith(int $memberId, array $relations, array $columns = ['*']): Collection
+    {
+        return $this->todoTask->newQuery()->where([
+            'member_id' => $memberId,
+            'finished' => false
+        ])->with($relations)->get($columns);
     }
 
     /**
@@ -59,7 +73,7 @@ class TodoTaskRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): TodoTask
     {
-        return $this->todoTask->query()->findOrFail($id, $columns);
+        return $this->todoTask->newQuery()->findOrFail($id, $columns);
     }
 
     /**
@@ -68,7 +82,7 @@ class TodoTaskRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): TodoTask
     {
-        return $this->todoTask->query()->with($relations)->findOrFail($id, $columns);
+        return $this->todoTask->newQuery()->with($relations)->findOrFail($id, $columns);
     }
 
     /**
@@ -77,7 +91,7 @@ class TodoTaskRepository implements RepositoryInterface
      */
     public function create(array $data): TodoTask
     {
-        return $this->todoTask->query()->create($data);
+        return $this->todoTask->newQuery()->create($data);
     }
 
     /**
@@ -97,6 +111,6 @@ class TodoTaskRepository implements RepositoryInterface
      */
     public function delete(int $id): bool
     {
-        return $this->todoTask->query()->where('id', $id)->delete();
+        return $this->todoTask->newQuery()->where('id', $id)->delete();
     }
 }

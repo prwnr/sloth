@@ -97,6 +97,22 @@ class TodoTaskRepositoryTest extends TestCase
         }
     }
 
+    public function testReturnsCollectionWithRelationForMemberOfOnlyFinishedTasks(): void
+    {
+        $memberId = factory(Member::class)->create()->id;
+        $expected = factory(TodoTask::class, 3)->create(['member_id' => $memberId, 'finished' => true]);
+        factory(TodoTask::class, 3)->create(['member_id' => $memberId, 'finished' => false]);
+
+        $expectedRelations = ['project', 'task', 'timelog', 'member'];
+        $actual = $this->repository->allUnfinishedOfMemberWith($memberId, $expectedRelations);
+
+        $this->assertEquals($expected->first()->attributesToArray(), $actual->first()->attributesToArray());
+        $this->assertEquals(3, $actual->count());
+        foreach ($expectedRelations as $relation) {
+            $this->assertTrue($actual->first()->relationLoaded($relation));
+        }
+    }
+
     public function testCreatesModel(): void
     {
         $expected = $this->makeTodoTaskData();
