@@ -33,6 +33,11 @@
         </div>
         <div class="row">
             <div class="col-lg-12 item-action-buttons">
+                <a @click.prevent="start"
+                   class="small text-success"
+                   href="">
+                    <i class="fa fa-play" title="Start"></i> start
+                </a>
                 <a @click.prevent="edit"
                    class="small text-primary"
                    data-target="#edit"
@@ -94,6 +99,23 @@
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 })
+            },
+
+            start() {
+                let log = {
+                    member: this.item.member_id,
+                    project: this.item.project_id,
+                    task: this.item.task,
+                    description: this.item.description,
+                    duration: null,
+                    created_at: moment().format('YYYY-MM-DD')
+                };
+
+                this.startLog(log).then(response => {
+                    this.$awn.success('New time log started');
+                }).catch(error => {
+                    this.$awn.alert(error.response)
+                });
             },
 
             edit() {
