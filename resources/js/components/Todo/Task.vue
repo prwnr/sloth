@@ -53,6 +53,7 @@
 
 <script>
     import PriorityBadge from './PriorityBadge';
+    import {mapActions} from 'vuex';
 
     export default {
         name: "Task",
@@ -81,6 +82,10 @@
         },
 
         methods: {
+            ...mapActions('timelogs', {
+                startLog: 'create'
+            }),
+
             finish() {
                 axios.patch(`todos/${this.item.id}/status`, {
                     finished: !this.item.finished

@@ -95,6 +95,30 @@ export default {
             })
         },
 
+        create({state, dispatch}, log) {
+            return new Promise((resolve, reject) => {
+                axios.post('time', log).then(response => {
+                    if (response.data.data.start) {
+                        response.data.data.start = response.data.data.start.date;
+                    } else {
+                        response.data.data.start = null;
+                    }
+
+                    if (state.day === log.created_at) {
+                        dispatch("add", response.data.data)
+                    }
+
+                    if (state.day !== log.created_at && response.data.data.start) {
+                        dispatch("addActive", response.data.data)
+                    }
+
+                    resolve(response.data.data)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+
         start({state, commit, dispatch}, {id, duration}) {
             return new Promise((resolve, reject) => {
                 axios.put(`time/${id}/duration`, {
