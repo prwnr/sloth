@@ -305,22 +305,4 @@
         cursor: pointer;
         color: #c82333 !important;
     }
-
-    .tick {
-        -webkit-animation: tick 1s;
-        -moz-animation: tick 1s;
-        animation: tick 1s;
-        -webkit-animation-iteration-count: infinite;
-        -moz-animation-iteration-count: infinite;
-        animation-iteration-count: infinite;
-    }
-
-    @keyframes tick {
-        from {
-            opacity: 1;
-        }
-        to {
-            opacity: 0;
-        }
-    }
 </style>

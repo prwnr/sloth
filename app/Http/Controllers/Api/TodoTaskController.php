@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TodoTaskAuthorizationRequest;
 use App\Http\Requests\TodoTaskRequest;
 use App\Repositories\TodoTaskRepository;
-use Illuminate\Http\{JsonResponse, Resources\Json\JsonResource, Resources\Json\ResourceCollection, Response};
+use Illuminate\Http\{JsonResponse, Request, Resources\Json\JsonResource, Resources\Json\ResourceCollection, Response};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -34,12 +34,19 @@ class TodoTaskController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return ResourceCollection
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
         $user = Auth::user();
-        return new ResourceCollection($this->repository->allOfMemberWith($user->member()->id, ['project', 'task', 'timelog', 'member']));
+        $relations = ['project', 'task', 'timelog', 'member'];
+        $memberId = $user->member()->id;
+        if ($request->query('show_all')) {
+            return new ResourceCollection($this->repository->allOfMemberWith($memberId, $relations));
+        }
+
+        return new ResourceCollection($this->repository->allUnfinishedOfMemberWith($memberId, $relations));
     }
 
     /**

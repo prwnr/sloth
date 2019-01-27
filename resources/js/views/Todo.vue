@@ -20,9 +20,17 @@
         <section class="content">
             <loading v-if="loading"></loading>
             <div v-else class="card mb-4">
+                <div class="card-header">
+                    <div class="float-right">
+                        <button class="btn btn-default"
+                                @click="showAll = !showAll">
+                            {{ tasksToggle }}
+                        </button>
+                    </div>
+                </div>
                 <div>
                     <div class="p-3"
-                         v-if="items.length == 0">Too slothful to make a list?
+                         v-if="items.length === 0">Too slothful to make a list?
                     </div>
                     <div class="list-group list-group-flush">
                         <task
@@ -35,7 +43,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content card-primary card-outline">
@@ -79,6 +86,7 @@
     import Task from '../components/Todo/Task';
     import NewTask from '../components/Todo/NewTask';
     import EditTask from '../components/Todo/EditTask';
+    import Filters from '../components/Report/Filters'
 
     export default {
         name: "Todo",
@@ -86,7 +94,8 @@
         components: {
             Task,
             NewTask,
-            EditTask
+            EditTask,
+            Filters
         },
 
         data() {
@@ -99,7 +108,8 @@
                     2: 'medium',
                     3: 'low'
                 },
-                editedTask: null
+                editedTask: null,
+                showAll: false
             }
         },
 
@@ -111,6 +121,16 @@
             todoList() {
                 let items = _.orderBy(this.items, 'priority', 'asc');
                 return _.orderBy(items, 'finished', 'asc');
+            },
+
+            tasksToggle() {
+                return this.showAll ? 'Hide finished' : 'Show all';
+            }
+        },
+
+        watch: {
+            showAll: function () {
+                this.fetchTasks();
             }
         },
 
@@ -177,28 +197,39 @@
             },
 
             /**
-             * Fetch requried data
+             * Fetch required data
              */
             fetchData() {
+                this.fetchTasks();
+                axios.get('projects').then(response => {
+                    this.projects = response.data.data;
+                }).catch(error => {
+                    this.$awn.alert(error.message);
+                });
+            },
+
+            /**
+             * Fetch tasks
+             */
+            fetchTasks() {
                 this.loading = true;
-                axios.get('todos').then(response => {
+                let endpoint = 'todos';
+                if (this.showAll) {
+                    endpoint = `${endpoint}?show_all=true`;
+                }
+
+                axios.get(endpoint).then(response => {
                     let items = response.data.data;
                     items = items.map(item => {
                         item.project_name = item.project.name;
                         return item;
-                    })
+                    });
 
                     this.items = items;
                 }).catch(error => {
                     this.$awn.alert(error.message);
                 }).finally(() => {
                     this.loading = false;
-                })
-
-                axios.get('projects').then(response => {
-                    this.projects = response.data.data;
-                }).catch(error => {
-                    this.$awn.alert(error.message);
                 });
             }
         },

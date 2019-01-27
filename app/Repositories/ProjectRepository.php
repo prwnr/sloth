@@ -33,7 +33,7 @@ class ProjectRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->project->query()->where('team_id', Auth::user()->team_id)->get($columns);
+        return $this->project->newQuery()->where('team_id', Auth::user()->team_id)->get($columns);
     }
 
     /**
@@ -41,7 +41,7 @@ class ProjectRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->project->query()->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
+        return $this->project->newQuery()->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
     }
 
     /**
@@ -50,7 +50,7 @@ class ProjectRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): Project
     {
-        return $this->project->query()->findOrFail($id, $columns);
+        return $this->project->newQuery()->findOrFail($id, $columns);
     }
 
     /**
@@ -59,7 +59,7 @@ class ProjectRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Project
     {
-        return $this->project->query()->with($relations)->findOrFail($id, $columns);
+        return $this->project->newQuery()->with($relations)->findOrFail($id, $columns);
     }
 
     /**

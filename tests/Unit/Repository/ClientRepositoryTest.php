@@ -149,7 +149,7 @@ class ClientRepositoryTest extends TestCase
     public function testDoesNotDeleteModel(): void
     {
         $model = new Client($this->makeClientData());
-        $this->client->shouldReceive('query->findOrFail')
+        $this->client->shouldReceive('newQuery->findOrFail')
             ->withNoArgs()
             ->with(1, ['*'])
             ->andReturn($model);

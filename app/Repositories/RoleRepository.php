@@ -31,7 +31,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function all(array $columns = ['*']): Collection
     {
-        return $this->role->query()->where('team_id', Auth::user()->team_id)->get($columns);
+        return $this->role->newQuery()->where('team_id', Auth::user()->team_id)->get($columns);
     }
 
     /**
@@ -39,7 +39,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function allWith(array $relations, array $columns = ['*']): Collection
     {
-        return $this->role->query()->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
+        return $this->role->newQuery()->where('team_id', Auth::user()->team_id)->with($relations)->get($columns);
     }
 
     /**
@@ -48,7 +48,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function find(int $id, array $columns = ['*']): Role
     {
-        return $this->role->query()->findOrFail($id, $columns);
+        return $this->role->newQuery()->findOrFail($id, $columns);
     }
 
     /**
@@ -57,7 +57,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function findByName(string $name): ?Role
     {
-        return $this->role->query()->where([
+        return $this->role->newQuery()->where([
             'name' => $name,
             'team_id' => Auth::user()->team_id
         ])->first();
@@ -69,7 +69,7 @@ class RoleRepository implements RepositoryInterface
      */
     public function findWith(int $id, array $relations, array $columns = ['*']): Role
     {
-        return $this->role->query()->with($relations)->findOrFail($id, $columns);
+        return $this->role->newQuery()->with($relations)->findOrFail($id, $columns);
     }
 
     /**
@@ -115,6 +115,6 @@ class RoleRepository implements RepositoryInterface
      */
     public function delete(int $id): bool
     {
-        return (bool) $this->role->query()->where('id', $id)->delete();
+        return (bool) $this->role->newQuery()->where('id', $id)->delete();
     }
 }

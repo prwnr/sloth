@@ -187,7 +187,8 @@
         methods: {
             ...mapActions('timelogs', {
                 addLog: 'add',
-                addActiveLog: 'addActive'
+                addActiveLog: 'addActive',
+                createLog: 'create'
             }),
             /**
              * Creates new tracking time row
@@ -198,22 +199,8 @@
                 }
 
                 this.form.created_at = moment(this.form.created_at).format('YYYY-MM-DD');
-                this.form.post('time').then(response => {
-                    if (response.data.start) {
-                        response.data.start = response.data.start.date;
-                    } else {
-                        response.data.start = null;
-                    }
-
-                    let created_at = this.form.created_at;
-                    if (this.day === created_at) {
-                        this.addLog(response.data)
-                    }
-
-                    if (this.day !== created_at && response.data.start) {
-                        this.addActiveLog(response.data)
-                    }
-
+                let created_at = this.form.created_at;
+                this.createLog(this.form.data()).then(response => {
                     this.form.reset();
                     this.form.created_at = created_at;
                     this.form.member = this.authUser.member.id;
