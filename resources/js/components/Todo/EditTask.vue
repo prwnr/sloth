@@ -16,7 +16,7 @@
                     </textarea>
                     <div class="input-group-append">
                         <span class="input-group-text"
-                              v-text="(500 - form.description.length)">
+                              v-text="(200 - form.description.length)">
                         </span>
                     </div>
                 </div>

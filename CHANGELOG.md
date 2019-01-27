@@ -1,10 +1,11 @@
 # Release Notes
 
-## 1.1.3 (2019-01-xx)
+## 1.1.3 (2019-01-27)
 
 #### Added
 
 - filter button to show/hide finished Todo tasks from list
+- button to start time log for a specific todo task
 
 ## 1.1.3 (2019-01-22)
 

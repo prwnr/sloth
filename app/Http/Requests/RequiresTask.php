@@ -35,9 +35,13 @@ trait RequiresTask
             throw new \RuntimeException('RequiresTask must be used within FormRequest instance');
         }
 
-        $projectId = $this->get('project', $this->get('project_id'));
+        $projectId = $this->get('project');
         if (!$projectId) {
             return false;
+        }
+
+        if (is_array($projectId)) {
+            $projectId = $this->get('project_id');
         }
 
         $repository = new ProjectRepository(new Project());

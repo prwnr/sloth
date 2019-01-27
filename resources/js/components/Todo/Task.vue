@@ -33,11 +33,15 @@
         </div>
         <div class="row">
             <div class="col-lg-12 item-action-buttons">
-                <a @click.prevent="start"
+                <a v-if="!isActive" @click.prevent="start"
                    class="small text-success"
                    href="">
                     <i class="fa fa-play" title="Start"></i> start
                 </a>
+                <span v-else
+                   class="small text-secondary pr-1">
+                    <i class="fa fa-clock-o tick"></i> working on it
+                </span>
                 <a @click.prevent="edit"
                    class="small text-primary"
                    data-target="#edit"
@@ -58,7 +62,7 @@
 
 <script>
     import PriorityBadge from './PriorityBadge';
-    import {mapActions} from 'vuex';
+    import {mapActions, mapGetters} from 'vuex';
 
     export default {
         name: "Task",
@@ -75,6 +79,9 @@
         },
 
         computed: {
+            ...mapGetters('timelogs', {
+                activeLogs: 'active'
+            }),
             itemPriority() {
                 let priorities = {
                     1: 'high',
@@ -83,6 +90,9 @@
                 };
 
                 return priorities[this.item.priority];
+            },
+            isActive() {
+                return !_.isUndefined(this.activeLogs.find(item => item.id === this.item.timelog_id));
             }
         },
 
@@ -105,14 +115,19 @@
                 let log = {
                     member: this.item.member_id,
                     project: this.item.project_id,
-                    task: this.item.task,
+                    task: this.item.task_id,
                     description: this.item.description,
                     duration: null,
                     created_at: moment().format('YYYY-MM-DD')
                 };
 
                 this.startLog(log).then(response => {
-                    this.$awn.success('New time log started');
+                    this.item.timelog_id = response.id;
+                    axios.put(`todos/${this.item.id}`, this.item).then(response => {
+                        this.$awn.success('New time log started');
+                    }).catch(error => {
+                        this.$awn.alert(error.message);
+                    });
                 }).catch(error => {
                     this.$awn.alert(error.response)
                 });

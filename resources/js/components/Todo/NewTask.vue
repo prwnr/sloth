@@ -15,7 +15,7 @@
                               v-model="form.description">
                     </textarea>
                     <div class="input-group-append">
-                        <span class="input-group-text" v-text="(500 - form.description.length)"></span>
+                        <span class="input-group-text" v-text="(200 - form.description.length)"></span>
                     </div>
                 </div>
                 <form-error
