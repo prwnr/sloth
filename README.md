@@ -123,7 +123,7 @@ List of bigger features that will be added in future:
 
 - generating PDF/XLS report files from report view
 - more detailed permissions for member roles
-~~- starting a work log from within a todo task~~
+- ~~starting a work log from within a todo task~~
 - creating multiple teams for a single administrator
 - messages communication between team members
 - messages notifications for various actions in application
