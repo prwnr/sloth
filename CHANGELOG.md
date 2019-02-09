@@ -5,6 +5,7 @@
 #### Fixed
 
 - disable start log button on finished todo tasks
+- control sidebar overflow with too many logs in it
 
 ## 1.1.4 (2019-01-27)
 

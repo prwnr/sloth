@@ -41,7 +41,7 @@ class MemberRepository implements RepositoryInterface
 
     /**
      * @param int $id
-     * @param array $options ['active' => true, 'date' => true/date('Y-m-d')]
+     * @param array $options ['active' => true, 'date' => true/date('Y-m-d'), 'last' => number]
      * @return Collection
      */
     public function timeLogs(int $id, array $options): Collection
@@ -55,6 +55,12 @@ class MemberRepository implements RepositoryInterface
         if (isset($options['active'])) {
             $logs->whereNotNull('start');
         }
+
+        if (isset($options['last'])) {
+            $logs->limit($options['last']);
+            $logs->latest('created_at');
+        }
+
 
         $logs = $logs->get();
         $logs->loadMissing('project', 'task');

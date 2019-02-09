@@ -2,7 +2,7 @@
     <div class="p-3 logs-list">
         <h5>Your active work logs</h5>
         <hr class="mb-2">
-        <span v-if="activeLogs.length == 0">You are too slothful to work on anything right now</span>
+        <span v-if="activeLogs.length === 0">You are too slothful to work on anything right now</span>
         <div :key="log.id"
              class="mb-4"
              v-for="log in activeLogs">
@@ -22,6 +22,23 @@
                 <span v-if="log.description"><br>Description: {{ log.description }}</span>
             </div>
         </div>
+
+        <hr class="mt-2 mb-2 bg-white">
+        <div class="mt-4 mb-2"></div>
+
+        <h5>Last work logs</h5>
+        <hr class="mb-2">
+        <div :key="'last' + log.id"
+             class="mb-4"
+             v-for="log in lastLogs">
+            <h5 class="mb-1">
+                {{ log.created_at | formatDateTo('LL') }}
+            </h5>
+            <div>
+                Project: {{ log.project.name }}
+                <span v-if="log.description"><br>Description: {{ log.description }}</span>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -30,16 +47,15 @@
 
     export default {
         name: 'ControlSidebar',
-        data() {
-            return {
-                logs: []
-            }
-        },
 
         created() {
             this.fetchActive().catch(error => {
                 this.$awn.alert(error.message)
             });
+
+            this.fetchLast(3).catch(error => {
+                this.$awn.alert(error.message)
+            })
         },
 
         filters: {
@@ -51,13 +67,15 @@
         computed: {
             ...mapGetters({
                 authUser: 'authUser',
-                activeLogs: 'timelogs/active'
+                activeLogs: 'timelogs/active',
+                lastLogs: 'timelogs/lastLogs',
             })
         },
 
         methods: {
             ...mapActions('timelogs', {
                 fetchActive: 'fetchActive',
+                fetchLast: 'fetchLastLogs',
                 stopLog: 'stop'
             }),
 

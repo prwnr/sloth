@@ -3,6 +3,7 @@ export default {
     state: {
         items: [],
         active: [],
+        lastLogs: [],
         day: ''
     },
 
@@ -13,6 +14,10 @@ export default {
 
         active(state) {
             return state.active
+        },
+
+        lastLogs(state) {
+            return state.lastLogs
         },
 
         totalTime(state) {
@@ -69,10 +74,25 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.get(`users/${rootState.authUser.get('id')}/logs`, {
                     params: {
-                        date: day
+                        date: day,
                     }
                 }).then(response => {
                     commit("setLogs", response.data.data)
+                    resolve(response.data.data)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+
+        fetchLastLogs({commit, rootState}, limit) {
+            return new Promise((resolve, reject) => {
+                axios.get(`users/${rootState.authUser.get('id')}/logs`, {
+                    params: {
+                        last: limit,
+                    }
+                }).then(response => {
+                    commit("setLastLogs", response.data.data)
                     resolve(response.data.data)
                 }).catch(error => {
                     reject(error)
@@ -84,7 +104,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.get(`users/${rootState.authUser.get('id')}/logs`, {
                     params: {
-                        active: true
+                        active: true,
                     }
                 }).then(response => {
                     commit("setActive", response.data.data)
@@ -237,6 +257,10 @@ export default {
 
         setActive(state, logs) {
             state.active = logs
+        },
+
+        setLastLogs(state, logs) {
+            state.lastLogs = logs
         },
 
         addToLogs(state, log) {
