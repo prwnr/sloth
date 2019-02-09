@@ -1,5 +1,5 @@
 <template>
-    <div class="p-3">
+    <div class="p-3 logs-list">
         <h5>Your active work logs</h5>
         <hr class="mb-2">
         <span v-if="activeLogs.length == 0">You are too slothful to work on anything right now</span>
@@ -83,5 +83,10 @@
         color: #f8f9fa;
         background-color: inherit;
         border-color: #f8f9fa;
+    }
+
+    .logs-list {
+        overflow-y: auto;
+        height: calc(100vh - 57px);
     }
 </style>
