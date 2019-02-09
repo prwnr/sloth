@@ -33,12 +33,12 @@
         </div>
         <div class="row">
             <div class="col-lg-12 item-action-buttons">
-                <a v-if="!isActive" @click.prevent="start"
+                <a v-if="!isActive && !item.finished" @click.prevent="start"
                    class="small text-success"
                    href="">
                     <i class="fa fa-play" title="Start"></i> start
                 </a>
-                <span v-else
+                <span v-if="isActive"
                    class="small text-secondary pr-1">
                     <i class="fa fa-clock-o tick"></i> working on it
                 </span>

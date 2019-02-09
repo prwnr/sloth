@@ -1,6 +1,12 @@
 # Release Notes
 
-## 1.1.3 (2019-01-27)
+## 1.1.5 (2019-02-09)
+
+#### Fixed
+
+- disable start log button on finished todo tasks
+
+## 1.1.4 (2019-01-27)
 
 #### Added
 
