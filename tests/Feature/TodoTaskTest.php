@@ -18,7 +18,7 @@ class TodoTaskTest extends FeatureTestCase
         $this->actingAs($this->user, 'api');
         factory(TodoTask::class, 5)->create(['member_id' => $this->member->id]);
 
-        $response = $this->json(Request::METHOD_GET, '/api/todos');
+        $response = $this->json(Request::METHOD_GET, '/api/todos?show_all=true');
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
