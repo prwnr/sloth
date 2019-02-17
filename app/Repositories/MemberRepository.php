@@ -52,13 +52,21 @@ class MemberRepository implements RepositoryInterface
             $logs->whereDate('created_at', $this->getDateFilter($date));
         }
 
-        if (isset($options['active'])) {
-            $logs->whereNotNull('start');
+        $active = $options['active'] ?? null;
+        if ($active !== null) {
+            if ($active === 'true') {
+                $logs->whereNotNull('start');
+            }
+
+            if ($active === 'false') {
+                $logs->whereNull('start');
+            }
         }
 
         if (isset($options['last'])) {
             $logs->limit($options['last']);
             $logs->latest('created_at');
+            $logs->orderBy('created_at');
         }
 
 

@@ -17,7 +17,7 @@ export default {
         },
 
         lastLogs(state) {
-            return state.lastLogs
+            return state.lastLogs.slice(0, 3)
         },
 
         totalTime(state) {
@@ -90,6 +90,7 @@ export default {
                 axios.get(`users/${rootState.authUser.get('id')}/logs`, {
                     params: {
                         last: limit,
+                        active: false
                     }
                 }).then(response => {
                     commit("setLastLogs", response.data.data)
@@ -165,6 +166,7 @@ export default {
                     duration: duration,
                     time: 'stop'
                 }).then(response => {
+                    let log = state.items.find(item => id === item.id);
                     let logs = state.active.filter(item => item.id !== id);
                     commit("setActive", logs)
                     dispatch("update", {
@@ -174,6 +176,9 @@ export default {
                             start: null
                         }
                     })
+                    let lastLogs = state.lastLogs
+                    lastLogs.unshift(log)
+                    commit("setLastLogs", lastLogs)
                     resolve(response.data.data)
                 }).catch(error => {
                     reject(error)
